@@ -1,0 +1,23 @@
+@import "clear-style";
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  font-family: "NotoSansHK", sans-serif;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.devs_content {
+  padding: 5px;
+}
+
+.devs_button {
+  width: fit-content;
+}
