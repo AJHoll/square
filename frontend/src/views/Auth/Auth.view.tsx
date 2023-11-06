@@ -5,12 +5,10 @@ import DevsInput from '@ajholl/devsuikit/dist/DevsInput';
 import DevsPassword from '@ajholl/devsuikit/dist/DevsPassword';
 import DevsButton from '@ajholl/devsuikit/dist/DevsButton';
 import './Auth.view.scss'
-import { StoreProps } from '../../interfaces/StoreProps';
 import AuthStore from './Auth.store';
-import { RouteComponentProps } from 'react-router-dom';
-import { TitleProps } from '../../interfaces/TitleProps';
+import { BaseViewProps } from '../../interfaces/BaseViewProps';
 
-export interface AuthViewProps extends RouteComponentProps, StoreProps, TitleProps {
+export interface AuthViewProps extends BaseViewProps {
 }
 
 export class AuthView extends React.Component<AuthViewProps> {
@@ -49,7 +47,7 @@ export class AuthView extends React.Component<AuthViewProps> {
             <DevsButton template="filled"
                         color="primary"
                         title="Войти"
-                        onClick={async () => this.authStore.login()}
+                        onClick={async () => this.authStore.auth()}
             />
           </div>
         </DevsPanel>

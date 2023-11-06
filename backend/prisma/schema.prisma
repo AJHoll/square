@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model adm_group {
+  id                Decimal             @id(map: "pk_adm_group") @db.Decimal(15, 0)
+  name              String              @unique(map: "udx_adm_group_name") @default("") @db.VarChar(30)
+  caption           String?             @db.VarChar(254)
+  description       String?             @db.VarChar(4000)
+  adm_group_in_user adm_group_in_user[]
+  adm_role_in_group adm_role_in_group[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model adm_group_in_user {
+  id        Decimal   @id(map: "pk_adm_group_in_user") @db.Decimal(15, 0)
+  user_id   Decimal   @db.Decimal(15, 0)
+  group_id  Decimal   @db.Decimal(15, 0)
+  adm_group adm_group @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_group_in_user_group_id")
+  adm_user  adm_user  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_group_in_user_user_id")
+
+  @@unique([user_id, group_id], map: "udx_adm_group_in_user_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model adm_role {
+  id                Decimal             @id(map: "pk_adm_role") @db.Decimal(15, 0)
+  name              String              @unique(map: "udx_adm_role_name") @default("") @db.VarChar(30)
+  caption           String?             @db.VarChar(254)
+  description       String?             @db.VarChar(4000)
+  adm_role_in_group adm_role_in_group[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model adm_role_in_group {
+  id        Decimal   @id(map: "pk_adm_role_in_group") @db.Decimal(15, 0)
+  group_id  Decimal   @db.Decimal(15, 0)
+  role_id   Decimal   @db.Decimal(15, 0)
+  adm_group adm_group @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_in_group_group")
+  adm_role  adm_role  @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_in_group_role")
+
+  @@unique([group_id, role_id], map: "udx_adm_role_in_group_group_role_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model adm_user {
+  id                Decimal             @id(map: "pk_adm_user") @db.Decimal(15, 0)
+  name              String              @unique(map: "udx_adm_user_name") @default("") @db.VarChar(30)
+  caption           String?             @db.VarChar(254)
+  hash              String?             @db.VarChar(254)
+  person_id         Decimal?            @db.Decimal(15, 0)
+  adm_group_in_user adm_group_in_user[]
+
+  @@index([person_id], map: "idx_adm_user_person_id")
+}

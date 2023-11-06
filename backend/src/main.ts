@@ -3,5 +3,6 @@ import { AppModule } from './app.module';
 
 (async () => {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3030);
+  app.enableCors();
+  await app.listen(1024);
 })();

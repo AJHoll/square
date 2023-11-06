@@ -1,5 +1,7 @@
 import AuthStore from './Auth/Auth.store';
+import RootService from '../services/Root.service';
 
 export default class RootStore {
-  authStore: AuthStore = new AuthStore();
+  rootService: RootService = new RootService();
+  authStore: AuthStore = new AuthStore(this);
 }

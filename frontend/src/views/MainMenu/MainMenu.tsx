@@ -1,11 +1,9 @@
 import './MainMenu.scss';
 import React from 'react';
 import { observer } from 'mobx-react';
-import { StoreProps } from '../../interfaces/StoreProps';
-import { TitleProps } from '../../interfaces/TitleProps';
-import { RouteComponentProps } from 'react-router-dom';
+import { BaseViewProps } from '../../interfaces/BaseViewProps';
 
-export interface MainMenuProps extends RouteComponentProps, StoreProps, TitleProps{
+export interface MainMenuProps extends BaseViewProps {
 }
 
 export class MainMenu extends React.Component<MainMenuProps> {

@@ -1,23 +1,24 @@
 import { makeAutoObservable } from 'mobx';
+import { UserDto } from '../dtos/User.dto';
+import axios from 'axios';
+import RootService from './Root.service';
 
-export class UserService {
+export default class UserService {
+  rootService: RootService;
+  private readonly restPath: string;
 
-  get isAuth(): boolean {
-    const expiredDateValue = localStorage.getItem('devs.auth.expiredDate');
-    if (expiredDateValue) {
-      try {
-        return +expiredDateValue >= Date.now();
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
-  }
-
-  constructor() {
+  constructor(rootService: RootService) {
+    this.rootService = rootService;
+    this.restPath = `${this.rootService.restUrl}/user`;
     makeAutoObservable(this);
   }
-}
 
-const userService = new UserService();
-export default userService;
+  async auth(username: string, password: string): Promise<UserDto> {
+    try {
+      const response = await axios.post<UserDto>(`${this.restPath}/${username}/auth`, { username, password });
+      return response.data;
+    } catch (e) {
+      throw e;
+    }
+  }
+}

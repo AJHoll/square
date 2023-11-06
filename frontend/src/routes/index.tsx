@@ -20,6 +20,7 @@ export default class Routes extends React.Component<RoutesProps> {
       <Switch>
         <AuthGuardRoute exact
                         path="/"
+                        rootStore={this.props.rootStore}
                         render={(routeProps: RouteComponentProps) =>
                           <OMainMenu {...routeProps}
                                      rootStore={this.props.rootStore}
