@@ -13,6 +13,7 @@ export class MainMenu extends React.Component<MainMenuProps> {
   mainMenuStore: MainMenuStore = this.props.rootStore.mainMenuStore;
 
   async componentDidMount(): Promise<void> {
+    document.title = this.props.title;
   }
 
   render(): React.ReactNode {
