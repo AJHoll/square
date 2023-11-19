@@ -1,41 +1,34 @@
 import { makeAutoObservable } from 'mobx';
-import { UserDto } from '../../dtos/User.dto';
-import UserService from '../../services/User.service';
 import RootStore from '../Root.store';
+import UserService from '../../services/User.service';
+import AuthService from '../../services/Auth.service';
+import { AuthView } from './Auth.view';
 
 export default class AuthStore {
   rootStore: RootStore;
+  authService: AuthService;
   userService: UserService;
   username: string = '';
   password: string = '';
-  userLocalStorageKey: string = 'devs.auth.user';
 
   get isAuth(): boolean {
-    const userValue = localStorage.getItem(this.userLocalStorageKey);
-    if (userValue) {
-      try {
-        const user: UserDto = JSON.parse(userValue);
-        if (user.expiredDate) {
-          return user.expiredDate >= new Date();
-        }
-        return false;
-      } catch (e) {
-        return false;
-      }
+    if (!this.userService.user) {
+      this.authService.checkAndParseToken();
     }
-    return false;
+    return !!this.userService.user?.username;
   }
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     this.userService = this.rootStore.rootService.userService;
+    this.authService = this.rootStore.rootService.authService;
     makeAutoObservable(this)
   }
 
-  async auth(): Promise<void> {
+  async login(context: AuthView): Promise<void> {
     try {
-      const user = await this.userService.auth(this.username, this.password);
-      sessionStorage.setItem(this.userLocalStorageKey, JSON.stringify(user));
+      await this.authService.login(this.username, this.password);
+      context.props.history.push("/");
     } catch (e) {
       console.error(e);
     }

@@ -9,10 +9,8 @@ interface RoutesProps extends StoreProps {
 }
 
 export default class Routes extends React.Component<RoutesProps> {
-  projectName: string = '[square]';
-
   getTitle(viewHeader: string) {
-    return `${this.projectName} - ${viewHeader}`;
+    return `${this.props.rootStore.projectName} - ${viewHeader}`;
   }
 
   render() {

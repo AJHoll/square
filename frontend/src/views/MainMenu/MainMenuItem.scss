@@ -1,0 +1,28 @@
+@import "@ajholl/devsuikit/dist/scss";
+
+.app_menu_item {
+  display: flex;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 15px 10px !important;
+  color: $color-secondary;
+  user-select: none;
+  flex: 1;
+
+  &__icon {
+    flex: none;
+    display: flex;
+    font-size: 29px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__content {
+    flex: auto;
+  }
+
+  &:hover {
+    color: $color-primary;
+  }
+}

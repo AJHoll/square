@@ -47,7 +47,7 @@ export class AuthView extends React.Component<AuthViewProps> {
             <DevsButton template="filled"
                         color="primary"
                         title="Войти"
-                        onClick={async () => this.authStore.auth()}
+                        onClick={async () => this.authStore.login(this)}
             />
           </div>
         </DevsPanel>

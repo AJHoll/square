@@ -1,7 +1,7 @@
-import { RoleDto } from './Role.dto';
-
 export interface UserDto {
-  login: string;
-  expiredDate: Date;
-  roles: RoleDto[];
+  id: number;
+  username: string;
+  password: string;
+  caption: string;
+  roles: string[];
 }

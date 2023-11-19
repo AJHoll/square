@@ -1,0 +1,28 @@
+@import "@ajholl/devsuikit/dist/scss";
+
+.main_menu_group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: none;
+
+  &__title {
+    font-size: 17px;
+    color: $color-secondary;
+  }
+
+  &:hover {
+    .main_menu_group__title {
+      color: $color-primary;
+    }
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: left;
+    flex-wrap: wrap;
+  }
+}
