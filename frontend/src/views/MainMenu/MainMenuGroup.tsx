@@ -13,12 +13,21 @@ export default class MainMenuGroup extends React.Component<MainMenuGroupProps> {
     return (
       <DevsPanel className="main_menu_group">
         <div className="main_menu_group__title">
-          {this.props.title}
+          <div className="title_icon">
+            <div className={this.props.icon ?? 'lni lni-folder'}></div>
+          </div>
+          <div className="title_content">{this.props.title}</div>
         </div>
         <div className="main_menu_group__items">
           {this.props.items.map((item) => {
-            return (<MainMenuItem key={item.id} id={item.id} title={item.title} url={item.url} history={this.props.history}
-                                  location={this.props.location} match={this.props.match} />)
+            return (<MainMenuItem key={item.id}
+                                  id={item.id}
+                                  title={item.title}
+                                  url={item.url}
+                                  history={this.props.history}
+                                  location={this.props.location}
+                                  match={this.props.match}
+            />)
           })}
         </div>
       </DevsPanel>

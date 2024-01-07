@@ -1,4 +1,4 @@
-import { MainMenuItemDto } from './MainMenuItem.dto';
+import { MainMenuItemDto } from './main-menu-item.dto';
 
 export interface MainMenuGroupDto {
   id: number;

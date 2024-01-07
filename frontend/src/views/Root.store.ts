@@ -6,5 +6,5 @@ export default class RootStore {
   readonly projectName = '[Скверъ]';
   rootService: RootService = new RootService();
   authStore: AuthStore = new AuthStore(this);
-  mainMenuStore: MainMenuStore = new MainMenuStore(this);
+  mainMenuStore: MainMenuStore = new MainMenuStore(this, this.rootService.mainMenuService);
 }

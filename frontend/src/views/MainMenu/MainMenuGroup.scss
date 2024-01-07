@@ -10,6 +10,18 @@
   &__title {
     font-size: 17px;
     color: $color-secondary;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    justify-content: start;
+
+    .title_icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   &:hover {

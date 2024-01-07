@@ -13,11 +13,11 @@ export class UserService {
         name: username,
       },
       include: {
-        adm_group_in_user: {
+        adm_user_group: {
           select: {
             adm_group: {
               select: {
-                adm_role_in_group: {
+                adm_group_role: {
                   select: {
                     adm_role: true,
                   },
@@ -33,9 +33,9 @@ export class UserService {
       username: user.name,
       caption: user.caption,
       password: user.hash,
-      roles: user.adm_group_in_user
+      roles: user.adm_user_group
         .reduce((acc, crnt) => {
-          acc = [...acc, ...crnt.adm_group.adm_role_in_group.map(r => r.adm_role.name)]
+          acc = [...acc, ...crnt.adm_group.adm_group_role.map(r => r.adm_role.name)]
           return acc;
         }, []),
     };

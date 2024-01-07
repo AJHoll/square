@@ -14,6 +14,7 @@ export class MainMenu extends React.Component<MainMenuProps> {
 
   async componentDidMount(): Promise<void> {
     document.title = this.props.title;
+    await this.mainMenuStore.reloadMainMenu();
   }
 
   render(): React.ReactNode {

@@ -9,36 +9,38 @@ datasource db {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_group {
-  id                Decimal             @id(map: "pk_adm_group") @db.Decimal(15, 0)
-  name              String              @unique(map: "udx_adm_group_name") @default("") @db.VarChar(30)
-  caption           String?             @db.VarChar(254)
-  description       String?             @db.VarChar(4000)
-  adm_group_in_user adm_group_in_user[]
-  adm_role_in_group adm_role_in_group[]
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model adm_group_in_user {
-  id        Decimal   @id(map: "pk_adm_group_in_user") @db.Decimal(15, 0)
-  user_id   Decimal   @db.Decimal(15, 0)
-  group_id  Decimal   @db.Decimal(15, 0)
-  adm_group adm_group @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_group_in_user_group_id")
-  adm_user  adm_user  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_group_in_user_user_id")
-
-  @@unique([user_id, group_id], map: "udx_adm_group_in_user_user_id")
+  id             Decimal          @id(map: "pk_adm_group") @db.Decimal(15, 0)
+  name           String           @unique(map: "udx_adm_group_name") @default("") @db.VarChar(30)
+  caption        String?          @db.VarChar(254)
+  description    String?          @db.VarChar(4000)
+  adm_group_role adm_group_role[]
+  adm_user_group adm_user_group[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_role {
-  id                Decimal             @id(map: "pk_adm_role") @db.Decimal(15, 0)
-  name              String              @unique(map: "udx_adm_role_name") @default("") @db.VarChar(30)
-  caption           String?             @db.VarChar(254)
-  description       String?             @db.VarChar(4000)
-  adm_role_in_group adm_role_in_group[]
+  id                 Decimal              @id(map: "pk_adm_role") @db.Decimal(15, 0)
+  name               String               @unique(map: "udx_adm_role_name") @default("") @db.VarChar(30)
+  caption            String?              @db.VarChar(254)
+  description        String?              @db.VarChar(4000)
+  adm_group_role     adm_group_role[]
+  adm_role_menu_item adm_role_menu_item[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model adm_role_in_group {
+model adm_user {
+  id             Decimal          @id(map: "pk_adm_user") @db.Decimal(15, 0)
+  name           String           @unique(map: "udx_adm_user_name") @default("") @db.VarChar(30)
+  caption        String?          @db.VarChar(254)
+  hash           String?          @db.VarChar(254)
+  person_id      Decimal?         @db.Decimal(15, 0)
+  adm_user_group adm_user_group[]
+
+  @@index([person_id], map: "idx_adm_user_person_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model adm_group_role {
   id        Decimal   @id(map: "pk_adm_role_in_group") @db.Decimal(15, 0)
   group_id  Decimal   @db.Decimal(15, 0)
   role_id   Decimal   @db.Decimal(15, 0)
@@ -49,13 +51,46 @@ model adm_role_in_group {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model adm_user {
-  id                Decimal             @id(map: "pk_adm_user") @db.Decimal(15, 0)
-  name              String              @unique(map: "udx_adm_user_name") @default("") @db.VarChar(30)
-  caption           String?             @db.VarChar(254)
-  hash              String?             @db.VarChar(254)
-  person_id         Decimal?            @db.Decimal(15, 0)
-  adm_group_in_user adm_group_in_user[]
+model adm_role_menu_item {
+  id            Decimal       @id(map: "pk_adm_role_menu_item") @db.Decimal(15, 0)
+  role_id       Decimal       @db.Decimal(15, 0)
+  menu_item_id  Decimal       @db.Decimal(15, 0)
+  krn_menu_item krn_menu_item @relation(fields: [menu_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_menu_item_menu_item_id")
+  adm_role      adm_role      @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_menu_item_role_id")
 
-  @@index([person_id], map: "idx_adm_user_person_id")
+  @@unique([role_id, menu_item_id], map: "udx_adm_role_menu_item_role_id_menu_item_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model adm_user_group {
+  id        Decimal   @id(map: "pk_adm_group_in_user") @db.Decimal(15, 0)
+  user_id   Decimal   @db.Decimal(15, 0)
+  group_id  Decimal   @db.Decimal(15, 0)
+  adm_group adm_group @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_group_in_user_group_id")
+  adm_user  adm_user  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_group_in_user_user_id")
+
+  @@unique([user_id, group_id], map: "udx_adm_group_in_user_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model krn_menu_group {
+  id            Decimal         @id(map: "pk_krn_manu_group") @db.Decimal(15, 0)
+  title         String?         @unique(map: "udx_krn_manu_group_title") @db.VarChar(254)
+  icon          String?         @db.VarChar(254)
+  krn_menu_item krn_menu_item[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model krn_menu_item {
+  id                 Decimal              @id(map: "pk_krn_menu_item") @db.Decimal(15, 0)
+  group_id           Decimal              @db.Decimal(15, 0)
+  title              String?              @db.VarChar(254)
+  url                String?              @db.VarChar(254)
+  icon               String?              @db.VarChar(254)
+  adm_role_menu_item adm_role_menu_item[]
+  krn_menu_group     krn_menu_group       @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_krn_menu_item_group_id")
+
+  @@unique([group_id, title], map: "udx_krn_menu_item_group_id_title")
+  @@index([group_id], map: "idx_krn_menu_item_group_id")
+  @@index([title], map: "idx_krn_menu_item_title")
 }
