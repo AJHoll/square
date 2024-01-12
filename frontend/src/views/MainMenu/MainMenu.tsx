@@ -24,7 +24,7 @@ export class MainMenu extends React.Component<MainMenuProps> {
           <img src="/assets/icon.svg" alt="logo" />
           <div className="app_main_menu__icon-text">
             <span>{this.props.rootStore.projectName}</span>
-            <p>by devs.io</p>
+            <p>by <a href="#">devsystem.space</a></p>
           </div>
         </div>
         <div className="app_main_menu__content">

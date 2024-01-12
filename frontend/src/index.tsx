@@ -13,9 +13,7 @@ const root = ReactDOM.createRoot(
 const rootStore: RootStore = new RootStore();
 
 root.render(
-  <React.StrictMode>
-    <DevsContent>
-      <Routes rootStore={rootStore} />
-    </DevsContent>
-  </React.StrictMode>,
+  <DevsContent>
+    <Routes rootStore={rootStore} />
+  </DevsContent>,
 );
