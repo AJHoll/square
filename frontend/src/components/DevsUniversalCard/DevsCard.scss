@@ -1,0 +1,11 @@
+.app_universal_card {
+  &__footer {
+    display: flex;
+    flex: auto;
+    width: 100%;
+    height: 100%;
+    justify-content: right;
+    align-items: center;
+    gap: 15px;
+  }
+}

@@ -1,0 +1,56 @@
+.app_universal_list {
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+  width: 100%;
+  height: 100%;
+
+  &__toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    flex: none;
+    gap: 25px;
+    padding: 10px 0;
+
+    &-operations {
+      display: flex;
+      flex: none;
+      flex-direction: row;
+      justify-content: left;
+      align-items: center;
+      gap: 5px
+    }
+
+    &-actions {
+      display: flex;
+      flex: none;
+      flex-direction: row;
+      justify-content: left;
+      align-items: center;
+      gap: 5px;
+    }
+
+    &-fast_filter {
+      display: flex;
+      flex: auto;
+
+      &_input {
+        width: 100%;
+      }
+
+      &_search_button {
+        border: none !important;
+        border-radius: 0 !important;
+      }
+    }
+  }
+
+  &__grid {
+    display: flex;
+    flex: auto;
+    width: 100%;
+    height: 100%;
+  }
+}

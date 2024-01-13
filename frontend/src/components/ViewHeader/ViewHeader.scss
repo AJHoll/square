@@ -1,0 +1,40 @@
+@import "@ajholl/devsuikit/dist/scss/themes/primereact/variables";
+
+.view_header {
+  $view-header-font-size: 17px;
+  $view-header-font-weight: 600;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  color: $color-secondary;
+
+  &__title {
+    font-size: $view-header-font-size;
+    font-weight: $view-header-font-weight;
+    user-select: none;
+  }
+
+  &__backward_icon {
+    font-size: $view-header-font-size + 2px;
+    font-weight: $view-header-font-weight;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    text-decoration: none;
+    opacity: 75%;
+    transition: 200ms;
+
+    &:hover {
+      opacity: 90%;
+    }
+
+    &:active {
+      opacity: 100%;
+    }
+  }
+}

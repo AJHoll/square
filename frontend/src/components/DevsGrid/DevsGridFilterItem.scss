@@ -1,0 +1,12 @@
+@import "@ajholl/devsuikit/dist/scss/themes/primereact/variables";
+.app_universal_filter_item {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+  flex: none;
+  color: $color-secondary;
+  & > * {
+    flex: auto;
+  }
+}
