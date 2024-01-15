@@ -1,15 +1,15 @@
-import './MainMenu.scss';
+import './MainMenu.view.scss';
 import React from 'react';
 import { observer } from 'mobx-react';
 import { BaseViewProps } from '../../interfaces/BaseViewProps';
 import MainMenuStore from './MainMenu.store';
-import MainMenuGroup from './MainMenuGroup';
+import MainMenuGroup from './components/MainMenuGroup';
 import { RouteComponentProps } from 'react-router-dom';
 
 export interface MainMenuProps extends BaseViewProps, RouteComponentProps {
 }
 
-export class MainMenu extends React.Component<MainMenuProps> {
+export class MainMenuView extends React.Component<MainMenuProps> {
   mainMenuStore: MainMenuStore = this.props.rootStore.mainMenuStore;
 
   async componentDidMount(): Promise<void> {
@@ -24,7 +24,7 @@ export class MainMenu extends React.Component<MainMenuProps> {
           <img src="/assets/icon.svg" alt="logo" />
           <div className="app_main_menu__icon-text">
             <span>{this.props.rootStore.projectName}</span>
-            <p>by <a href="#">devsystem.space</a></p>
+            <p>by <a href="https://devsystem.space">devsystem.space</a></p>
           </div>
         </div>
         <div className="app_main_menu__content">
@@ -40,5 +40,5 @@ export class MainMenu extends React.Component<MainMenuProps> {
   }
 }
 
-const OMainMenu = observer(MainMenu);
-export default OMainMenu;
+const OMainMenuView = observer(MainMenuView);
+export default OMainMenuView;

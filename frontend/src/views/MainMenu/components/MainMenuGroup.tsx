@@ -1,5 +1,5 @@
 import React from 'react';
-import { MainMenuGroupDto } from '../../dtos/MainMenuGroup.dto';
+import { MainMenuGroupDto } from '../../../dtos/MainMenuGroup.dto';
 import DevsPanel from '@ajholl/devsuikit/dist/DevsPanel';
 import MainMenuItem from './MainMenuItem';
 import { RouteComponentProps } from 'react-router-dom';

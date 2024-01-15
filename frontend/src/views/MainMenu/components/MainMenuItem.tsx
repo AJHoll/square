@@ -1,7 +1,7 @@
 import React from 'react';
 import './MainMenuItem.scss';
 import DevsPanel from '@ajholl/devsuikit/dist/DevsPanel';
-import { MainMenuItemDto } from '../../dtos/MainMenuItem.dto';
+import { MainMenuItemDto } from '../../../dtos/MainMenuItem.dto';
 import { RouteComponentProps } from 'react-router-dom';
 
 interface MainManuItemProps extends MainMenuItemDto, RouteComponentProps {

@@ -9,7 +9,7 @@ datasource db {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_group {
-  id             Decimal          @id(map: "pk_adm_group") @db.Decimal(15, 0)
+  id             Decimal          @id(map: "pk_adm_group") @default(dbgenerated("nextval('seq_adm_group'::regclass)")) @db.Decimal(15, 0)
   name           String           @unique(map: "udx_adm_group_name") @default("") @db.VarChar(30)
   caption        String?          @db.VarChar(254)
   description    String?          @db.VarChar(4000)
@@ -19,7 +19,7 @@ model adm_group {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_role {
-  id                 Decimal              @id(map: "pk_adm_role") @db.Decimal(15, 0)
+  id                 Decimal              @id(map: "pk_adm_role") @default(dbgenerated("nextval('seq_adm_role'::regclass)")) @db.Decimal(15, 0)
   name               String               @unique(map: "udx_adm_role_name") @default("") @db.VarChar(30)
   caption            String?              @db.VarChar(254)
   description        String?              @db.VarChar(4000)
@@ -29,7 +29,7 @@ model adm_role {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_user {
-  id             Decimal          @id(map: "pk_adm_user") @db.Decimal(15, 0)
+  id             Decimal          @id(map: "pk_adm_user") @default(dbgenerated("nextval('seq_adm_user'::regclass)")) @db.Decimal(15, 0)
   name           String           @unique(map: "udx_adm_user_name") @default("") @db.VarChar(30)
   caption        String?          @db.VarChar(254)
   hash           String?          @db.VarChar(254)
@@ -41,7 +41,7 @@ model adm_user {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_group_role {
-  id        Decimal   @id(map: "pk_adm_role_in_group") @db.Decimal(15, 0)
+  id        Decimal   @id(map: "pk_adm_role_in_group") @default(dbgenerated("nextval('seq_adm_group_role'::regclass)")) @db.Decimal(15, 0)
   group_id  Decimal   @db.Decimal(15, 0)
   role_id   Decimal   @db.Decimal(15, 0)
   adm_group adm_group @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_in_group_group")
@@ -52,7 +52,7 @@ model adm_group_role {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_role_menu_item {
-  id            Decimal       @id(map: "pk_adm_role_menu_item") @db.Decimal(15, 0)
+  id            Decimal       @id(map: "pk_adm_role_menu_item") @default(dbgenerated("nextval('seq_adm_role_menu_item'::regclass)")) @db.Decimal(15, 0)
   role_id       Decimal       @db.Decimal(15, 0)
   menu_item_id  Decimal       @db.Decimal(15, 0)
   krn_menu_item krn_menu_item @relation(fields: [menu_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_menu_item_menu_item_id")
@@ -63,7 +63,7 @@ model adm_role_menu_item {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_user_group {
-  id        Decimal   @id(map: "pk_adm_group_in_user") @db.Decimal(15, 0)
+  id        Decimal   @id(map: "pk_adm_group_in_user") @default(dbgenerated("nextval('seq_adm_user_group'::regclass)")) @db.Decimal(15, 0)
   user_id   Decimal   @db.Decimal(15, 0)
   group_id  Decimal   @db.Decimal(15, 0)
   adm_group adm_group @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_group_in_user_group_id")
@@ -74,7 +74,7 @@ model adm_user_group {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model krn_menu_group {
-  id            Decimal         @id(map: "pk_krn_manu_group") @db.Decimal(15, 0)
+  id            Decimal         @id(map: "pk_krn_manu_group") @default(dbgenerated("nextval('seq_krn_menu_group'::regclass)")) @db.Decimal(15, 0)
   title         String?         @unique(map: "udx_krn_manu_group_title") @db.VarChar(254)
   icon          String?         @db.VarChar(254)
   krn_menu_item krn_menu_item[]
@@ -82,7 +82,7 @@ model krn_menu_group {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model krn_menu_item {
-  id                 Decimal              @id(map: "pk_krn_menu_item") @db.Decimal(15, 0)
+  id                 Decimal              @id(map: "pk_krn_menu_item") @default(dbgenerated("nextval('seq_krn_menu_item'::regclass)")) @db.Decimal(15, 0)
   group_id           Decimal              @db.Decimal(15, 0)
   title              String?              @db.VarChar(254)
   url                String?              @db.VarChar(254)

@@ -25,7 +25,7 @@ export default class DevsCard extends React.Component<UniversalCardProps> {
     } = this.props;
     const { onSaveBtnClicked, onCloseBtnClicked, onCancelBtnClicked } = this.props;
     return (
-      <DevsModal appendTo="#window__content"
+      <DevsModal appendTo="#root"
                  visible={visible ?? false}
                  title={title ?? ''}
                  className={modalClassName}

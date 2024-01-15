@@ -7,5 +7,9 @@
     justify-content: right;
     align-items: center;
     gap: 15px;
+
+    button.p-button {
+      margin: 0;
+    }
   }
 }
