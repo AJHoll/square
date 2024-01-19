@@ -7,6 +7,10 @@ import DevsGrid from '../../../components/DevsGrid/DevsGrid';
 import { ColDef, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { AdmRoleDto } from '../../../dtos/AdmRole.dto';
 import { AdmRoleMenuDto } from '../../../dtos/AdmRoleMenu.dto';
+import DevsSplitterPanel from '@ajholl/devsuikit/dist/DevsSplitterPanel';
+import DevsSplitter from '@ajholl/devsuikit/dist/DevsSplitter';
+import DevsButton from '@ajholl/devsuikit/dist/DevsButton';
+import { KrnMenuItemDto } from '../../../dtos/KrnMenuItem.dto';
 
 interface AdmRoleMenuProps extends StoreProps {
 }
@@ -20,7 +24,7 @@ export class AdmRoleMenu extends React.Component<AdmRoleMenuProps> {
     filter: true,
     sortable: true,
   }
-  colDef: ColDef<AdmRoleMenuDto>[] = [
+  roleMenuColDef: ColDef<AdmRoleMenuDto>[] = [
     {
       field: 'id',
       headerName: 'ID',
@@ -41,24 +45,85 @@ export class AdmRoleMenu extends React.Component<AdmRoleMenuProps> {
     {
       field: 'menuItem.icon',
       headerName: 'Иконка',
-      cellRenderer: (params: ICellRendererParams) => <i className={params.value}></i>
+      cellRenderer: (params: ICellRendererParams) => <i className={params.value}></i>,
     },
   ]
 
-  async onGridReady(event: GridReadyEvent<AdmRoleMenuDto>): Promise<void> {
-    this.admRoleMenuStore.gridApi = event.api;
-    this.admRoleMenuStore.columnApi = event.columnApi;
-    await this.admRoleMenuStore.reloadRoles();
+  menuColDef: ColDef<KrnMenuItemDto>[] = [
+    {
+      field: 'id',
+      headerName: 'ID',
+      hide: true,
+    },
+    {
+      field: 'group.title',
+      headerName: 'Группа',
+    },
+    {
+      field: 'title',
+      headerName: 'Наименование',
+    },
+    {
+      field: 'url',
+      headerName: 'URL',
+    },
+    {
+      field: 'icon',
+      headerName: 'Иконка',
+      cellRenderer: (params: ICellRendererParams) => <i className={params.value}></i>,
+    },
+  ]
+
+  async onRoleMenuGridReady(event: GridReadyEvent<AdmRoleMenuDto>): Promise<void> {
+    this.admRoleMenuStore.roleMenuGridApi = event.api;
+    await this.admRoleMenuStore.reloadRoleMenuItems();
+  }
+
+  async onMenuItemsGridReady(event: GridReadyEvent<KrnMenuItemDto>): Promise<void> {
+    this.admRoleMenuStore.menuGridApi = event.api;
+    await this.admRoleMenuStore.reloadMenuItems();
   }
 
   render() {
     return (
-      <>
-        <DevsGrid gridDefaultColDef={this.defaultColDef}
-                  gridColDef={this.colDef}
-                  onGridReady={async (event) => await this.onGridReady(event)}
-        />
-      </>
+      <DevsSplitter layout="horizontal">
+        <DevsSplitterPanel>
+          <DevsGrid title="Пункты меню роли"
+                    gridDefaultColDef={{ ...this.defaultColDef }}
+                    gridColDef={this.roleMenuColDef}
+                    gridRowSelection="multiple"
+                    onGridReady={async (event) => await this.onRoleMenuGridReady(event)}
+                    onGridRowSelectionChanged={(event) => this.admRoleMenuStore.roleMenuItemSelectionChange(event)}
+          />
+        </DevsSplitterPanel>
+        <DevsSplitterPanel>
+          <div className="all_menu">
+            <div className="all_menu__button_bar">
+              <DevsButton template="filled"
+                          color="primary"
+                          icon="lni lni-arrow-left"
+                          disabled={this.admRoleMenuStore.addMenuItemToRoleBtnDisabled}
+                          onClick={() => this.admRoleMenuStore.addMenuItemToRole()}
+              />
+              <DevsButton template="filled"
+                          color="primary"
+                          icon="lni lni-arrow-right"
+                          disabled={this.admRoleMenuStore.removeMenuItemsFromRoleBtnDisabled}
+                          onClick={() => this.admRoleMenuStore.removeMenuItemsFromRole()}
+              />
+            </div>
+            <div className="all_menu__grid">
+              <DevsGrid title="Пункты меню"
+                        gridDefaultColDef={{ ...this.defaultColDef }}
+                        gridColDef={this.menuColDef}
+                        gridRowSelection="multiple"
+                        onGridReady={async (event) => await this.onMenuItemsGridReady(event)}
+                        onGridRowSelectionChanged={(event) => this.admRoleMenuStore.menuItemSelectionChange(event)}
+              />
+            </div>
+          </div>
+        </DevsSplitterPanel>
+      </DevsSplitter>
     );
   }
 }

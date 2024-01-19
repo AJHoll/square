@@ -3,7 +3,9 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
 import { UserInfoMiddleware } from './middleware/user-info.middleware';
-import { AdmRoleModule } from './role/adm-role.module';
+import { AdmRoleModule } from './adm-role/adm-role.module';
+import { KrnMenuController } from './krn-menu/krn-menu.controller';
+import { KrnMenuModule } from './krn-menu/krn-menu.module';
 
 @Module({
   imports: [
@@ -11,7 +13,10 @@ import { AdmRoleModule } from './role/adm-role.module';
     UserModule,
     MainMenuModule,
     AdmRoleModule,
+    KrnMenuModule,
   ],
+  controllers: [KrnMenuController],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {

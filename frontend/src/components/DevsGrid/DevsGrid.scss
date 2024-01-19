@@ -1,3 +1,5 @@
+@import "@ajholl/devsuikit/dist/scss/themes/primereact/variables";
+
 .app_universal_list {
   display: flex;
   flex-direction: column;
@@ -13,6 +15,13 @@
     flex: none;
     gap: 25px;
     padding: 10px 0;
+
+    &-title {
+      font-size: 15px;
+      color: $color-secondary;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
 
     &-operations {
       display: flex;

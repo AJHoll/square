@@ -1,9 +1,9 @@
 import { makeAutoObservable } from 'mobx';
-import RootStore from '../Root.store';
-import AdmRoleService from '../../services/AdmRole.service';
+import RootStore from '../../Root.store';
+import AdmRoleService from '../../../services/AdmRole.service';
 import { ColumnApi, GridApi, SelectionChangedEvent } from 'ag-grid-community';
-import { AdmRoleDto } from '../../dtos/AdmRole.dto';
-import AdmRoleCardStore from './components/AdmRoleCard.store';
+import { AdmRoleDto } from '../../../dtos/AdmRole.dto';
+import AdmRoleCardStore from './AdmRoleCard.store';
 
 
 export default class AdmRoleStore {
@@ -25,18 +25,14 @@ export default class AdmRoleStore {
     this._columnApi = value;
   }
 
-  get columnApi(): ColumnApi | undefined {
-    return this._columnApi;
-  }
-
   private _selectedRoleIds: AdmRoleDto['id'][] = [];
 
   get editBtnDisabled(): boolean {
-    return (this._selectedRoleIds ?? []).length !== 1;
+    return (this._selectedRoleIds ?? []).length !== 1 || this._selectedRoleIds.includes(1);
   }
 
   get deleteBtnDisabled(): boolean {
-    return (this._selectedRoleIds ?? []).length === 0;
+    return (this._selectedRoleIds ?? []).length === 0 || this._selectedRoleIds.includes(1);
   }
 
   constructor(rootStore: RootStore,
@@ -57,7 +53,7 @@ export default class AdmRoleStore {
   }
 
   async roleSelectionChange(event: SelectionChangedEvent<AdmRoleDto>): Promise<void> {
-    this._selectedRoleIds = event.api.getSelectedRows().map((row) => row.id);
+    this._selectedRoleIds = event.api.getSelectedRows().map(row => row.id);
     await this._rootStore.admRoleMenuStore.setRoleId(this._selectedRoleIds.length === 1 ? this._selectedRoleIds[0] : undefined);
   }
 

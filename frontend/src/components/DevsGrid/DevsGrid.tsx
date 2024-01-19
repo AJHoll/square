@@ -9,6 +9,8 @@ import DevsInput from '@ajholl/devsuikit/dist/DevsInput';
 import { AgGridReact } from 'ag-grid-react';
 
 interface UniversalListProps<GData = any> {
+  // title props
+  title?: string;
   // createBtn props
   createBtnDisabled?: boolean;
   createBtnTitle?: string;
@@ -65,7 +67,7 @@ export default class DevsGrid extends React.Component<UniversalListProps, Univer
 
   render() {
     const { filterVisible, fastFilterValue } = this.state;
-    const { createBtnDisabled, createBtnTitle, createBtnIcon, onCreateBtnClicked } = this.props;
+    const { title, createBtnDisabled, createBtnTitle, createBtnIcon, onCreateBtnClicked } = this.props;
     const { editBtnDisabled, editBtnTitle, editBtnIcon, onEditBtnClicked } = this.props;
     const { deleteBtnDisabled, deleteBtnTitle, deleteBtnIcon, onDeleteBtnClicked } = this.props;
     const { reloadBtnTitle, reloadBtnIcon, onReloadBtnClicked } = this.props;
@@ -94,6 +96,9 @@ export default class DevsGrid extends React.Component<UniversalListProps, Univer
     return (
       <div className="app_universal_list">
         <div className="app_universal_list__toolbar">
+          {title ? <div className="app_universal_list__toolbar-title">
+            {title}
+          </div> : undefined}
           <div className="app_universal_list__toolbar-operations">
             {
               onCreateBtnClicked !== undefined ? (
@@ -176,12 +181,12 @@ export default class DevsGrid extends React.Component<UniversalListProps, Univer
                 >
                   <DevsGridFilter defaultFilterValue={filters ?? {}}
                                   onConfirm={(modifiedFilters) => {
-                                     this.setState({ filterVisible: false }, () => {
-                                       if (onFilterConfirm !== undefined) {
-                                         onFilterConfirm(modifiedFilters);
-                                       }
-                                     });
-                                   }}
+                                    this.setState({ filterVisible: false }, () => {
+                                      if (onFilterConfirm !== undefined) {
+                                        onFilterConfirm(modifiedFilters);
+                                      }
+                                    });
+                                  }}
                   />
                 </DevsModal>
               ) : ''

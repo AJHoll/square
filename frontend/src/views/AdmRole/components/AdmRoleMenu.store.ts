@@ -2,36 +2,44 @@ import RootStore from '../../Root.store';
 import AdmRoleService from '../../../services/AdmRole.service';
 import { makeAutoObservable } from 'mobx';
 import { AdmRoleDto } from '../../../dtos/AdmRole.dto';
-import { ColumnApi, GridApi } from 'ag-grid-community';
+import { GridApi, SelectionChangedEvent } from 'ag-grid-community';
 import { AdmRoleMenuDto } from '../../../dtos/AdmRoleMenu.dto';
+import { KrnMenuItemDto } from '../../../dtos/KrnMenuItem.dto';
+import KrnMenuService from '../../../services/KrnMenu.service';
 
 export default class AdmRoleMenuStore {
   private readonly _rootService: RootStore;
   private readonly _admRoleService: AdmRoleService;
+  private readonly _krnMenuService: KrnMenuService;
 
-  private _gridApi: GridApi<AdmRoleMenuDto> | undefined;
-  set gridApi(value: GridApi<AdmRoleMenuDto>) {
-    this._gridApi = value;
+  private _roleMenuGridApi: GridApi<AdmRoleMenuDto> | undefined;
+  set roleMenuGridApi(value: GridApi<AdmRoleMenuDto>) {
+    this._roleMenuGridApi = value;
   }
 
-  get gridApi(): GridApi<AdmRoleMenuDto> {
-    return this._gridApi!;
-  }
-
-  private _columnApi: ColumnApi | undefined;
-  set columnApi(value: ColumnApi | undefined) {
-    this._columnApi = value;
-  }
-
-  get columnApi(): ColumnApi | undefined {
-    return this._columnApi;
+  private _menuGridApi: GridApi<KrnMenuItemDto> | undefined;
+  set menuGridApi(value: GridApi<KrnMenuItemDto>) {
+    this._menuGridApi = value;
   }
 
   private _roleId: AdmRoleDto['id'];
+  private _selectionRoleMenus: AdmRoleMenuDto[] = [];
+  private _selectionMenuItems: KrnMenuItemDto[] = [];
 
-  constructor(rootStore: RootStore, admRoleService: AdmRoleService) {
+  get addMenuItemToRoleBtnDisabled(): boolean {
+    return (this._selectionMenuItems ?? []).length === 0;
+  }
+
+  get removeMenuItemsFromRoleBtnDisabled(): boolean {
+    return (this._selectionRoleMenus ?? []).length === 0;
+  }
+
+  constructor(rootStore: RootStore,
+              admRoleService: AdmRoleService,
+              krnMenuService: KrnMenuService) {
     this._rootService = rootStore;
     this._admRoleService = admRoleService;
+    this._krnMenuService = krnMenuService;
     makeAutoObservable(this);
   }
 
@@ -39,16 +47,45 @@ export default class AdmRoleMenuStore {
     const isRoleChange: boolean = this._roleId !== roleId;
     this._roleId = roleId;
     if (isRoleChange) {
-      await this.reloadRoles();
+      await Promise.all([this.reloadRoleMenuItems(), this.reloadMenuItems()]);
     }
   }
 
-  async reloadRoles(): Promise<void> {
+  async reloadRoleMenuItems(): Promise<void> {
+    this._selectionRoleMenus = [];
     if (this._roleId) {
       const data = await this._admRoleService.getRoleMenuItems(this._roleId);
-      this._gridApi?.setRowData(data ?? []);
+      this._roleMenuGridApi?.setRowData(data ?? []);
     } else {
-      this._gridApi?.setRowData([]);
+      this._roleMenuGridApi?.setRowData([]);
     }
+  }
+
+  async reloadMenuItems(): Promise<void> {
+    this._selectionMenuItems = [];
+    if (this._roleId) {
+      const data = await this._krnMenuService.getMenuItemsWithoutRole(this._roleId);
+      this._menuGridApi?.setRowData(data ?? []);
+    } else {
+      this._menuGridApi?.setRowData([]);
+    }
+  }
+
+  roleMenuItemSelectionChange(event: SelectionChangedEvent<AdmRoleMenuDto>): void {
+    this._selectionRoleMenus = event.api.getSelectedRows();
+  }
+
+  menuItemSelectionChange(event: SelectionChangedEvent<KrnMenuItemDto>): void {
+    this._selectionMenuItems = event.api.getSelectedRows();
+  }
+
+  async addMenuItemToRole(): Promise<void> {
+    await this._admRoleService.addMenuItemToRole(this._roleId, this._selectionMenuItems);
+    await Promise.all([this.reloadRoleMenuItems(), this.reloadMenuItems()]);
+  }
+
+  async removeMenuItemsFromRole(): Promise<void> {
+    await this._admRoleService.removeMenuItemsFromRole(this._roleId, this._selectionRoleMenus);
+    await Promise.all([this.reloadRoleMenuItems(), this.reloadMenuItems()]);
   }
 }

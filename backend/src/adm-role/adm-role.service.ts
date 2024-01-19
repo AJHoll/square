@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../services/database.service';
 import { AdmRoleDto } from '../dtos/adm-role.dto';
 import { AdmRoleMenuDto } from '../dtos/adm-role-menu.dto';
+import { KrnMenuItemDto } from '../dtos/krn-menu-item.dto';
 
 @Injectable()
 export class AdmRoleService {
@@ -107,5 +108,20 @@ export class AdmRoleService {
         url: res.krn_menu_item.url,
       },
     }));
+  }
+
+  async addMenuItemsToRole(roleId: AdmRoleDto['id'], addMenuItemIds: KrnMenuItemDto['id'][]): Promise<void> {
+    await this.databaseService.adm_role_menu_item.createMany({
+      skipDuplicates: true, data: addMenuItemIds.map(addMenuItemId => ({
+        role_id: roleId,
+        menu_item_id: addMenuItemId,
+      })),
+    })
+  }
+
+  async removeRoleMenusFromRole(roleId: AdmRoleDto['id'], removeRoleMenuIds: AdmRoleMenuDto['id'][]): Promise<void> {
+    await this.databaseService.adm_role_menu_item.deleteMany({
+      where: { role_id: roleId, id: { in: removeRoleMenuIds } },
+    })
   }
 }

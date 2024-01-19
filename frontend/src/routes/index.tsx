@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Redirect, Route, RouteComponentProps, Switch }
 import AuthGuardRoute from './AuthGuardRoute';
 import OAuthView from '../views/Auth/Auth.view';
 import { StoreProps } from '../interfaces/StoreProps';
-import OAdmRoleView from '../views/AdmRole/AdmRole.view';
 import OMainMenuView from '../views/MainMenu/MainMenu.view';
 import DevsToast from '@ajholl/devsuikit/dist/DevsToast';
+import OadmRoleView from '../views/AdmRole/AdmRole.view';
 
 interface RoutesProps extends StoreProps {
 }
@@ -39,7 +39,7 @@ export default class Routes extends React.Component<RoutesProps> {
                             path="/roles"
                             rootStore={this.props.rootStore}
                             render={(routeProps: RouteComponentProps) =>
-                              <OAdmRoleView {...routeProps}
+                              <OadmRoleView {...routeProps}
                                             rootStore={this.props.rootStore}
                                             title={this.getTitle('Управление ролями')}
                               />}

@@ -32,6 +32,22 @@ export class AdmRoleController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post(':id/menu-item/:menuItemIds')
+  async addMenuItemsToRole(@Request() { user }: { user: UserDto },
+                           @Param('id') idRole: AdmRoleDto['id'],
+                           @Param('menuItemIds') menuItemIds: string): Promise<void> {
+    await this.admRoleService.addMenuItemsToRole(idRole, menuItemIds.split(',').map(id => +id));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id/menu-item/:roleMenuIds')
+  async removeRoleMenusFromRole(@Request() { user }: { user: UserDto },
+                                @Param('id') idRole: AdmRoleDto['id'],
+                                @Param('roleMenuIds') roleMenuIds: string): Promise<void> {
+    await this.admRoleService.removeRoleMenusFromRole(idRole, roleMenuIds.split(',').map(id => +id));
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   async createAdmRole(@Request() { user }: { user: UserDto },
                       @Body() admRole: AdmRoleDto): Promise<AdmRoleDto> {
