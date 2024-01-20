@@ -26,6 +26,9 @@ export default class AdmRoleStore {
   }
 
   private _selectedRoleIds: AdmRoleDto['id'][] = [];
+  set selectedRoleIds(value: AdmRoleDto['id'][]) {
+    this._selectedRoleIds = value;
+  }
 
   get editBtnDisabled(): boolean {
     return (this._selectedRoleIds ?? []).length !== 1 || this._selectedRoleIds.includes(1);
@@ -45,15 +48,17 @@ export default class AdmRoleStore {
 
   async reloadRoles(): Promise<void> {
     const data = await this._admRoleService.getRoles();
+    this.selectedRoleIds = [];
+    this._gridApi?.deselectAll();
     if (data) {
-      this.gridApi?.setRowData(data);
+      this._gridApi?.setRowData(data);
     } else {
       this._rootStore.message.error('Ошибка получения данных', 'Ошибка при получении списка ролей');
     }
   }
 
   async roleSelectionChange(event: SelectionChangedEvent<AdmRoleDto>): Promise<void> {
-    this._selectedRoleIds = event.api.getSelectedRows().map(row => row.id);
+    this.selectedRoleIds = event.api.getSelectedRows().map(row => row.id);
     await this._rootStore.admRoleMenuStore.setRoleId(this._selectedRoleIds.length === 1 ? this._selectedRoleIds[0] : undefined);
   }
 

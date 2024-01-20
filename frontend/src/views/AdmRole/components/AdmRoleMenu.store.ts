@@ -27,11 +27,11 @@ export default class AdmRoleMenuStore {
   private _selectionMenuItems: KrnMenuItemDto[] = [];
 
   get addMenuItemToRoleBtnDisabled(): boolean {
-    return (this._selectionMenuItems ?? []).length === 0;
+    return !this._roleId || (this._selectionMenuItems ?? []).length === 0;
   }
 
   get removeMenuItemsFromRoleBtnDisabled(): boolean {
-    return (this._selectionRoleMenus ?? []).length === 0;
+    return !this._roleId || (this._selectionRoleMenus ?? []).length === 0;
   }
 
   constructor(rootStore: RootStore,
@@ -53,6 +53,8 @@ export default class AdmRoleMenuStore {
 
   async reloadRoleMenuItems(): Promise<void> {
     this._selectionRoleMenus = [];
+    this._roleMenuGridApi?.setRowData([]);
+    this._roleMenuGridApi?.showLoadingOverlay();
     if (this._roleId) {
       const data = await this._admRoleService.getRoleMenuItems(this._roleId);
       this._roleMenuGridApi?.setRowData(data ?? []);
@@ -63,12 +65,16 @@ export default class AdmRoleMenuStore {
 
   async reloadMenuItems(): Promise<void> {
     this._selectionMenuItems = [];
-    if (this._roleId) {
+    this._menuGridApi?.setRowData([]);
+    this._menuGridApi?.showLoadingOverlay();
+    if (!!this._roleId) {
       const data = await this._krnMenuService.getMenuItemsWithoutRole(this._roleId);
       this._menuGridApi?.setRowData(data ?? []);
     } else {
       this._menuGridApi?.setRowData([]);
     }
+
+
   }
 
   roleMenuItemSelectionChange(event: SelectionChangedEvent<AdmRoleMenuDto>): void {

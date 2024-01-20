@@ -76,12 +76,12 @@ export class AdmRoleMenu extends React.Component<AdmRoleMenuProps> {
 
   async onRoleMenuGridReady(event: GridReadyEvent<AdmRoleMenuDto>): Promise<void> {
     this.admRoleMenuStore.roleMenuGridApi = event.api;
-    await this.admRoleMenuStore.reloadRoleMenuItems();
+    event.api.setRowData([]);
   }
 
   async onMenuItemsGridReady(event: GridReadyEvent<KrnMenuItemDto>): Promise<void> {
     this.admRoleMenuStore.menuGridApi = event.api;
-    await this.admRoleMenuStore.reloadMenuItems();
+    event.api.setRowData([]);
   }
 
   render() {

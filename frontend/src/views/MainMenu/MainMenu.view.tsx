@@ -30,7 +30,8 @@ export class MainMenuView extends React.Component<MainMenuProps> {
         <div className="app_main_menu__content">
           {
             this.mainMenuStore.menu.map((group) => (
-              <MainMenuGroup key={group.id} id={group.id} title={group.title} order={group.order} items={group.items}
+              <MainMenuGroup key={group.id} id={group.id} title={group.title} icon={group.icon}
+                             order={group.order} items={group.items}
                              location={this.props.location} history={this.props.history}
                              match={this.props.match} />))
           }

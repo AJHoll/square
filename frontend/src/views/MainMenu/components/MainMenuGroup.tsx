@@ -24,6 +24,7 @@ export default class MainMenuGroup extends React.Component<MainMenuGroupProps> {
                                   id={item.id}
                                   title={item.title}
                                   url={item.url}
+                                  icon={item.icon}
                                   history={this.props.history}
                                   location={this.props.location}
                                   match={this.props.match}
