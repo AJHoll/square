@@ -5,7 +5,8 @@ import OAuthView from '../views/Auth/Auth.view';
 import { StoreProps } from '../interfaces/StoreProps';
 import OMainMenuView from '../views/MainMenu/MainMenu.view';
 import DevsToast from '@ajholl/devsuikit/dist/DevsToast';
-import OadmRoleView from '../views/AdmRole/AdmRole.view';
+import OAdmRoleView from '../views/AdmRole/AdmRole.view';
+import OAdmGroupView from '../views/AdmGroup/AdmGroup.view';
 
 interface RoutesProps extends StoreProps {
 }
@@ -39,9 +40,18 @@ export default class Routes extends React.Component<RoutesProps> {
                             path="/roles"
                             rootStore={this.props.rootStore}
                             render={(routeProps: RouteComponentProps) =>
-                              <OadmRoleView {...routeProps}
+                              <OAdmRoleView {...routeProps}
                                             rootStore={this.props.rootStore}
                                             title={this.getTitle('Управление ролями')}
+                              />}
+            />
+            <AuthGuardRoute exact
+                            path="/groups"
+                            rootStore={this.props.rootStore}
+                            render={(routeProps: RouteComponentProps) =>
+                              <OAdmGroupView {...routeProps}
+                                             rootStore={this.props.rootStore}
+                                             title={this.getTitle('Управление группами')}
                               />}
             />
             <Route exact

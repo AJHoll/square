@@ -15,31 +15,34 @@ interface AdmRoleWithTabsViewProps extends BaseViewProps {
 }
 
 export class AdmRoleView extends React.Component<AdmRoleWithTabsViewProps> {
+
+  componentDidMount() {
+    document.title = this.props.title;
+  }
+
   render() {
     return (
-      <>
-        <div className="adm_role_view">
-          <OAdmRoleCard rootStore={this.props.rootStore} />
-          <ViewHeader title="Управление ролями" />
-          <div className="adm_role_view__content">
-            <DevsSplitter layout="vertical">
-              <DevsSplitterPanel>
-                <OAdmRole rootStore={this.props.rootStore} />
-              </DevsSplitterPanel>
-              <DevsSplitterPanel>
-                <DevsTabView>
-                  <DevsTabPanel header="Пункты меню">
-                    <OAdmRoleMenu rootStore={this.props.rootStore} />
-                  </DevsTabPanel>
-                </DevsTabView>
-              </DevsSplitterPanel>
-            </DevsSplitter>
-          </div>
+      <div className="adm_role_view">
+        <OAdmRoleCard rootStore={this.props.rootStore} />
+        <ViewHeader title="Управление ролями" />
+        <div className="adm_role_view__content">
+          <DevsSplitter layout="vertical">
+            <DevsSplitterPanel>
+              <OAdmRole rootStore={this.props.rootStore} />
+            </DevsSplitterPanel>
+            <DevsSplitterPanel>
+              <DevsTabView>
+                <DevsTabPanel header="Пункты меню">
+                  <OAdmRoleMenu rootStore={this.props.rootStore} />
+                </DevsTabPanel>
+              </DevsTabView>
+            </DevsSplitterPanel>
+          </DevsSplitter>
         </div>
-      </>
+      </div>
     )
   }
 }
 
-const OadmRoleView = observer(AdmRoleView);
-export default OadmRoleView;
+const OAdmRoleView = observer(AdmRoleView);
+export default OAdmRoleView;

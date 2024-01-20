@@ -85,46 +85,44 @@ export class AdmRoleMenu extends React.Component<AdmRoleMenuProps> {
   }
 
   render() {
-    return (
-      <DevsSplitter layout="horizontal">
-        <DevsSplitterPanel>
-          <DevsGrid title="Пункты меню роли"
-                    gridDefaultColDef={{ ...this.defaultColDef }}
-                    gridColDef={this.roleMenuColDef}
-                    gridRowSelection="multiple"
-                    onGridReady={async (event) => await this.onRoleMenuGridReady(event)}
-                    onGridRowSelectionChanged={(event) => this.admRoleMenuStore.roleMenuItemSelectionChange(event)}
-          />
-        </DevsSplitterPanel>
-        <DevsSplitterPanel>
-          <div className="all_menu">
-            <div className="all_menu__button_bar">
-              <DevsButton template="filled"
-                          color="primary"
-                          icon="lni lni-arrow-left"
-                          disabled={this.admRoleMenuStore.addMenuItemToRoleBtnDisabled}
-                          onClick={() => this.admRoleMenuStore.addMenuItemToRole()}
-              />
-              <DevsButton template="filled"
-                          color="primary"
-                          icon="lni lni-arrow-right"
-                          disabled={this.admRoleMenuStore.removeMenuItemsFromRoleBtnDisabled}
-                          onClick={() => this.admRoleMenuStore.removeMenuItemsFromRole()}
-              />
-            </div>
-            <div className="all_menu__grid">
-              <DevsGrid title="Пункты меню"
-                        gridDefaultColDef={{ ...this.defaultColDef }}
-                        gridColDef={this.menuColDef}
-                        gridRowSelection="multiple"
-                        onGridReady={async (event) => await this.onMenuItemsGridReady(event)}
-                        onGridRowSelectionChanged={(event) => this.admRoleMenuStore.menuItemSelectionChange(event)}
-              />
-            </div>
+    return <DevsSplitter layout="horizontal">
+      <DevsSplitterPanel>
+        <DevsGrid title="Пункты меню роли"
+                  gridDefaultColDef={this.defaultColDef}
+                  gridColDef={this.roleMenuColDef}
+                  gridRowSelection="multiple"
+                  onGridReady={async (event) => await this.onRoleMenuGridReady(event)}
+                  onGridRowSelectionChanged={(event) => this.admRoleMenuStore.roleMenuItemSelectionChange(event)}
+        />
+      </DevsSplitterPanel>
+      <DevsSplitterPanel>
+        <div className="all_menu">
+          <div className="all_menu__button_bar">
+            <DevsButton template="filled"
+                        color="primary"
+                        icon="lni lni-arrow-left"
+                        disabled={this.admRoleMenuStore.addMenuItemToRoleBtnDisabled}
+                        onClick={() => this.admRoleMenuStore.addMenuItemToRole()}
+            />
+            <DevsButton template="filled"
+                        color="primary"
+                        icon="lni lni-arrow-right"
+                        disabled={this.admRoleMenuStore.removeMenuItemsFromRoleBtnDisabled}
+                        onClick={() => this.admRoleMenuStore.removeMenuItemsFromRole()}
+            />
           </div>
-        </DevsSplitterPanel>
-      </DevsSplitter>
-    );
+          <div className="all_menu__grid">
+            <DevsGrid title="Пункты меню"
+                      gridDefaultColDef={this.defaultColDef}
+                      gridColDef={this.menuColDef}
+                      gridRowSelection="multiple"
+                      onGridReady={async (event) => await this.onMenuItemsGridReady(event)}
+                      onGridRowSelectionChanged={(event) => this.admRoleMenuStore.menuItemSelectionChange(event)}
+            />
+          </div>
+        </div>
+      </DevsSplitterPanel>
+    </DevsSplitter>
   }
 }
 

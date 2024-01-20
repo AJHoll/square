@@ -6,6 +6,8 @@ import DevsToast from '@ajholl/devsuikit/dist/DevsToast';
 import React from 'react';
 import AdmRoleCardStore from './AdmRole/components/AdmRoleCard.store';
 import AdmRoleMenuStore from './AdmRole/components/AdmRoleMenu.store';
+import AdmGroupStore from './AdmGroup/components/AdmGroup.store';
+import AdmGroupRoleStore from './AdmGroup/components/AdmGroupRole.store';
 
 export default class RootStore {
   readonly projectName = '[Скверъ]';
@@ -16,6 +18,9 @@ export default class RootStore {
   readonly admRoleMenuStore: AdmRoleMenuStore = new AdmRoleMenuStore(this, this.rootService.admRoleService, this.rootService.krnMenuService);
   readonly admRoleCardStore: AdmRoleCardStore = new AdmRoleCardStore(this, this.rootService.admRoleService);
   readonly admRoleStore: AdmRoleStore = new AdmRoleStore(this, this.rootService.admRoleService);
+
+  readonly admGroupRoleStore: AdmGroupRoleStore = new AdmGroupRoleStore(this, this.rootService.admGroupService);
+  readonly admGroupStore: AdmGroupStore = new AdmGroupStore(this, this.rootService.admGroupService);
 
 
   toastRef: React.RefObject<DevsToast> | null = null;
