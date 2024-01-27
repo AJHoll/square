@@ -3,6 +3,6 @@ import { KrnMenuItemDto } from './KrnMenuItem.dto';
 
 export interface AdmRoleMenuDto {
   id?: number,
-  role: AdmRoleDto;
-  menuItem: KrnMenuItemDto;
+  role?: AdmRoleDto;
+  menuItem?: KrnMenuItemDto;
 }

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { AdmRoleDto } from '../dtos/AdmRole.dto';
 import { AdmRoleMenuDto } from '../dtos/AdmRoleMenu.dto';
 import { KrnMenuItemDto } from '../dtos/KrnMenuItem.dto';
+import { AdmGroupDto } from '../dtos/AdmGroup.dto';
 
 export default class AdmRoleService {
   private readonly _rootService: RootService;
@@ -18,6 +19,10 @@ export default class AdmRoleService {
   // ROLE
   async getRoles(): Promise<AdmRoleDto[]> {
     return (await axios.get<AdmRoleDto[]>(`${this._restPath}`)).data;
+  }
+
+  async getRoleExcludeGroup(groupId: AdmGroupDto['id']): Promise<AdmRoleDto[]> {
+    return (await axios.get<AdmRoleDto[]>(`${this._restPath}/exclude-group/${groupId}`)).data;
   }
 
   async getRole(id: AdmRoleDto['id']): Promise<AdmRoleDto> {

@@ -3,6 +3,7 @@ import { DatabaseService } from '../services/database.service';
 import { AdmRoleDto } from '../dtos/adm-role.dto';
 import { AdmRoleMenuDto } from '../dtos/adm-role-menu.dto';
 import { KrnMenuItemDto } from '../dtos/krn-menu-item.dto';
+import { AdmGroupDto } from '../dtos/adm-group.dto';
 
 @Injectable()
 export class AdmRoleService {
@@ -71,7 +72,7 @@ export class AdmRoleService {
           name: { not: { equals: 'admin' } },
         },
       },
-    })
+    });
   }
 
   async getRoleMenuItems(roleId: AdmRoleDto['id']): Promise<AdmRoleMenuDto[]> {
@@ -116,12 +117,24 @@ export class AdmRoleService {
         role_id: roleId,
         menu_item_id: addMenuItemId,
       })),
-    })
+    });
   }
 
   async removeRoleMenusFromRole(roleId: AdmRoleDto['id'], removeRoleMenuIds: AdmRoleMenuDto['id'][]): Promise<void> {
     await this.databaseService.adm_role_menu_item.deleteMany({
       where: { role_id: roleId, id: { in: removeRoleMenuIds } },
+    });
+  }
+
+  async getRolesExcludeGroup(groupId: AdmGroupDto['id']): Promise<AdmRoleDto[]> {
+    const dbResult = await this.databaseService.adm_role.findMany({
+      where: { NOT: { adm_group_role: { some: { group_id: groupId } } } },
     })
+    return dbResult.map((res) => ({
+      id: res.id.toNumber(),
+      name: res.name,
+      caption: res.caption,
+      description: res.description,
+    }));
   }
 }

@@ -63,7 +63,7 @@ export default class AdmRoleStore {
   }
 
   createNewRole(): void {
-    this._admRoleCardStore.title = 'Создание роли';
+    this._admRoleCardStore.title = 'Новая роль';
     this._admRoleCardStore.admRole = {};
     this._admRoleCardStore.visible = true;
   }

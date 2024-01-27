@@ -1,5 +1,5 @@
-import { AdmGroupDto } from './AdmGroup.dto';
-import { AdmRoleDto } from './AdmRole.dto';
+import { AdmRoleDto } from './adm-role.dto';
+import { AdmGroupDto } from './adm-group.dto';
 
 export interface AdmGroupRoleDto {
   id?: number;

@@ -56,11 +56,13 @@ export class AdmGroupRole extends React.Component<AdmGroupRoleProps> {
   ]
 
   async onGroupRoleGridReady(event: GridReadyEvent<AdmGroupRoleDto>): Promise<void> {
-
+    this.admGroupRoleStore.groupRoleGridApi = event.api;
+    event.api.setRowData([]);
   }
 
   async onRoleGridReady(event: GridReadyEvent<AdmRoleDto>): Promise<void> {
-
+    this.admGroupRoleStore.roleGridApi = event.api;
+    event.api.setRowData([]);
   }
 
   render() {
@@ -81,7 +83,7 @@ export class AdmGroupRole extends React.Component<AdmGroupRoleProps> {
                         color="primary"
                         icon="lni lni-arrow-left"
                         disabled={this.admGroupRoleStore.addRoleToGroupBtnDisabled}
-                        onClick={() => this.admGroupRoleStore.addRoletoGroup()}
+                        onClick={() => this.admGroupRoleStore.addRoleToGroup()}
             />
             <DevsButton template="filled"
                         color="primary"

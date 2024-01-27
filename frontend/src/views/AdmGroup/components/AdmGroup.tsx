@@ -35,8 +35,10 @@ export class AdmGroup extends React.Component<AdmGroupProps> {
     },
   ]
 
-  onGridReady(event: GridReadyEvent) {
-
+  async onGridReady(event: GridReadyEvent): Promise<void> {
+    this.admGroupStore.gridApi = event.api;
+    this.admGroupStore.columnApi = event.columnApi;
+    await this.admGroupStore.reloadGroups();
   }
 
   render() {
@@ -48,12 +50,12 @@ export class AdmGroup extends React.Component<AdmGroupProps> {
                      gridRowSelection="multiple"
                      editBtnDisabled={this.admGroupStore.editBtnDisabled}
                      deleteBtnDisabled={this.admGroupStore.deleteBtnDisabled}
-                     onGridReady={(event) => this.onGridReady(event)}
-                     onGridRowSelectionChanged={(event) => this.admGroupStore.groupSelectionChange(event)}
+                     onGridReady={async (event) => this.onGridReady(event)}
+                     onGridRowSelectionChanged={async (event) => this.admGroupStore.groupSelectionChange(event)}
                      onCreateBtnClicked={() => this.admGroupStore.createNewGroup()}
                      onEditBtnClicked={() => this.admGroupStore.editGroup()}
                      onDeleteBtnClicked={() => this.admGroupStore.deleteGroups()}
-                     onGridRowDoubleClicked={() => this.admGroupStore.editGroup()}
+                     onGridRowDoubleClicked={() => !this.admGroupStore.editBtnDisabled ? this.admGroupStore.editGroup() : undefined}
     />;
   }
 }

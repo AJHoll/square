@@ -61,7 +61,7 @@ export class AdmRole extends React.Component<AdmRoleViewProps> {
                      onCreateBtnClicked={() => this.admRoleStore.createNewRole()}
                      onEditBtnClicked={() => this.admRoleStore.editRole()}
                      onDeleteBtnClicked={() => this.admRoleStore.deleteRole()}
-                     onGridRowDoubleClicked={() => this.admRoleStore.editRole()}
+                     onGridRowDoubleClicked={() => !this.admRoleStore.editBtnDisabled ? this.admRoleStore.editRole() : undefined}
     />;
   }
 }

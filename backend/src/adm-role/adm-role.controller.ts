@@ -4,6 +4,7 @@ import { UserDto } from '../dtos/user.dto';
 import { AdmRoleDto } from '../dtos/adm-role.dto';
 import { AdmRoleService } from './adm-role.service';
 import { AdmRoleMenuDto } from '../dtos/adm-role-menu.dto';
+import { AdmGroupDto } from '../dtos/adm-group.dto';
 
 @Controller('adm-role')
 export class AdmRoleController {
@@ -68,5 +69,12 @@ export class AdmRoleController {
                        @Param('ids') ids: string): Promise<void> {
 
     await this.admRoleService.deleteRoles(ids.split(',').map(val => +val));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('exclude-group/:groupId')
+  async getKrnMenu(@Request() { user }: { user: UserDto },
+                   @Param('groupId') groupId: AdmGroupDto['id']): Promise<AdmRoleDto[]> {
+    return this.admRoleService.getRolesExcludeGroup(groupId);
   }
 }

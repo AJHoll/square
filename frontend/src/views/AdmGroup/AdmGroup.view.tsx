@@ -33,7 +33,7 @@ export class AdmGroupView extends React.Component<AdmGroupViewProps> {
             </DevsSplitterPanel>
             <DevsSplitterPanel>
               <DevsTabView>
-                <DevsTabPanel header="Пункты меню">
+                <DevsTabPanel header="Роли">
                   <OAdmGroupRole rootStore={this.props.rootStore} />
                 </DevsTabPanel>
               </DevsTabView>

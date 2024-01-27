@@ -27,11 +27,11 @@ export default class AdmRoleMenuStore {
   private _selectionMenuItems: KrnMenuItemDto[] = [];
 
   get addMenuItemToRoleBtnDisabled(): boolean {
-    return !this._roleId || (this._selectionMenuItems ?? []).length === 0;
+    return !this._roleId || (this._selectionMenuItems ?? []).length === 0 || this._roleId === 1;
   }
 
   get removeMenuItemsFromRoleBtnDisabled(): boolean {
-    return !this._roleId || (this._selectionRoleMenus ?? []).length === 0;
+    return !this._roleId || (this._selectionRoleMenus ?? []).length === 0 || this._roleId === 1;
   }
 
   constructor(rootStore: RootStore,
@@ -73,8 +73,6 @@ export default class AdmRoleMenuStore {
     } else {
       this._menuGridApi?.setRowData([]);
     }
-
-
   }
 
   roleMenuItemSelectionChange(event: SelectionChangedEvent<AdmRoleMenuDto>): void {

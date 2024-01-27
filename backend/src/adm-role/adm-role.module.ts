@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AdmRoleController } from './admRoleController';
+import { AdmRoleController } from './adm-role.controller';
 import { AdmRoleService } from './adm-role.service';
 import { DatabaseService } from '../services/database.service';
 

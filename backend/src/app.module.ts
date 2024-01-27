@@ -6,6 +6,7 @@ import { UserInfoMiddleware } from './middleware/user-info.middleware';
 import { AdmRoleModule } from './adm-role/adm-role.module';
 import { KrnMenuController } from './krn-menu/krn-menu.controller';
 import { KrnMenuModule } from './krn-menu/krn-menu.module';
+import { AdmGroupModule } from './adm-group/adm-group.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { KrnMenuModule } from './krn-menu/krn-menu.module';
     MainMenuModule,
     AdmRoleModule,
     KrnMenuModule,
+    AdmGroupModule,
   ],
   controllers: [KrnMenuController],
   providers: [],
