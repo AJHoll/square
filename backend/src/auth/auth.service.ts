@@ -14,7 +14,6 @@ export class AuthService {
     const user: UserDto = await this.userService.findOne(username);
     const match = await bcrypt.compare(password, (user.password ?? ''));
     if (match) {
-      user.id = undefined;
       user.password = undefined;
       return user;
     }
