@@ -9,6 +9,7 @@ import {KrnMenuModule} from './krn-menu/krn-menu.module';
 import {AdmGroupModule} from './adm-group/adm-group.module';
 import {AdmUserController} from './adm-user/adm-user.controller';
 import {AdmUserModule} from './adm-user/adm-user.module';
+import {SqrRoleModule} from "./sqr-role/sqr-role.module";
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import {AdmUserModule} from './adm-user/adm-user.module';
         KrnMenuModule,
         AdmGroupModule,
         AdmUserModule,
+        SqrRoleModule
     ],
     controllers: [KrnMenuController, AdmUserController],
     providers: [],

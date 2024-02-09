@@ -34,6 +34,12 @@ begin
   (
     select kmi.id
     from krn_menu_item kmi
+    where not exists (select 1
+                      from adm_role_menu_item armi
+                      where armi.role_id = (select rle.id 
+                                            from adm_role rle 
+                                            where rle.name = 'admin')
+                        and armi.menu_item_id = kmi.id)
   )
   loop
     insert into adm_role_menu_item(id, role_id, menu_item_id)

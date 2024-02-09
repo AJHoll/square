@@ -12,6 +12,8 @@ import AdmGroupCardStore from './AdmGroup/components/AdmGroupCard.store';
 import AdmUserStore from "./AdmUser/components/AdmUser.store";
 import AdmUserGroupStore from "./AdmUser/components/AdmUserGroup.store";
 import AdmUserCardStore from "./AdmUser/components/AdmUserCard.store";
+import {SqrRoleStore} from "./SqrRole/components/SqrRole.store";
+import {SqrRoleCardStore} from "./SqrRole/components/SqrRoleCard.store";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
@@ -30,6 +32,9 @@ export default class RootStore {
     readonly admUserGroupStore: AdmUserGroupStore = new AdmUserGroupStore(this, this.rootService.admUserService, this.rootService.admGroupService);
     readonly admUserCardStore: AdmUserCardStore = new AdmUserCardStore(this, this.rootService.admUserService);
     readonly admUserStore: AdmUserStore = new AdmUserStore(this, this.rootService.admUserService);
+
+    readonly sqrRoleCardStore: SqrRoleCardStore = new SqrRoleCardStore(this, this.rootService.sqrRoleService);
+    readonly sqrRoleStore: SqrRoleStore = new SqrRoleStore(this, this.rootService.sqrRoleService);
 
     toastRef: React.RefObject<DevsToast> | null = null;
 

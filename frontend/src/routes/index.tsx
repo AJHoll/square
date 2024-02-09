@@ -8,6 +8,8 @@ import DevsToast from '@ajholl/devsuikit/dist/DevsToast';
 import OAdmRoleView from '../views/AdmRole/AdmRole.view';
 import OAdmGroupView from '../views/AdmGroup/AdmGroup.view';
 import OAdmUserView from "../views/AdmUser/AdmUser.view";
+import OSqrRoleView from "../views/SqrRole/SqrRole.view";
+import OSqrSquareView from "../views/SqrSquare/SqrSquare.view";
 
 interface RoutesProps extends StoreProps {
 }
@@ -62,6 +64,24 @@ export default class Routes extends React.Component<RoutesProps> {
                                             <OAdmUserView {...routeProps}
                                                           rootStore={this.props.rootStore}
                                                           title={this.getTitle('Управление пользователями')}
+                                            />}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/square-roles"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OSqrRoleView {...routeProps}
+                                                          rootStore={this.props.rootStore}
+                                                          title={this.getTitle('Управление ролями на площадке')}
+                                            />}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/squares"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OSqrSquareView {...routeProps}
+                                                            rootStore={this.props.rootStore}
+                                                            title={this.getTitle('Управление площадоками')}
                                             />}
                         />
                         <Route exact
