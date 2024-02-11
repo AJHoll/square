@@ -11,9 +11,7 @@ export interface AdmRoleProps extends StoreProps {
 }
 
 export class AdmRole extends React.Component<AdmRoleProps> {
-
-
-    admRoleStore: AdmRoleStore = this.props.rootStore.admRoleStore;
+    readonly admRoleStore: AdmRoleStore = this.props.rootStore.admRoleStore;
 
     defaultColDef: ColDef<AdmRoleDto> = {
         flex: 1,

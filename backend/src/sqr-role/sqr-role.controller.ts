@@ -12,27 +12,27 @@ export class SqrRoleController {
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getAdmRoles(@Request() {user}: { user: UserDto }): Promise<SqrRoleDto[]> {
+    async getSqrRoles(@Request() {user}: { user: UserDto }): Promise<SqrRoleDto[]> {
         return this.sqrRoleService.getRoles();
     }
 
     @UseGuards(JwtAuthGuard)
     @Get(':id')
-    async getAdmRole(@Request() {user}: { user: UserDto },
+    async getSqrRole(@Request() {user}: { user: UserDto },
                      @Param('id') id: SqrRoleDto['id']): Promise<SqrRoleDto> {
         return this.sqrRoleService.getRole(id);
     }
 
     @UseGuards(JwtAuthGuard)
     @Post()
-    async createAdmRole(@Request() {user}: { user: UserDto },
+    async createSqrRole(@Request() {user}: { user: UserDto },
                         @Body() admRole: SqrRoleDto): Promise<SqrRoleDto> {
         return this.sqrRoleService.createRole(admRole);
     }
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
-    async editAdmRole(@Request() {user}: { user: UserDto },
+    async editSqrRole(@Request() {user}: { user: UserDto },
                       @Param('id') id: SqrRoleDto['id'],
                       @Body() admRole: SqrRoleDto): Promise<SqrRoleDto> {
         return this.sqrRoleService.editRole(id, admRole);
@@ -40,7 +40,7 @@ export class SqrRoleController {
 
     @UseGuards(JwtAuthGuard)
     @Delete(':ids')
-    async deleteAdmRoles(@Request() {user}: { user: UserDto },
+    async deleteSqrRoles(@Request() {user}: { user: UserDto },
                          @Param('ids') ids: string): Promise<void> {
 
         await this.sqrRoleService.deleteRoles(ids.split(',').map(val => +val));
