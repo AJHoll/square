@@ -5,6 +5,11 @@ import './SqrSquare.view.scss';
 import ViewHeader from "../../components/ViewHeader/ViewHeader";
 import OSqrSquareCard from "./components/SqrSquareCard";
 import OSqrSquare from "./components/SqrSquare";
+import DevsSplitter from "@ajholl/devsuikit/dist/DevsSplitter";
+import DevsSplitterPanel from "@ajholl/devsuikit/dist/DevsSplitterPanel";
+import DevsTabView from "@ajholl/devsuikit/dist/DevsTabView";
+import DevsTabPanel from "@ajholl/devsuikit/dist/DevsTabPanel";
+import OSqrSquareUser from "./components/SqrSquareUser";
 
 interface SqrSquareViewProps extends BaseViewProps {
 }
@@ -20,7 +25,19 @@ export class SqrSquareView extends React.Component<SqrSquareViewProps> {
                 <OSqrSquareCard rootStore={this.props.rootStore}/>
                 <ViewHeader title="Управление площадками"/>
                 <div className="adm_square_view__content">
-                    <OSqrSquare rootStore={this.props.rootStore}/>
+                    <DevsSplitter layout="vertical">
+                        <DevsSplitterPanel>
+                            <OSqrSquare rootStore={this.props.rootStore}/>
+                        </DevsSplitterPanel>
+                        <DevsSplitterPanel>
+                            <DevsTabView>
+                                <DevsTabPanel header="Состав площадки">
+                                    <OSqrSquareUser rootStore={this.props.rootStore}/>
+                                </DevsTabPanel>
+                            </DevsTabView>
+                        </DevsSplitterPanel>
+                    </DevsSplitter>
+
                 </div>
             </div>
         )

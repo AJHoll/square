@@ -29,12 +29,13 @@ model adm_role {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_user {
-  id             Decimal          @id(map: "pk_adm_user") @default(dbgenerated("nextval('seq_adm_user'::regclass)")) @db.Decimal(15, 0)
-  name           String           @unique(map: "udx_adm_user_name") @default("") @db.VarChar(30)
-  caption        String?          @db.VarChar(254)
-  hash           String?          @db.VarChar(254)
-  person_id      Decimal?         @db.Decimal(15, 0)
-  adm_user_group adm_user_group[]
+  id              Decimal           @id(map: "pk_adm_user") @default(dbgenerated("nextval('seq_adm_user'::regclass)")) @db.Decimal(15, 0)
+  name            String            @unique(map: "udx_adm_user_name") @default("") @db.VarChar(30)
+  caption         String?           @db.VarChar(254)
+  hash            String?           @db.VarChar(254)
+  person_id       Decimal?          @db.Decimal(15, 0)
+  adm_user_group  adm_user_group[]
+  sqr_square_user sqr_square_user[]
 
   @@index([person_id], map: "idx_adm_user_person_id")
 }
@@ -101,7 +102,7 @@ model sqr_role {
   name            String            @unique(map: "udx_sqr_role_name") @default("") @db.VarChar(30)
   caption         String?           @db.VarChar(254)
   description     String?           @db.VarChar(4000)
-  sqr_square_role sqr_square_role[]
+  sqr_square_user sqr_square_user[]
 
   @@index([caption], map: "idx_sqr_role_caption")
 }
@@ -112,18 +113,20 @@ model sqr_square {
   name            String            @unique(map: "udx_sqr_square_name") @default("") @db.VarChar(30)
   caption         String?           @db.VarChar(254)
   description     String?           @db.VarChar(4000)
-  sqr_square_role sqr_square_role[]
+  sqr_square_user sqr_square_user[]
 
   @@index([caption], map: "idx_sqr_square_caption")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model sqr_square_role {
-  id         Decimal    @id(map: "pk_sqr_square_role") @default(dbgenerated("nextval('seq_sqr_square_role'::regclass)")) @db.Decimal(15, 0)
+model sqr_square_user {
+  id         Decimal    @id(map: "pk_sqr_square_user") @default(dbgenerated("nextval('seq_sqr_square_role'::regclass)")) @db.Decimal(15, 0)
   square_id  Decimal    @db.Decimal(15, 0)
+  user_id    Decimal    @db.Decimal(15, 0)
   role_id    Decimal    @db.Decimal(15, 0)
-  sqr_role   sqr_role   @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_role_role_id")
-  sqr_square sqr_square @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_role_square_id")
+  sqr_role   sqr_role   @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_role_id")
+  sqr_square sqr_square @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_square_id")
+  adm_user   adm_user   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_user_id")
 
-  @@unique([square_id, role_id], map: "udx_sqr_square_role_square_id_role_id")
+  @@unique([square_id, user_id, role_id], map: "udx_sqr_square_user_square_id_user_id_role_id")
 }

@@ -16,6 +16,7 @@ import {SqrRoleStore} from "./SqrRole/components/SqrRole.store";
 import {SqrRoleCardStore} from "./SqrRole/components/SqrRoleCard.store";
 import SqrSquareStore from "./SqrSquare/components/SqrSquare.store";
 import SqrSquareCardStore from "./SqrSquare/components/SqrSquareCard.store";
+import SqrSquareUserStore from "./SqrSquare/components/SqrSquareUser.store";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
@@ -38,6 +39,7 @@ export default class RootStore {
     readonly sqrRoleCardStore: SqrRoleCardStore = new SqrRoleCardStore(this, this.rootService.sqrRoleService);
     readonly sqrRoleStore: SqrRoleStore = new SqrRoleStore(this, this.rootService.sqrRoleService);
 
+    readonly sqrSquareUserStore: SqrSquareUserStore = new SqrSquareUserStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareCardStore: SqrSquareCardStore = new SqrSquareCardStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareStore: SqrSquareStore = new SqrSquareStore(this, this.rootService.sqrSquareService);
 
