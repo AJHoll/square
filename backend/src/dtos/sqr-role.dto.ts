@@ -3,4 +3,5 @@ export interface SqrRoleDto {
     name?: string;
     caption?: string;
     description?: string;
+    groupId?: number;
 }

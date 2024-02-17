@@ -28,21 +28,21 @@ export class SqrSquareController {
     @UseGuards(JwtAuthGuard)
     @Get()
     async getSquares(@Request() {user}: { user: UserDto }): Promise<SqrSquareDto[]> {
-        return this.sqrRoleService.getRoles();
+        return this.sqrRoleService.getSquares();
     }
 
     @UseGuards(JwtAuthGuard)
     @Get(':id')
     async getSquare(@Request() {user}: { user: UserDto },
                     @Param('id') id: SqrSquareDto['id']): Promise<SqrSquareDto> {
-        return this.sqrRoleService.getRole(id);
+        return this.sqrRoleService.getSquare(id);
     }
 
     @UseGuards(JwtAuthGuard)
     @Post()
     async createSquare(@Request() {user}: { user: UserDto },
                        @Body() admRole: SqrSquareDto): Promise<SqrSquareDto> {
-        return this.sqrRoleService.createRole(admRole);
+        return this.sqrRoleService.createSquare(admRole);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -50,7 +50,7 @@ export class SqrSquareController {
     async editSquare(@Request() {user}: { user: UserDto },
                      @Param('id') id: SqrSquareDto['id'],
                      @Body() admRole: SqrSquareDto): Promise<SqrSquareDto> {
-        return this.sqrRoleService.editRole(id, admRole);
+        return this.sqrRoleService.editSquare(id, admRole);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -58,7 +58,7 @@ export class SqrSquareController {
     async deleteSquares(@Request() {user}: { user: UserDto },
                         @Param('ids') ids: string): Promise<void> {
 
-        await this.sqrRoleService.deleteRoles(ids.split(',').map(val => +val));
+        await this.sqrRoleService.deleteSquares(ids.split(',').map(val => +val));
     }
 
     @UseGuards(JwtAuthGuard)

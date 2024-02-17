@@ -15,6 +15,7 @@ model adm_group {
   description    String?          @db.VarChar(4000)
   adm_group_role adm_group_role[]
   adm_user_group adm_user_group[]
+  sqr_role       sqr_role[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -102,9 +103,12 @@ model sqr_role {
   name            String            @unique(map: "udx_sqr_role_name") @default("") @db.VarChar(30)
   caption         String?           @db.VarChar(254)
   description     String?           @db.VarChar(4000)
+  group_id        Decimal?          @db.Decimal(15, 0)
+  adm_group       adm_group?        @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sqr_role_adm_group_id")
   sqr_square_user sqr_square_user[]
 
   @@index([caption], map: "idx_sqr_role_caption")
+  @@index([group_id], map: "idx_sqr_role_group_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments

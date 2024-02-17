@@ -10,7 +10,7 @@ export class SqrSquareService {
     constructor(private databaseService: DatabaseService) {
     }
 
-    async getRoles(): Promise<SqrSquareDto[]> {
+    async getSquares(): Promise<SqrSquareDto[]> {
         const dbData = await this.databaseService.sqr_square.findMany();
         return dbData.map<SqrSquareDto>(d => ({
             id: d.id.toNumber(),
@@ -20,7 +20,7 @@ export class SqrSquareService {
         }));
     }
 
-    async getRole(id: SqrSquareDto['id']): Promise<SqrSquareDto> {
+    async getSquare(id: SqrSquareDto['id']): Promise<SqrSquareDto> {
         const dbData = await this.databaseService.sqr_square.findFirst({where: {id}});
         return {
             id: dbData.id.toNumber(),
@@ -30,7 +30,7 @@ export class SqrSquareService {
         };
     }
 
-    async createRole(admRole: SqrSquareDto): Promise<SqrSquareDto> {
+    async createSquare(admRole: SqrSquareDto): Promise<SqrSquareDto> {
         const dbResult = await this.databaseService.sqr_square.create({
             data: {
                 name: admRole.name,
@@ -46,7 +46,7 @@ export class SqrSquareService {
         };
     }
 
-    async editRole(id: SqrSquareDto['id'], admRole: SqrSquareDto): Promise<SqrSquareDto> {
+    async editSquare(id: SqrSquareDto['id'], admRole: SqrSquareDto): Promise<SqrSquareDto> {
         const dbResult = await this.databaseService.sqr_square.update({
             data: {
                 name: admRole.name,
@@ -63,7 +63,7 @@ export class SqrSquareService {
         };
     }
 
-    async deleteRoles(ids: SqrSquareDto['id'][]): Promise<void> {
+    async deleteSquares(ids: SqrSquareDto['id'][]): Promise<void> {
         await this.databaseService.sqr_square.deleteMany({
             where: {
                 id: {in: ids}
@@ -78,6 +78,7 @@ export class SqrSquareService {
             name: d.name,
             caption: d.caption,
             description: d.description,
+            groupId: d.group_id.toNumber(),
         }));
     }
 
@@ -99,22 +100,36 @@ export class SqrSquareService {
     }
 
     async addUsersToSquareRole(squareId: SqrSquareDto['id'], roleIds: SqrRoleDto['id'][], userIds: SqrSquareUserDto['id'][]): Promise<void> {
-        const addData = [];
-        for (const roleId of roleIds) {
+        const addSquareUserData = [];
+        const addAdmUserGroupData = [];
+        const roles = await this.databaseService.sqr_role.findMany({where: {id: {in: roleIds}}});
+        for (const role of roles) {
             for (const userId of userIds) {
-                addData.push({
+                addSquareUserData.push({
                     user_id: userId,
-                    role_id: roleId,
+                    role_id: role.id,
                     square_id: squareId
-                })
+                });
+                addAdmUserGroupData.push({
+                    user_id: userId,
+                    group_id: role.group_id
+                });
             }
         }
         await this.databaseService.sqr_square_user.createMany({
-            data: addData
+            data: addSquareUserData
+        });
+        await this.databaseService.adm_user_group.createMany({
+            data: addAdmUserGroupData
         });
     }
 
     async removeUsersFromSquareRole(squareId: SqrSquareDto['id'], roleIds: SqrRoleDto['id'][], userIds: SqrSquareUserDto['id'][]): Promise<void> {
+        const groupIds = await this.databaseService.sqr_role.findMany({
+            select: {group_id: true},
+            distinct: 'group_id',
+            where: {id: {in: roleIds}}
+        });
         await this.databaseService.sqr_square_user.deleteMany({
             where: {
                 user_id: {in: userIds},
@@ -122,5 +137,11 @@ export class SqrSquareService {
                 square_id: squareId
             }
         });
+        await this.databaseService.adm_user_group.deleteMany({
+            where: {
+                user_id: {in: userIds},
+                group_id: {in: groupIds.map(g => g.group_id)},
+            }
+        })
     }
 }
