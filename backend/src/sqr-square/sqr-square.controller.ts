@@ -28,7 +28,7 @@ export class SqrSquareController {
     @UseGuards(JwtAuthGuard)
     @Get()
     async getSquares(@Request() {user}: { user: UserDto }): Promise<SqrSquareDto[]> {
-        return this.sqrRoleService.getSquares();
+        return this.sqrRoleService.getSquares(user);
     }
 
     @UseGuards(JwtAuthGuard)

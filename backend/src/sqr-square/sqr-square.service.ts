@@ -3,6 +3,7 @@ import {DatabaseService} from '../services/database.service';
 import {SqrSquareDto} from "../dtos/sqr-square.dto";
 import {SqrRoleDto} from "../dtos/sqr-role.dto";
 import {SqrSquareUserDto} from "../dtos/sqr-square-user.dto";
+import {UserDto} from "../dtos/user.dto";
 
 @Injectable()
 export class SqrSquareService {
@@ -10,8 +11,16 @@ export class SqrSquareService {
     constructor(private databaseService: DatabaseService) {
     }
 
-    async getSquares(): Promise<SqrSquareDto[]> {
-        const dbData = await this.databaseService.sqr_square.findMany();
+    async getSquares(user: UserDto): Promise<SqrSquareDto[]> {
+        const dbData = await this.databaseService.sqr_square.findMany(
+            {
+                where: user.roles.includes('admin') ? undefined : {
+                    sqr_square_user: {
+                        some: {user_id: user.id}
+                    }
+                }
+            }
+        );
         return dbData.map<SqrSquareDto>(d => ({
             id: d.id.toNumber(),
             name: d.name,
