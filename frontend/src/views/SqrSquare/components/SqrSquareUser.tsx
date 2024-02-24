@@ -9,6 +9,7 @@ import {ColDef, GridReadyEvent} from "ag-grid-community";
 import {SqrRoleDto} from "../../../dtos/SqrRole.dto";
 import {SqrSquareUserDto} from "../../../dtos/SqrSquareUser.dto";
 import SqrSquareUserStore from "./SqrSquareUser.store";
+import DevsButton from "@ajholl/devsuikit/dist/DevsButton";
 
 interface SqrSquareUserProps extends StoreProps {
 }
@@ -74,34 +75,55 @@ export class SqrSquareUser extends React.Component<SqrSquareUserProps> {
                           gridDefaultColDef={this.defaultColDef}
                           gridColDef={this.sqrRolesColDef}
                           gridRowSelection="single"
-                          onEditBtnClicked={async (event) => await this.sqrSquareUserStore.toggleMode()}
-                          editBtnTitle={`Перевести в режим ${this.sqrSquareUserStore.mode === 'view' ? 'редактирования' : 'просмотра'}`}
-                          editBtnIcon={this.sqrSquareUserStore.mode === 'view' ? 'lni lni-pencil' : 'lni lni-eye'}
-                          editBtnDisabled={this.sqrSquareUserStore.modeBtnDisabled}
                           onGridReady={async (event) => await this.onSqrRoleGridReady(event)}
                           onGridRowSelectionChanged={(event) => this.sqrSquareUserStore.sqrRoleSelectionChange(event)}
                 />
             </DevsSplitterPanel>
             <DevsSplitterPanel>
-                <DevsGrid
-                    title={this.sqrSquareUserStore.mode === 'view' ? `Пользователи роли: ${this.sqrSquareUserStore.selectionRoleCaption}` : 'Все пользователи'}
-                    gridDefaultColDef={this.defaultColDef}
-                    gridColDef={this.squareUserColDef}
-                    gridRowSelection="multiple"
-                    onGridReady={async (event) => await this.onSquareUserGridReady(event)}
-                    onGridRowSelectionChanged={(event) => this.sqrSquareUserStore.squareUserSelectionChange(event)}
-                    filters={this.sqrSquareUserStore.squareUserFilters}
-                    fastFilterPlaceholder="Для поиска пользователя начните вводить ФИО"
-                    onFilterConfirm={async (filters) => (await this.sqrSquareUserStore.onSquareUserFilterConfirm(filters))}
-                    onCreateBtnClicked={async () => (await this.sqrSquareUserStore.addUsersToSquareRole())}
-                    createBtnIcon="lni lni-plus"
-                    createBtnDisabled={this.sqrSquareUserStore.addUsersToSquareRoleBtnDisabled}
-                    onDeleteBtnClicked={async () => (await this.sqrSquareUserStore.removeUsersFromSquareRole())}
-                    deleteBtnIcon="lni lni-minus"
-                    deleteBtnDisabled={this.sqrSquareUserStore.removeUsersFromSquareRoleBtnDisabled}
-                />
+                <div className="all_sqr_user">
+                    {
+                        this.sqrSquareUserStore.mode === 'modify' ?
+                            <div className="all_sqr_user__button_bar">
+                                <DevsButton template="filled"
+                                            color="success"
+                                            icon="lni lni-plus"
+                                            disabled={this.sqrSquareUserStore.addUsersToSquareRoleBtnDisabled}
+                                            onClick={async () => (await this.sqrSquareUserStore.addUsersToSquareRole())}
+                                />
+                                <DevsButton template="filled"
+                                            color="danger"
+                                            icon="lni lni-minus"
+                                            disabled={this.sqrSquareUserStore.removeUsersFromSquareRoleBtnDisabled}
+                                            onClick={async () => (await this.sqrSquareUserStore.removeUsersFromSquareRole())}
+                                />
+                            </div> : undefined
+                    }
+                    <div className="all_sqr_user__grid">
+                        <DevsGrid
+                            title={this.sqrSquareUserStore.mode === 'view' ? `Пользователи роли: ${this.sqrSquareUserStore.selectionRoleCaption}` : 'Все пользователи'}
+                            gridDefaultColDef={this.defaultColDef}
+                            gridColDef={this.squareUserColDef}
+                            gridRowSelection="multiple"
+                            onGridReady={async (event) => await this.onSquareUserGridReady(event)}
+                            onGridRowSelectionChanged={(event) => this.sqrSquareUserStore.squareUserSelectionChange(event)}
+                            filters={this.sqrSquareUserStore.squareUserFilters}
+                            fastFilterPlaceholder="Для поиска пользователя начните вводить ФИО"
+                            onFilterConfirm={async (filters) => (await this.sqrSquareUserStore.onSquareUserFilterConfirm(filters))}
+                            additionalOperations={<>
+                                <DevsButton template="filled"
+                                            color="primary"
+                                            title={this.sqrSquareUserStore.mode === 'view' ? 'Редактировать' : 'Просмотр'}
+                                            icon={this.sqrSquareUserStore.mode === 'view' ? 'lni lni-pencil' : 'lni lni-eye'}
+                                            disabled={this.sqrSquareUserStore.modeBtnDisabled}
+                                            onClick={async (event) => await this.sqrSquareUserStore.toggleMode()}
+                                />
+                            </>}
+                        />
+                    </div>
+                </div>
+
             </DevsSplitterPanel>
-        </DevsSplitter>
+        </DevsSplitter>;
     }
 }
 

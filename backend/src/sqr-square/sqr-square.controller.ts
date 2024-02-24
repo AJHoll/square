@@ -6,6 +6,7 @@ import {
     Param,
     ParseArrayPipe,
     ParseBoolPipe,
+    ParseFloatPipe,
     Post,
     Put,
     Query,
@@ -18,6 +19,8 @@ import {SqrSquareService} from './sqr-square.service';
 import {SqrSquareDto} from "../dtos/sqr-square.dto";
 import {SqrRoleDto} from "../dtos/sqr-role.dto";
 import {SqrSquareUserDto} from "../dtos/sqr-square-user.dto";
+import {SqrTeamDto} from "../dtos/sqr-team.dto";
+import {SqrSquareTeamUserDto} from "../dtos/sqr-square-team-user.dto";
 
 @Controller('sqr-square')
 export class SqrSquareController {
@@ -63,9 +66,8 @@ export class SqrSquareController {
 
     @UseGuards(JwtAuthGuard)
     @Get(':id/sqr-role')
-    async getSquareRoles(@Request() {user}: { user: UserDto },
-                         @Param('id') id: SqrSquareDto['id']): Promise<SqrRoleDto[]> {
-        return this.sqrRoleService.getSquareRoles(id);
+    async getSquareRoles(@Request() {user}: { user: UserDto }): Promise<SqrRoleDto[]> {
+        return this.sqrRoleService.getSquareRoles();
     }
 
     @UseGuards(JwtAuthGuard)
@@ -97,5 +99,77 @@ export class SqrSquareController {
                                     @Param('userIds', ParseArrayPipe) userIds: SqrSquareUserDto['id'][]
     ): Promise<void> {
         await this.sqrRoleService.removeUsersFromSquareRole(id, roleIds, userIds);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-team')
+    async getSquareTeams(@Request() {user}: { user: UserDto },
+                         @Param('squareId') squareId: SqrSquareDto['id']): Promise<SqrTeamDto[]> {
+        return this.sqrRoleService.getSquareTeams(squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-team/:teamId')
+    async getSquareTeam(@Request() {user}: { user: UserDto },
+                        @Param('squareId') squareId: SqrSquareDto['id'],
+                        @Param('teamId') teamId: SqrTeamDto['id'],
+    ): Promise<SqrTeamDto> {
+        return this.sqrRoleService.getSquareTeam(squareId, teamId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-team/')
+    async createSquareTeam(@Request() {user}: { user: UserDto },
+                           @Param('squareId') squareId: SqrSquareDto['id'],
+                           @Body() sqrTeam: SqrTeamDto): Promise<SqrTeamDto> {
+        return this.sqrRoleService.createSquareTeam(squareId, sqrTeam);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put(':squareId/sqr-team/:teamId')
+    async editSquareTeam(@Request() {user}: { user: UserDto },
+                         @Param('squareId') squareId: SqrSquareDto['id'],
+                         @Param('teamId') teamId: SqrTeamDto['id'],
+                         @Body() sqrTeam: SqrTeamDto): Promise<SqrTeamDto> {
+        return this.sqrRoleService.editSquareTeam(squareId, teamId, sqrTeam);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete(':squareId/sqr-team/:teamIds')
+    async deleteSquareTeams(@Request() {user}: { user: UserDto },
+                            @Param('squareId') squareId: SqrSquareDto['id'],
+                            @Param('teamIds', ParseArrayPipe) teamIds: string[]): Promise<void> {
+        await this.sqrRoleService.deleteSquareTeams(squareId, teamIds.map(val => +val));
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-team/:teamId/user')
+    async getSquareTeamUsers(@Request() {user}: { user: UserDto },
+                             @Param('squareId') squareId: SqrSquareDto['id'],
+                             @Param('teamId', ParseFloatPipe) teamId: SqrTeamDto['id'],
+                             @Query('showAllUsers', ParseBoolPipe) showAllUsers: boolean,
+                             @Query('fastFilter') fastFilter: string
+    ): Promise<SqrSquareTeamUserDto[]> {
+        return this.sqrRoleService.getSquareTeamUsers(squareId, teamId, showAllUsers, fastFilter);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-team/:teamIds/user/:userIds')
+    async addUsersToSquareTeams(@Request() {user}: { user: UserDto },
+                                @Param('squareId') squareId: SqrSquareDto['id'],
+                                @Param('teamIds', ParseArrayPipe) teamIds: SqrTeamDto['id'][],
+                                @Param('userIds', ParseArrayPipe) userIds: SqrSquareUserDto['id'][]
+    ): Promise<void> {
+        await this.sqrRoleService.addUsersToSquareTeams(squareId, teamIds, userIds);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete(':squareId/sqr-team/:teamIds/user/:userIds')
+    async removeUsersFromSquareTeams(@Request() {user}: { user: UserDto },
+                                     @Param('squareId') squareId: SqrSquareDto['id'],
+                                     @Param('teamIds', ParseArrayPipe) teamIds: SqrTeamDto['id'][],
+                                     @Param('userIds', ParseArrayPipe) userIds: SqrSquareUserDto['id'][]
+    ): Promise<void> {
+        await this.sqrRoleService.removeUsersFromSquareTeams(squareId, teamIds, userIds);
     }
 }

@@ -11,10 +11,8 @@ export class UserInfoMiddleware implements NestMiddleware {
     use(req: Request, res: Response, next: NextFunction): void {
         const token = this.jwtService.decode(req.headers['authorization']
             .replace("Bearer", "").trim(), {json: true, complete: true});
-        if (token['payload']) {
-            req.user = {
-                ...token['payload']
-            }
+        if (token && token['payload']) {
+            req.user = {...token['payload']}
         }
         next();
     }

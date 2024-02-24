@@ -5,11 +5,13 @@ import SqrSquareService from "../../../services/SqrSquare.service";
 import {SqrSquareDto} from "../../../dtos/SqrSquare.dto";
 import {makeAutoObservable} from "mobx";
 import SqrSquareUserStore from "./SqrSquareUser.store";
+import SqrSquareTeamStore from "./SqrSquareTeam.store";
 
 export default class SqrSquareStore {
     private readonly _rootStore: RootStore;
     private readonly _sqrSquareCardStore: SqrSquareCardStore;
-    private readonly _sqrSquareUserStoer: SqrSquareUserStore;
+    private readonly _sqrSquareUserStore: SqrSquareUserStore;
+    private readonly _sqrSquareTeamStore: SqrSquareTeamStore;
     private readonly _sqrSquareService: SqrSquareService;
 
     private _gridApi: GridApi<SqrSquareDto> | undefined;
@@ -41,7 +43,8 @@ export default class SqrSquareStore {
 
     constructor(rootStore: RootStore, sqrSquareService: SqrSquareService) {
         this._rootStore = rootStore;
-        this._sqrSquareUserStoer = rootStore.sqrSquareUserStore;
+        this._sqrSquareUserStore = rootStore.sqrSquareUserStore;
+        this._sqrSquareTeamStore = rootStore.sqrSquareTeamStore;
         this._sqrSquareCardStore = rootStore.sqrSquareCardStore;
         this._sqrSquareService = sqrSquareService;
         makeAutoObservable(this);
@@ -60,7 +63,8 @@ export default class SqrSquareStore {
 
     async squareSelectionChange(event: SelectionChangedEvent<SqrSquareDto>): Promise<void> {
         this.selectedSquareIds = event.api.getSelectedRows().map(row => row.id);
-        await this._sqrSquareUserStoer.setSquareId(this._selectedSquareIds.length === 1 ? this._selectedSquareIds[0] : undefined);
+        const squareId = this._selectedSquareIds.length === 1 ? this._selectedSquareIds[0] : undefined;
+        await Promise.all([this._sqrSquareUserStore.setSquareId(squareId), this._sqrSquareTeamStore.setSquareId(squareId)]);
     }
 
     createNewSquare(): void {

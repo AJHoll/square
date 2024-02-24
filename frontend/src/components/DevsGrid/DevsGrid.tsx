@@ -26,6 +26,8 @@ interface UniversalListProps<GData = any> {
     deleteBtnTitle?: string;
     deleteBtnIcon?: string;
     onDeleteBtnClicked?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+    // user operations props
+    additionalOperations?: React.ReactElement;
     // reload props
     reloadBtnTitle?: string;
     reloadBtnIcon?: string;
@@ -70,6 +72,7 @@ export default class DevsGrid extends React.Component<UniversalListProps, Univer
         const {title, createBtnDisabled, createBtnTitle, createBtnIcon, onCreateBtnClicked} = this.props;
         const {editBtnDisabled, editBtnTitle, editBtnIcon, onEditBtnClicked} = this.props;
         const {deleteBtnDisabled, deleteBtnTitle, deleteBtnIcon, onDeleteBtnClicked} = this.props;
+        const {additionalOperations} = this.props;
         const {reloadBtnTitle, reloadBtnIcon, onReloadBtnClicked} = this.props;
         const {
             filterBtnDisabled,
@@ -99,7 +102,7 @@ export default class DevsGrid extends React.Component<UniversalListProps, Univer
                     {title ? <div className="app_universal_list__toolbar-title">
                         {title}
                     </div> : undefined}
-                    {onCreateBtnClicked !== undefined || onEditBtnClicked !== undefined || onDeleteBtnClicked || undefined ?
+                    {onCreateBtnClicked !== undefined || onEditBtnClicked !== undefined || onDeleteBtnClicked !== undefined || additionalOperations !== undefined ?
                         <div className="app_universal_list__toolbar-operations">
                             {
                                 onCreateBtnClicked !== undefined ? (
@@ -140,6 +143,7 @@ export default class DevsGrid extends React.Component<UniversalListProps, Univer
                                     />
                                 ) : ''
                             }
+                            {additionalOperations}
                         </div> : undefined
                     }
                     {

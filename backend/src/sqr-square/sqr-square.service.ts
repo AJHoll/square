@@ -4,6 +4,8 @@ import {SqrSquareDto} from "../dtos/sqr-square.dto";
 import {SqrRoleDto} from "../dtos/sqr-role.dto";
 import {SqrSquareUserDto} from "../dtos/sqr-square-user.dto";
 import {UserDto} from "../dtos/user.dto";
+import {SqrTeamDto} from "../dtos/sqr-team.dto";
+import {SqrSquareTeamUserDto} from "../dtos/sqr-square-team-user.dto";
 
 @Injectable()
 export class SqrSquareService {
@@ -80,7 +82,7 @@ export class SqrSquareService {
         });
     }
 
-    async getSquareRoles(squareId: SqrSquareDto['id']): Promise<SqrRoleDto[]> {
+    async getSquareRoles(): Promise<SqrRoleDto[]> {
         const dbData = await this.databaseService.sqr_role.findMany();
         return dbData.map<SqrRoleDto>(d => ({
             id: d.id.toNumber(),
@@ -152,5 +154,135 @@ export class SqrSquareService {
                 group_id: {in: groupIds.map(g => g.group_id)},
             }
         })
+    }
+
+    async getSquareTeams(squareId: SqrSquareDto['id']): Promise<SqrTeamDto[]> {
+        const dbData = await this.databaseService.sqr_square_team.findMany({where: {square_id: squareId}});
+        return dbData.map<SqrTeamDto>(d => ({
+            id: d.id.toNumber(),
+            squareId: d.square_id.toNumber(),
+            name: d.name,
+            caption: d.caption,
+            description: d.description,
+        }));
+    }
+
+    async getSquareTeam(squareId: SqrSquareDto['id'], teamId: SqrTeamDto['id']): Promise<SqrTeamDto> {
+        const dbData = await this.databaseService.sqr_square_team.findFirst({where: {square_id: squareId, id: teamId}});
+        return {
+            id: dbData.id.toNumber(),
+            squareId: dbData.square_id.toNumber(),
+            name: dbData.name,
+            caption: dbData.caption,
+            description: dbData.description,
+        }
+    }
+
+    async createSquareTeam(squareId: SqrSquareDto['id'], team: SqrTeamDto): Promise<SqrTeamDto> {
+        const dbData = await this.databaseService.sqr_square_team.create({
+            data: {
+                square_id: squareId,
+                name: team.name,
+                caption: team.caption,
+                description: team.description
+            }
+        })
+        return {
+            id: dbData.id.toNumber(),
+            squareId: dbData.square_id.toNumber(),
+            name: dbData.name,
+            caption: dbData.caption,
+            description: dbData.description,
+        };
+    }
+
+    async editSquareTeam(squareId: SqrSquareDto['id'], teamId: SqrTeamDto['id'], team: SqrTeamDto): Promise<SqrTeamDto> {
+        const dbData = await this.databaseService.sqr_square_team.update({
+            where: {id: teamId},
+            data: {
+                name: team.name,
+                caption: team.caption,
+                description: team.description
+            }
+        })
+        return {
+            id: dbData.id.toNumber(),
+            squareId: dbData.square_id.toNumber(),
+            name: dbData.name,
+            caption: dbData.caption,
+            description: dbData.description,
+        };
+    }
+
+    async deleteSquareTeams(squareId: SqrSquareDto['id'], teamIds: SqrTeamDto['id'][]): Promise<void> {
+        await this.databaseService.sqr_square_team.deleteMany({where: {square_id: squareId, id: {in: teamIds}}});
+    }
+
+    async getSquareTeamUsers(squareId: SqrSquareDto['id'],
+                             teamId: SqrTeamDto['id'],
+                             showAllUsers: boolean,
+                             fastFilter: string,
+    ): Promise<SqrSquareTeamUserDto[]> {
+        const dbData = await this.databaseService.sqr_square_user.findMany({
+            include: {
+                adm_user: true,
+                sqr_square_team: true,
+                sqr_role: true,
+            },
+            where: {
+                square_id: squareId,
+                sqr_role: {name: {in: ['participant', 'teamExpert']}},
+                team_id: !showAllUsers ? teamId : undefined,
+                adm_user: (fastFilter ?? '').length > 0 ? {
+                    caption: {
+                        contains: fastFilter,
+                        mode: "insensitive"
+                    }
+                } : undefined
+            }
+        });
+        return dbData.map<SqrSquareTeamUserDto>(d => ({
+            id: d.id.toNumber(),
+            team: {
+                id: d.sqr_square_team?.id.toNumber(),
+                name: d.sqr_square_team?.name,
+                caption: d.sqr_square_team?.caption,
+                description: d.sqr_square_team?.description,
+                squareId: d.sqr_square_team?.square_id.toNumber()
+            },
+            role: {
+                id: d.sqr_role?.id.toNumber(),
+                name: d.sqr_role?.name,
+                caption: d.sqr_role?.caption,
+                description: d.sqr_role?.description,
+            },
+            user: {
+                id: d.adm_user.id.toNumber(),
+                name: d.adm_user.name,
+                caption: d.adm_user.caption,
+                activeInSquareRole: d.team_id?.toNumber() === teamId
+            }
+        }));
+    }
+
+    async addUsersToSquareTeams(squareId: SqrSquareDto['id'], teamIds: SqrTeamDto['id'][], userIds: SqrSquareUserDto['id'][]): Promise<void> {
+        await Promise.all(teamIds.map(teamId => this.databaseService.sqr_square_user.updateMany({
+            where: {
+                square_id: squareId,
+                id: {in: userIds},
+            },
+            data: {team_id: teamId}
+        })));
+    }
+
+    async removeUsersFromSquareTeams(squareId: SqrSquareDto['id'], teamIds: SqrTeamDto['id'][], userIds: SqrSquareUserDto['id'][]): Promise<void> {
+        await this.databaseService.sqr_square_user.updateMany({
+            where: {
+                square_id: squareId,
+                id: {in: userIds},
+                team_id: {in: teamIds}
+            },
+            data: {team_id: null}
+        });
     }
 }

@@ -44,7 +44,6 @@ export default class AdmUserService {
     }
 
     async removeGroupsFromUser(userId: AdmGroupDto['id'], groups: AdmUserGroupDto[]): Promise<void> {
-        console.log(groups);
         await axios.delete<void>(`${this._restPath}/${userId}/group/${groups.map(u => u.id).join(',')}`);
     }
 }
