@@ -19,6 +19,17 @@ model adm_group {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model adm_group_role {
+  id        Decimal   @id(map: "pk_adm_role_in_group") @default(dbgenerated("nextval('seq_adm_group_role'::regclass)")) @db.Decimal(15, 0)
+  group_id  Decimal   @db.Decimal(15, 0)
+  role_id   Decimal   @db.Decimal(15, 0)
+  adm_group adm_group @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_in_group_group")
+  adm_role  adm_role  @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_in_group_role")
+
+  @@unique([group_id, role_id], map: "udx_adm_role_in_group_group_role_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model adm_role {
   id                 Decimal              @id(map: "pk_adm_role") @default(dbgenerated("nextval('seq_adm_role'::regclass)")) @db.Decimal(15, 0)
   name               String               @unique(map: "udx_adm_role_name") @default("") @db.VarChar(30)
@@ -26,6 +37,17 @@ model adm_role {
   description        String?              @db.VarChar(4000)
   adm_group_role     adm_group_role[]
   adm_role_menu_item adm_role_menu_item[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model adm_role_menu_item {
+  id            Decimal       @id(map: "pk_adm_role_menu_item") @default(dbgenerated("nextval('seq_adm_role_menu_item'::regclass)")) @db.Decimal(15, 0)
+  role_id       Decimal       @db.Decimal(15, 0)
+  menu_item_id  Decimal       @db.Decimal(15, 0)
+  krn_menu_item krn_menu_item @relation(fields: [menu_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_menu_item_menu_item_id")
+  adm_role      adm_role      @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_menu_item_role_id")
+
+  @@unique([role_id, menu_item_id], map: "udx_adm_role_menu_item_role_id_menu_item_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -39,28 +61,6 @@ model adm_user {
   sqr_square_user sqr_square_user[]
 
   @@index([person_id], map: "idx_adm_user_person_id")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model adm_group_role {
-  id        Decimal   @id(map: "pk_adm_role_in_group") @default(dbgenerated("nextval('seq_adm_group_role'::regclass)")) @db.Decimal(15, 0)
-  group_id  Decimal   @db.Decimal(15, 0)
-  role_id   Decimal   @db.Decimal(15, 0)
-  adm_group adm_group @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_in_group_group")
-  adm_role  adm_role  @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_in_group_role")
-
-  @@unique([group_id, role_id], map: "udx_adm_role_in_group_group_role_id")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model adm_role_menu_item {
-  id            Decimal       @id(map: "pk_adm_role_menu_item") @default(dbgenerated("nextval('seq_adm_role_menu_item'::regclass)")) @db.Decimal(15, 0)
-  role_id       Decimal       @db.Decimal(15, 0)
-  menu_item_id  Decimal       @db.Decimal(15, 0)
-  krn_menu_item krn_menu_item @relation(fields: [menu_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_menu_item_menu_item_id")
-  adm_role      adm_role      @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adm_role_menu_item_role_id")
-
-  @@unique([role_id, menu_item_id], map: "udx_adm_role_menu_item_role_id_menu_item_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -113,14 +113,62 @@ model sqr_role {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model sqr_square {
-  id              Decimal           @id(map: "pk_sqr_square") @default(dbgenerated("nextval('seq_sqr_square'::regclass)")) @db.Decimal(15, 0)
-  name            String            @unique(map: "udx_sqr_square_name") @default("") @db.VarChar(30)
-  caption         String?           @db.VarChar(254)
-  description     String?           @db.VarChar(4000)
-  sqr_square_team sqr_square_team[]
-  sqr_square_user sqr_square_user[]
+  id               Decimal            @id(map: "pk_sqr_square") @default(dbgenerated("nextval('seq_sqr_square'::regclass)")) @db.Decimal(15, 0)
+  name             String             @unique(map: "udx_sqr_square_name") @default("") @db.VarChar(30)
+  caption          String?            @db.VarChar(254)
+  description      String?            @db.VarChar(4000)
+  sqr_square_team  sqr_square_team[]
+  sqr_square_timer sqr_square_timer[]
+  sqr_square_user  sqr_square_user[]
 
   @@index([caption], map: "idx_sqr_square_caption")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sqr_square_team {
+  id               Decimal            @id(map: "pk_sqr_square_team") @default(dbgenerated("nextval('seq_sqr_square_team'::regclass)")) @db.Decimal(15, 0)
+  square_id        Decimal            @db.Decimal(15, 0)
+  name             String             @default("") @db.VarChar(30)
+  caption          String?            @db.VarChar(254)
+  description      String?            @db.VarChar(4000)
+  sqr_square       sqr_square         @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_team_square_id")
+  sqr_square_timer sqr_square_timer[]
+  sqr_square_user  sqr_square_user[]
+
+  @@unique([square_id, caption, name], map: "udx_sqr_square_team_square_id_name_caption")
+  @@index([square_id], map: "idx_sqr_square_team_square_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sqr_square_timer {
+  id                      Decimal                   @id(map: "pk_sqr_square_timer") @default(dbgenerated("nextval('seq_sqr_square_timer'::regclass)")) @db.Decimal(15, 0)
+  square_id               Decimal                   @db.Decimal(15, 0)
+  team_id                 Decimal                   @db.Decimal(15, 0)
+  caption                 String?                   @db.VarChar(254)
+  count                   BigInt?                   @default(0)
+  begin_time              DateTime?                 @db.Timestamp(6)
+  pause_time              DateTime?                 @db.Timestamp(6)
+  continue_time           DateTime?                 @db.Timestamp(6)
+  stop_time               DateTime?                 @db.Timestamp(6)
+  state                   String?                   @default("READY") @db.VarChar(254)
+  sqr_square              sqr_square                @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_timer_square_id")
+  sqr_square_team         sqr_square_team           @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_timer_team_id")
+  sqr_square_timer_detail sqr_square_timer_detail[]
+
+  @@unique([square_id, team_id], map: "udx_sqr_square_timer_square_id_team_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sqr_square_timer_detail {
+  id               Decimal          @id(map: "pk_sqr_square_timer_detail") @default(dbgenerated("nextval('seq_sqr_square_timer_detail'::regclass)")) @db.Decimal(15, 0)
+  timer_id         Decimal          @db.Decimal(15, 0)
+  state            String?          @db.VarChar(254)
+  time             DateTime?        @db.Timestamp(6)
+  count            BigInt?
+  description      String?
+  sqr_square_timer sqr_square_timer @relation(fields: [timer_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_timer_detail_timer_id")
+
+  @@index([timer_id], map: "idx_sqr_square_timer_detail_timer_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -137,18 +185,4 @@ model sqr_square_user {
 
   @@unique([square_id, user_id, role_id], map: "udx_sqr_square_user_square_id_user_id_role_id")
   @@index([team_id], map: "idx_sqr_square_user_team_id")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model sqr_square_team {
-  id              Decimal           @id(map: "pk_sqr_square_team") @default(dbgenerated("nextval('seq_sqr_square_team'::regclass)")) @db.Decimal(15, 0)
-  square_id       Decimal           @db.Decimal(15, 0)
-  name            String            @default("") @db.VarChar(30)
-  caption         String?           @db.VarChar(254)
-  description     String?           @db.VarChar(4000)
-  sqr_square      sqr_square        @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_team_square_id")
-  sqr_square_user sqr_square_user[]
-
-  @@unique([square_id, caption, name], map: "udx_sqr_square_team_square_id_name_caption")
-  @@index([square_id], map: "idx_sqr_square_team_square_id")
 }

@@ -1,0 +1,1 @@
+export type SqrTimerState = 'READY' | 'START' | 'STOP' | 'PAUSE';

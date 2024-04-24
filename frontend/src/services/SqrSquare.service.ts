@@ -7,6 +7,7 @@ import {SqrSquareUserDto} from "../dtos/SqrSquareUser.dto";
 import {UFilterItem} from "../components/DevsGrid/DevsGridFilterItem";
 import {SqrTeamDto} from "../dtos/SqrTeam.dto";
 import {SqrSquareTeamUserDto} from "../dtos/SqrSquareTeamUserDto";
+import {SqrTimerDto} from "../dtos/SqrTimer.dto";
 
 export default class SqrSquareService {
     private readonly _rootService: RootService;
@@ -121,5 +122,23 @@ export default class SqrSquareService {
                                     userIds: SqrSquareTeamUserDto['id'][],
                                     teamIds: SqrTeamDto['id'][]): Promise<void> {
         await axios.delete(`${this._restPath}/${squareId}/sqr-team/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
+    }
+
+    async getSquareTimers(squareId: SqrSquareDto['id']): Promise<SqrTimerDto[]> {
+        return (await axios.get<SqrTimerDto[]>(`${this._restPath}/${squareId}/sqr-timer`)).data;
+    }
+
+    async recreateTimers(squareId: SqrSquareDto['id']): Promise<void> {
+        await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/recreate`);
+    }
+
+    async setAllTimerCount(squareId: SqrSquareDto['id'], count: SqrTimerDto['count']): Promise<void> {
+        await axios.patch<void>(`${this._restPath}/${squareId}/sqr-timer/set-count/${count}`);
+    }
+
+    async setTimerCount(squareId: SqrSquareDto['id'],
+                        timerId: SqrTimerDto['id'],
+                        count: SqrTimerDto['count']): Promise<void> {
+        await axios.patch<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/set-count/${count}`);
     }
 }

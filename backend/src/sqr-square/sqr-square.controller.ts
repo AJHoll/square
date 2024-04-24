@@ -7,6 +7,8 @@ import {
     ParseArrayPipe,
     ParseBoolPipe,
     ParseFloatPipe,
+    ParseIntPipe,
+    Patch,
     Post,
     Put,
     Query,
@@ -21,6 +23,7 @@ import {SqrRoleDto} from "../dtos/sqr-role.dto";
 import {SqrSquareUserDto} from "../dtos/sqr-square-user.dto";
 import {SqrTeamDto} from "../dtos/sqr-team.dto";
 import {SqrSquareTeamUserDto} from "../dtos/sqr-square-team-user.dto";
+import {SqrTimerDto} from "../dtos/sqr-timer.dto";
 
 @Controller('sqr-square')
 export class SqrSquareController {
@@ -171,5 +174,36 @@ export class SqrSquareController {
                                      @Param('userIds', ParseArrayPipe) userIds: SqrSquareUserDto['id'][]
     ): Promise<void> {
         await this.sqrRoleService.removeUsersFromSquareTeams(squareId, teamIds, userIds);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-timer')
+    async getSquareTimers(@Request() {user}: { user: UserDto },
+                          @Param('squareId') squareId: SqrSquareDto['id']): Promise<SqrTimerDto[]> {
+        return this.sqrRoleService.getSquareTimers(squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-timer/recreate')
+    async recreateSquareTimers(@Request() {user}: { user: UserDto },
+                               @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
+        await this.sqrRoleService.recreateSquareTimers(squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch(':squareId/sqr-timer/set-count/:count')
+    async setAllTimerCount(@Request() {user}: { user: UserDto },
+                           @Param('squareId') squareId: SqrSquareDto['id'],
+                           @Param('count', ParseIntPipe) count: SqrTimerDto['count']): Promise<void> {
+        await this.sqrRoleService.setTimerCount(squareId, count);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch(':squareId/sqr-timer/:timerId/set-count/:count')
+    async setTimerCount(@Request() {user}: { user: UserDto },
+                        @Param('squareId') squareId: SqrSquareDto['id'],
+                        @Param('timerId') timerId: SqrTimerDto['id'],
+                        @Param('count', ParseIntPipe) count: SqrTimerDto['count']): Promise<void> {
+        await this.sqrRoleService.setTimerCount(squareId, count, timerId);
     }
 }

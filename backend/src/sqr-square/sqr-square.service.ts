@@ -6,6 +6,8 @@ import {SqrSquareUserDto} from "../dtos/sqr-square-user.dto";
 import {UserDto} from "../dtos/user.dto";
 import {SqrTeamDto} from "../dtos/sqr-team.dto";
 import {SqrSquareTeamUserDto} from "../dtos/sqr-square-team-user.dto";
+import {SqrTimerDto} from "../dtos/sqr-timer.dto";
+import {SqrTimerState, SqrTimerStateWithTitles} from "../dtos/sqr-timer-state";
 
 @Injectable()
 export class SqrSquareService {
@@ -283,6 +285,55 @@ export class SqrSquareService {
                 team_id: {in: teamIds}
             },
             data: {team_id: null}
+        });
+    }
+
+    async getSquareTimers(squareId: SqrSquareDto['id']): Promise<SqrTimerDto[]> {
+        const dbData = await this.databaseService.sqr_square_timer.findMany({where: {square_id: squareId}});
+        return dbData.map((rec) => ({
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            teamId: rec.team_id.toNumber(),
+            caption: rec.caption,
+            state: {key: rec.state, value: SqrTimerStateWithTitles[<SqrTimerState>rec.state]},
+            count: Number(rec.count),
+            beginTime: rec.begin_time,
+            pauseTime: rec.pause_time,
+            continueTime: rec.continue_time,
+            stopTime: rec.stop_time,
+            countLeft: 15 // Сумма значения к дате старта + все значения count пауз из detail
+        }));
+    }
+
+    async recreateSquareTimers(squareId: SqrSquareDto['id']): Promise<void> {
+        await this.databaseService.$transaction(async (prisma) => {
+            await prisma.sqr_square_timer.deleteMany({where: {square_id: squareId}});
+            const teams = await this.getSquareTeams(squareId);
+            for (const team of teams) {
+                await prisma.sqr_square_timer.create({
+                    data: {
+                        square_id: squareId,
+                        team_id: team.id,
+                        caption: team.caption,
+                        sqr_square_timer_detail: {
+                            create: {
+                                state: 'READY',
+                                time: new Date(),
+                                description: 'Пересоздание таймеров команд'
+                            }
+                        }
+                    },
+                });
+            }
+        });
+    }
+
+    async setTimerCount(squareId: SqrSquareDto['id'],
+                        count: SqrTimerDto['count'],
+                        timerId?: SqrTimerDto['id']): Promise<void> {
+        await this.databaseService.sqr_square_timer.updateMany({
+            where: {square_id: squareId, id: timerId},
+            data: {count: count}
         });
     }
 }
