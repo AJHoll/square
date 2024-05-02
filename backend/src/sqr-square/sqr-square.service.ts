@@ -8,6 +8,7 @@ import {SqrTeamDto} from "../dtos/sqr-team.dto";
 import {SqrSquareTeamUserDto} from "../dtos/sqr-square-team-user.dto";
 import {SqrTimerDto} from "../dtos/sqr-timer.dto";
 import {SqrTimerState, SqrTimerStateWithTitles} from "../dtos/sqr-timer-state";
+import {Interval} from "@nestjs/schedule";
 
 @Injectable()
 export class SqrSquareService {
@@ -289,7 +290,11 @@ export class SqrSquareService {
     }
 
     async getSquareTimers(squareId: SqrSquareDto['id']): Promise<SqrTimerDto[]> {
-        const dbData = await this.databaseService.sqr_square_timer.findMany({where: {square_id: squareId}});
+        const dbData = await this.databaseService.sqr_square_timer.findMany({
+            where:
+                {square_id: squareId},
+            include: {sqr_square_timer_detail: true}
+        });
         return dbData.map((rec) => ({
             id: rec.id.toNumber(),
             squareId: rec.square_id.toNumber(),
@@ -301,29 +306,85 @@ export class SqrSquareService {
             pauseTime: rec.pause_time,
             continueTime: rec.continue_time,
             stopTime: rec.stop_time,
-            countLeft: 15 // Сумма значения к дате старта + все значения count пауз из detail
+            countLeft: this.calcTimerLeftTime(rec.begin_time,
+                Number(rec.count),
+                Number(rec.sqr_square_timer_detail.reduce((acc, detailRec) => {
+                    if (detailRec.state === 'PAUSE') {
+                        acc += (detailRec.count ?? BigInt(Math.floor((Date.now() - detailRec.time.getTime()) / 1000)))
+                    }
+                    return acc;
+                }, BigInt(0))))
         }));
     }
 
-    async recreateSquareTimers(squareId: SqrSquareDto['id']): Promise<void> {
+    async getSquareTimer(squareId: SqrSquareDto['id'], timerId: SqrTimerDto['id']): Promise<SqrTimerDto> {
+        const rec = await this.databaseService.sqr_square_timer.findFirst({
+            where:
+                {square_id: squareId, id: timerId},
+            include: {sqr_square_timer_detail: true}
+        });
+        return {
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            teamId: rec.team_id.toNumber(),
+            caption: rec.caption,
+            state: {key: rec.state, value: SqrTimerStateWithTitles[<SqrTimerState>rec.state]},
+            count: Number(rec.count),
+            beginTime: rec.begin_time,
+            pauseTime: rec.pause_time,
+            continueTime: rec.continue_time,
+            stopTime: rec.stop_time,
+            countLeft: this.calcTimerLeftTime(rec.begin_time,
+                Number(rec.count),
+                Number(rec.sqr_square_timer_detail.reduce((acc, detailRec) => {
+                    if (detailRec.state === 'PAUSE') {
+                        acc += (detailRec.count ?? BigInt(Math.floor((Date.now() - detailRec.time.getTime()) / 1000)))
+                    }
+                    return acc;
+                }, BigInt(0))))
+        };
+    }
+
+    async recreateSquareTimer(squareId: SqrSquareDto['id'], timerId?: SqrTimerDto['id']): Promise<void> {
         await this.databaseService.$transaction(async (prisma) => {
-            await prisma.sqr_square_timer.deleteMany({where: {square_id: squareId}});
-            const teams = await this.getSquareTeams(squareId);
-            for (const team of teams) {
+            let timer: SqrTimerDto;
+            if (timerId) {
+                timer = await this.getSquareTimer(squareId, timerId);
+            }
+            await prisma.sqr_square_timer.deleteMany({where: {square_id: squareId, id: timerId}});
+            if (timer) {
                 await prisma.sqr_square_timer.create({
                     data: {
                         square_id: squareId,
-                        team_id: team.id,
-                        caption: team.caption,
+                        team_id: timer.teamId,
+                        caption: timer.caption,
                         sqr_square_timer_detail: {
                             create: {
                                 state: 'READY',
                                 time: new Date(),
-                                description: 'Пересоздание таймеров команд'
+                                description: 'Пересоздание таймера'
                             }
                         }
                     },
                 });
+            } else {
+                const teams = await this.getSquareTeams(squareId);
+                for (const team of teams) {
+                    await prisma.sqr_square_timer.create({
+                        data: {
+                            square_id: squareId,
+                            team_id: team.id,
+                            caption: team.caption,
+                            sqr_square_timer_detail: {
+                                create: {
+                                    state: 'READY',
+                                    time: new Date(),
+                                    description: 'Пересоздание таймеров команд'
+                                }
+                            }
+                        },
+                    });
+                }
             }
         });
     }
@@ -334,6 +395,174 @@ export class SqrSquareService {
         await this.databaseService.sqr_square_timer.updateMany({
             where: {square_id: squareId, id: timerId},
             data: {count: count}
+        });
+    }
+
+    async startTimer(squareId: SqrSquareDto['id'], timerId?: SqrTimerDto['id']): Promise<void> {
+        await this.databaseService.$transaction(async (prisma) => {
+            const timers = await prisma.sqr_square_timer.findMany({
+                where: {
+                    square_id: squareId,
+                    state: {in: ['PAUSE', 'READY']},
+                    id: timerId
+                }
+            });
+            for (const timer of timers) {
+                switch (timer.state) {
+                    case 'READY': {
+                        await prisma.sqr_square_timer.update({
+                            where: {id: timer.id},
+                            data: {
+                                state: 'START',
+                                begin_time: new Date(),
+                            }
+                        });
+                        await prisma.sqr_square_timer_detail.create({
+                            data: {
+                                timer_id: timer.id,
+                                state: 'START',
+                                time: new Date(),
+                                description: 'Запуск таймера'
+                            }
+                        });
+                        break;
+                    }
+                    case 'PAUSE': {
+                        await prisma.sqr_square_timer.update({
+                            where: {id: timer.id},
+                            data: {
+                                state: 'START',
+                                continue_time: new Date(),
+                            }
+                        });
+                        const activePauseDetails = await prisma.sqr_square_timer_detail.findMany(
+                            {where: {timer_id: {in: timers.map((timer) => timer.id)}, state: 'PAUSE', count: null}}
+                        );
+                        for (const activePauseDetail of activePauseDetails) {
+                            await prisma.sqr_square_timer_detail.update({
+                                where: {id: activePauseDetail.id},
+                                data: {
+                                    count: Math.floor(Date.now() / 1000) - Math.floor(activePauseDetail.time.getTime() / 1000)
+                                }
+                            })
+                        }
+                        await prisma.sqr_square_timer_detail.create({
+                            data: {
+                                timer_id: timer.id,
+                                state: 'START',
+                                time: new Date(),
+                                description: 'Возобновление таймера'
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    async pauseTimer(squareId: SqrSquareDto['id'], timerId?: SqrTimerDto['id']): Promise<void> {
+        await this.databaseService.$transaction(async (prisma) => {
+            const timers = await prisma.sqr_square_timer.findMany({
+                where: {
+                    square_id: squareId,
+                    state: {in: ['START']},
+                    id: timerId
+                }
+            });
+            await prisma.sqr_square_timer.updateMany({
+                where: {
+                    id: {in: timers.map(timer => timer.id)}
+                },
+                data: {
+                    state: 'PAUSE',
+                    pause_time: new Date(),
+                    continue_time: null,
+                },
+            });
+            await prisma.sqr_square_timer_detail.createMany({
+                data: timers.map((timer) => ({
+                    timer_id: timer.id,
+                    state: 'PAUSE',
+                    time: new Date(),
+                    description: 'Пауза таймера'
+                }))
+            });
+        });
+    }
+
+    async stopTimer(user: UserDto, squareId: SqrSquareDto['id'], timerId?: SqrTimerDto['id']): Promise<void> {
+        await this.databaseService.$transaction(async (prisma) => {
+            const timers = await prisma.sqr_square_timer.findMany({
+                where: {
+                    square_id: squareId,
+                    state: {notIn: ['STOP']},
+                    id: timerId
+                }
+            });
+            await prisma.sqr_square_timer.updateMany({
+                where: {
+                    id: {in: timers.map(timer => timer.id)}
+                },
+                data: {
+                    state: 'STOP',
+                    stop_time: new Date(),
+                },
+            });
+            await prisma.sqr_square_timer_detail.createMany({
+                data: timers.map((timer) => ({
+                    timer_id: timer.id,
+                    state: 'STOP',
+                    time: new Date(),
+                    description: `Останов таймера ${user?.caption ? `пользователем ${user.caption}` : ''}`
+                }))
+            });
+        });
+    }
+
+    private calcTimerLeftTime(startDate: Date, count: number, pausedTime: number): number {
+        if (!startDate) {
+            return count;
+        }
+        const predictEndDate = startDate.valueOf() + (count + pausedTime) * 1000;
+        const timeLeft = Math.floor((new Date(predictEndDate).valueOf() - new Date().valueOf()) / 1000);
+        return timeLeft <= 0 ? 0 : timeLeft;
+    }
+
+    @Interval(1000)
+    async syncTimers() {
+        await this.databaseService.$transaction(async (prisma) => {
+            const activeTimers = await prisma.sqr_square_timer.findMany({
+                where: {state: 'START'},
+                include: {sqr_square_timer_detail: true}
+            });
+            for (const rec of activeTimers) {
+                const leftTime = this.calcTimerLeftTime(rec.begin_time,
+                    Number(rec.count),
+                    Number(rec.sqr_square_timer_detail.reduce((acc, detailRec) => {
+                        if (detailRec.state === 'PAUSE') {
+                            acc += (detailRec.count ?? BigInt(Math.floor((Date.now() - detailRec.time.getTime()) / 1000)))
+                        }
+                        return acc;
+                    }, BigInt(0))));
+                if (leftTime <= BigInt(0)) {
+                    await prisma.sqr_square_timer.update({
+                        where: {id: rec.id},
+                        data: {
+                            state: 'STOP',
+                            stop_time: new Date(),
+                        }
+                    });
+                    await prisma.sqr_square_timer_detail.create({
+                        data: {
+                            timer_id: rec.id,
+                            state: 'STOP',
+                            time: new Date(),
+                            description: 'Таймер остановлен. Время вышло'
+                        }
+                    });
+                }
+            }
         });
     }
 }

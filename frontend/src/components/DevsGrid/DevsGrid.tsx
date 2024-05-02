@@ -1,6 +1,6 @@
 import './DevsGrid.scss';
 import React from 'react';
-import {ColDef, GridReadyEvent, SelectionChangedEvent} from 'ag-grid-community';
+import {ColDef, GridPreDestroyedEvent, GridReadyEvent, SelectionChangedEvent} from 'ag-grid-community';
 import DevsGridFilter from './DevsGridFilter';
 import {UFilterItem} from './DevsGridFilterItem';
 import DevsButton from '@ajholl/devsuikit/dist/DevsButton';
@@ -51,6 +51,7 @@ interface UniversalListProps<GData = any> {
     onGridReady?: (params: GridReadyEvent<GData>) => void;
     onGridRowSelectionChanged?: (event: SelectionChangedEvent<GData>) => void;
     onGridRowDoubleClicked?: () => void;
+    onGridPreDestroyed?: (event: GridPreDestroyedEvent) => void;
 }
 
 interface UniversalListState {
@@ -95,6 +96,7 @@ export default class DevsGrid extends React.Component<UniversalListProps, Univer
             gridRowSelection,
             onGridRowSelectionChanged,
             onGridRowDoubleClicked,
+            onGridPreDestroyed
         } = this.props;
         return (
             <div className="app_universal_list">
@@ -256,7 +258,9 @@ export default class DevsGrid extends React.Component<UniversalListProps, Univer
                                  onGridReady={onGridReady}
                                  rowSelection={gridRowSelection ?? 'single'}
                                  onSelectionChanged={onGridRowSelectionChanged}
-                                 onRowDoubleClicked={onGridRowDoubleClicked}/>
+                                 onRowDoubleClicked={onGridRowDoubleClicked}
+                                 onGridPreDestroyed={onGridPreDestroyed}
+                    />
                 </div>
             </div>
         )

@@ -9,6 +9,7 @@ import "./SqrSquareTimer.scss";
 import DevsButton from "@ajholl/devsuikit/dist/DevsButton";
 import DevsModal from "@ajholl/devsuikit/dist/DevsModal";
 import DevsInput from "@ajholl/devsuikit/dist/DevsInput";
+import {devsGridDateTimeFormatter} from "../../../components/DevsGrid/DevsGridFunctions";
 
 interface SqrSquareTimerProps extends StoreProps {
 }
@@ -59,18 +60,22 @@ export class SqrSquareTimer extends React.Component<SqrSquareTimerProps> {
         {
             field: 'beginTime',
             headerName: 'Дата/Время запуска',
+            valueFormatter: devsGridDateTimeFormatter
         },
         {
             field: 'pauseTime',
             headerName: 'Дата/Время паузы',
+            valueFormatter: devsGridDateTimeFormatter
         },
         {
             field: 'continueTime',
             headerName: 'Дата/Время возобновления',
+            valueFormatter: devsGridDateTimeFormatter
         },
         {
             field: 'stopTime',
-            headerName: 'Дата/Время останова',
+            headerName: 'Дата/Время завершения',
+            valueFormatter: devsGridDateTimeFormatter
         }
     ]
 
@@ -106,20 +111,23 @@ export class SqrSquareTimer extends React.Component<SqrSquareTimerProps> {
                                onChange={(event) => this.sqrSquareTimerStore.timerCardSecondsCount = +event.target.value}
                     ></DevsInput>
                 </div>
-
             </DevsModal>
             <DevsGrid title="Таймеры"
                       gridDefaultColDef={this.defaultColDef}
                       gridColDef={this.sqrTimerColDef}
                       gridRowSelection="single"
                       onGridReady={async (event) => (await this.onSqrTimeerGridReady(event))}
-                      onCreateBtnClicked={() => null}
+                      onGridPreDestroyed={(event) => this.sqrSquareTimerStore.onTimerGridPreDestroyed()}
+                      onCreateBtnClicked={() => this.sqrSquareTimerStore.startTimer()}
+                      createBtnDisabled={!this.sqrSquareTimerStore.squareId}
                       createBtnTitle="Запустить все"
                       createBtnIcon="lni lni-play"
-                      onEditBtnClicked={() => null}
+                      onEditBtnClicked={() => this.sqrSquareTimerStore.pauseTimer()}
+                      editBtnDisabled={!this.sqrSquareTimerStore.squareId}
                       editBtnTitle="Приостановить все"
                       editBtnIcon="lni lni-pause"
-                      onDeleteBtnClicked={() => null}
+                      onDeleteBtnClicked={() => this.sqrSquareTimerStore.stopTimer()}
+                      deleteBtnDisabled={!this.sqrSquareTimerStore.squareId}
                       deleteBtnTitle="Остановить все"
                       deleteBtnIcon="lni lni-stop"
                       additionalOperations={<>
@@ -128,32 +136,46 @@ export class SqrSquareTimer extends React.Component<SqrSquareTimerProps> {
                                       title="Задать значения всем"
                                       icon="lni lni-timer"
                                       onClick={() => this.sqrSquareTimerStore.setAllTimerCountBtnClicked()}
+                                      disabled={!this.sqrSquareTimerStore.squareId}
                           />
                           <DevsButton template="filled"
                                       color="primary"
                                       icon="lni lni-reload"
-                                      title="Пересоздать"
-                                      style={{marginLeft: '20px'}}
-                                      onClick={async () => await this.sqrSquareTimerStore.recreateTimers()}
+                                      title="Пересоздать все"
+                                      onClick={async () => await this.sqrSquareTimerStore.recreateTimer()}
+                                      disabled={!this.sqrSquareTimerStore.squareId}
                           />
 
                           <DevsButton template="filled"
                                       color="success"
                                       icon="lni lni-play"
                                       style={{marginLeft: '20px'}}
+                                      onClick={() => this.sqrSquareTimerStore.startTimer(true)}
+                                      disabled={(this.sqrSquareTimerStore.selectionSqrTimers ?? []).length === 0}
                           />
                           <DevsButton template="filled"
                                       color="secondary"
                                       icon="lni lni-pause"
+                                      onClick={() => this.sqrSquareTimerStore.pauseTimer(true)}
+                                      disabled={(this.sqrSquareTimerStore.selectionSqrTimers ?? []).length === 0}
                           />
                           <DevsButton template="filled"
                                       color="danger"
                                       icon="lni lni-stop"
+                                      onClick={() => this.sqrSquareTimerStore.stopTimer(true)}
+                                      disabled={(this.sqrSquareTimerStore.selectionSqrTimers ?? []).length === 0}
                           />
                           <DevsButton template="filled"
                                       color="primary"
                                       icon="lni lni-timer"
                                       onClick={() => this.sqrSquareTimerStore.setTimerCountBtnClicked()}
+                                      disabled={(this.sqrSquareTimerStore.selectionSqrTimers ?? []).length === 0}
+                          />
+                          <DevsButton template="filled"
+                                      color="primary"
+                                      icon="lni lni-reload"
+                                      onClick={async () => await this.sqrSquareTimerStore.recreateTimer(true)}
+                                      disabled={(this.sqrSquareTimerStore.selectionSqrTimers ?? []).length === 0}
                           />
                       </>}
                       onFastFilterBtnClicked={() => null}

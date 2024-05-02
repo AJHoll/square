@@ -184,10 +184,26 @@ export class SqrSquareController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-timer/:timerId')
+    async getSquareTimer(@Request() {user}: { user: UserDto },
+                         @Param('squareId') squareId: SqrSquareDto['id'],
+                         @Param('timerId') timerId: SqrTimerDto['id']): Promise<SqrTimerDto> {
+        return this.sqrRoleService.getSquareTimer(squareId, timerId);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post(':squareId/sqr-timer/recreate')
     async recreateSquareTimers(@Request() {user}: { user: UserDto },
                                @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
-        await this.sqrRoleService.recreateSquareTimers(squareId);
+        await this.sqrRoleService.recreateSquareTimer(squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-timer/:timerId/recreate')
+    async recreateSquareTimer(@Request() {user}: { user: UserDto },
+                              @Param('squareId') squareId: SqrSquareDto['id'],
+                              @Param('timerId') timerId: SqrTimerDto['id']): Promise<void> {
+        await this.sqrRoleService.recreateSquareTimer(squareId, timerId);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -205,5 +221,50 @@ export class SqrSquareController {
                         @Param('timerId') timerId: SqrTimerDto['id'],
                         @Param('count', ParseIntPipe) count: SqrTimerDto['count']): Promise<void> {
         await this.sqrRoleService.setTimerCount(squareId, count, timerId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-timer/start')
+    async startAllTimers(@Request() {user}: { user: UserDto },
+                         @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
+        await this.sqrRoleService.startTimer(squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-timer/:timerId/start')
+    async startTimer(@Request() {user}: { user: UserDto },
+                     @Param('squareId') squareId: SqrSquareDto['id'],
+                     @Param('timerId') timerId: SqrTimerDto['id']): Promise<void> {
+        await this.sqrRoleService.startTimer(squareId, timerId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-timer/pause')
+    async pauseAllTimers(@Request() {user}: { user: UserDto },
+                         @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
+        await this.sqrRoleService.pauseTimer(squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-timer/:timerId/pause')
+    async pauseTimer(@Request() {user}: { user: UserDto },
+                     @Param('squareId') squareId: SqrSquareDto['id'],
+                     @Param('timerId') timerId: SqrTimerDto['id']): Promise<void> {
+        await this.sqrRoleService.pauseTimer(squareId, timerId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-timer/stop')
+    async stopAllTimers(@Request() {user}: { user: UserDto },
+                        @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
+        await this.sqrRoleService.stopTimer(user, squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-timer/:timerId/stop')
+    async stopTimer(@Request() {user}: { user: UserDto },
+                    @Param('squareId') squareId: SqrSquareDto['id'],
+                    @Param('timerId') timerId: SqrTimerDto['id']): Promise<void> {
+        await this.sqrRoleService.stopTimer(user, squareId, timerId);
     }
 }

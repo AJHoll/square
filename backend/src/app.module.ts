@@ -12,9 +12,11 @@ import {AdmUserModule} from './adm-user/adm-user.module';
 import {SqrRoleModule} from "./sqr-role/sqr-role.module";
 import {SqrSquareModule} from "./sqr-square/sqr-square.module";
 import {JwtService} from "@nestjs/jwt";
+import {ScheduleModule} from "@nestjs/schedule";
 
 @Module({
     imports: [
+        ScheduleModule.forRoot(),
         AuthModule,
         UserModule,
         MainMenuModule,

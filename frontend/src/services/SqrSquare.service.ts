@@ -128,11 +128,20 @@ export default class SqrSquareService {
         return (await axios.get<SqrTimerDto[]>(`${this._restPath}/${squareId}/sqr-timer`)).data;
     }
 
-    async recreateTimers(squareId: SqrSquareDto['id']): Promise<void> {
-        await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/recreate`);
+    async getSquareTimer(squareId: SqrSquareDto['id'], timerId: SqrTimerDto['id']): Promise<SqrTimerDto> {
+        return (await axios.get<SqrTimerDto>(`${this._restPath}/${squareId}/sqr-timer/${timerId}`)).data;
     }
 
-    async setAllTimerCount(squareId: SqrSquareDto['id'], count: SqrTimerDto['count']): Promise<void> {
+    async recreateTimer(squareId: SqrSquareDto['id'], timerId?: SqrTimerDto['id']): Promise<void> {
+        if (timerId) {
+            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/recreate`);
+        } else {
+            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/recreate`);
+        }
+    }
+
+    async setAllTimerCount(squareId: SqrSquareDto['id'],
+                           count: SqrTimerDto['count']): Promise<void> {
         await axios.patch<void>(`${this._restPath}/${squareId}/sqr-timer/set-count/${count}`);
     }
 
@@ -140,5 +149,32 @@ export default class SqrSquareService {
                         timerId: SqrTimerDto['id'],
                         count: SqrTimerDto['count']): Promise<void> {
         await axios.patch<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/set-count/${count}`);
+    }
+
+    async startTimer(squareId: SqrSquareDto['id'],
+                     timerId?: SqrTimerDto['id']): Promise<void> {
+        if (timerId) {
+            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/start`);
+        } else {
+            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/start`);
+        }
+    }
+
+    async pauseTimer(squareId: SqrSquareDto['id'],
+                     timerId?: SqrTimerDto['id']): Promise<void> {
+        if (timerId) {
+            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/pause`);
+        } else {
+            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/pause`);
+        }
+    }
+
+    async stopTimer(squareId: SqrSquareDto['id'],
+                    timerId?: SqrTimerDto['id']): Promise<void> {
+        if (timerId) {
+            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/stop`);
+        } else {
+            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/stop`);
+        }
     }
 }

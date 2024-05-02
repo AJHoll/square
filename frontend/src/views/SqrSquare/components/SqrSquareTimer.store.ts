@@ -16,7 +16,15 @@ export default class SqrSquareTimerStore {
     }
 
     private _squareId: SqrSquareDto['id'];
+    get squareId(): SqrSquareDto["id"] {
+        return this._squareId;
+    }
+
     private _selectionSqrTimers: SqrTimerDto[] = [];
+    get selectionSqrTimers(): SqrTimerDto[] {
+        return this._selectionSqrTimers;
+    }
+
     private _squareTimerFilters: { [p: string]: UFilterItem } = {
         fast_filter: {
             fieldName: 'fast_filter',
@@ -69,13 +77,14 @@ export default class SqrSquareTimerStore {
         this.setUpTimerCount();
     }
 
-    private _timerIntervalHandler = setInterval(() => {
-        if (this._sqrTimersGridApi) {
-            this._sqrTimersGridApi?.forEachNode((rowNode) => {
-                if (rowNode.data?.state?.key === 'START' && (rowNode.data?.count ?? 0) > 0) {
-                    rowNode.updateData({...rowNode.data, count: (rowNode.data?.count ?? 0) - 1})
+    private _syncIntervalHandler = setInterval(async () => {
+        if (this._sqrTimersGridApi && this._sqrTimersGridApi?.getGridId()) {
+            this._sqrTimersGridApi.forEachNode(async (rowNode): Promise<void> => {
+                if (rowNode.data?.id) {
+                    const timer = await this._sqrSquareService.getSquareTimer(rowNode.data.squareId, rowNode.data.id);
+                    rowNode.updateData(timer);
                 }
-            })
+            });
         }
     }, 1000);
 
@@ -84,6 +93,10 @@ export default class SqrSquareTimerStore {
         this._rootStore = rootStore;
         this._sqrSquareService = sqrSquareService;
         makeAutoObservable(this);
+    }
+
+    onTimerGridPreDestroyed(): void {
+        this._sqrTimersGridApi = undefined;
     }
 
     setUpTimerCount(): void {
@@ -116,9 +129,20 @@ export default class SqrSquareTimerStore {
         this._selectionSqrTimers = event.api.getSelectedRows();
     }
 
-    async recreateTimers(): Promise<void> {
+    async recreateTimer(onlyOne: boolean = false): Promise<void> {
+        this._timerCountCardType = onlyOne ? 'oneTimer' : 'all';
         if (this._squareId) {
-            await this._sqrSquareService.recreateTimers(this._squareId);
+            switch (this._timerCountCardType) {
+                case "oneTimer": {
+                    await this._sqrSquareService.recreateTimer(this._squareId, this._selectionSqrTimers[0].id);
+                    break;
+                }
+                case "all": {
+                    await this._sqrSquareService.recreateTimer(this._squareId);
+                    break;
+                }
+            }
+
             await this.reloadSqrTimers();
         }
     }
@@ -154,5 +178,56 @@ export default class SqrSquareTimerStore {
             await this.reloadSqrTimers();
         }
         this.timerCountCardVisible = false;
+    }
+
+    async startTimer(onlyOne: boolean = false): Promise<void> {
+        this._timerCountCardType = onlyOne ? 'oneTimer' : 'all';
+        if (this._squareId) {
+            switch (this._timerCountCardType) {
+                case "oneTimer": {
+                    await this._sqrSquareService.startTimer(this._squareId, this._selectionSqrTimers[0].id);
+                    break;
+                }
+                case "all": {
+                    await this._sqrSquareService.startTimer(this._squareId);
+                    break;
+                }
+            }
+            await this.reloadSqrTimers();
+        }
+    }
+
+    async pauseTimer(onlyOne: boolean = false): Promise<void> {
+        this._timerCountCardType = onlyOne ? 'oneTimer' : 'all';
+        if (this._squareId) {
+            switch (this._timerCountCardType) {
+                case "oneTimer": {
+                    await this._sqrSquareService.pauseTimer(this._squareId, this._selectionSqrTimers[0].id);
+                    break;
+                }
+                case "all": {
+                    await this._sqrSquareService.pauseTimer(this._squareId);
+                    break;
+                }
+            }
+            await this.reloadSqrTimers();
+        }
+    }
+
+    async stopTimer(onlyOne: boolean = false): Promise<void> {
+        this._timerCountCardType = onlyOne ? 'oneTimer' : 'all';
+        if (this._squareId) {
+            switch (this._timerCountCardType) {
+                case "oneTimer": {
+                    await this._sqrSquareService.stopTimer(this._squareId, this._selectionSqrTimers[0].id);
+                    break;
+                }
+                case "all": {
+                    await this._sqrSquareService.stopTimer(this._squareId);
+                    break;
+                }
+            }
+            await this.reloadSqrTimers();
+        }
     }
 }
