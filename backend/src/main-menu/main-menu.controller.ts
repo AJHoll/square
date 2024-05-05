@@ -1,4 +1,4 @@
-import {Controller, Get, Request, UseGuards} from '@nestjs/common';
+import {Controller, Get, Query, Request, UseGuards} from '@nestjs/common';
 import {JwtAuthGuard} from '../guards/jwt-auth.guard';
 import {UserDto} from '../dtos/user.dto';
 import {MainMenuService} from './main-menu.service';
@@ -11,7 +11,8 @@ export class MainMenuController {
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getMainMenu(@Request() {user}: { user: UserDto }): Promise<MainMenuGroupDto[]> {
-        return this.mainMenuService.getMainMenuByUser(user);
+    async getMainMenu(@Request() {user}: { user: UserDto },
+                      @Query('menuFilter') menuFilter: string): Promise<MainMenuGroupDto[]> {
+        return this.mainMenuService.getMainMenuByUser(user, menuFilter);
     }
 }

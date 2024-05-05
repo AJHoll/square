@@ -15,6 +15,7 @@ export class SqrTimerView extends React.Component<SqrTimerViewProps> {
     selectRef: React.RefObject<DevsSelect> = React.createRef();
 
     async componentDidMount(): Promise<void> {
+        document.title = this.props.title;
         await this.sqrTimerStore.init(this.selectRef);
     }
 
@@ -31,6 +32,7 @@ export class SqrTimerView extends React.Component<SqrTimerViewProps> {
                                 addonBefore={<span style={{paddingLeft: '10px', paddingRight: '10px'}}>Площадка</span>}
                                 options={this.sqrTimerStore.squares}
                                 value={this.sqrTimerStore.selectedSquare}
+                                onlySelection={true}
                                 onChange={(event) => this.sqrTimerStore.selectedSquare = event.value}
                     />
                 </div>
