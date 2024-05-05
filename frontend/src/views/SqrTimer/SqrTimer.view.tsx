@@ -3,7 +3,6 @@ import {BaseViewProps} from "../../interfaces/BaseViewProps";
 import './SqrTimer.view.scss';
 import {observer} from "mobx-react";
 import ViewHeader from "../../components/ViewHeader/ViewHeader";
-import DevsCheckbox from "@ajholl/devsuikit/dist/DevsCheckbox";
 import DevsSelect from "@ajholl/devsuikit/dist/DevsSelect";
 import {SqrTimer} from "./components/SqrTimer";
 import {SqrTimerStore} from "./SqrTimer.store";
