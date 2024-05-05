@@ -10,6 +10,7 @@ import OAdmGroupView from '../views/AdmGroup/AdmGroup.view';
 import OAdmUserView from "../views/AdmUser/AdmUser.view";
 import OSqrRoleView from "../views/SqrRole/SqrRole.view";
 import OSqrSquareView from "../views/SqrSquare/SqrSquare.view";
+import OSqrTimerView from "../views/SqrTimer/SqrTimer.view";
 
 interface RoutesProps extends StoreProps {
 }
@@ -82,6 +83,15 @@ export default class Routes extends React.Component<RoutesProps> {
                                             <OSqrSquareView {...routeProps}
                                                             rootStore={this.props.rootStore}
                                                             title={this.getTitle('Управление площадоками')}
+                                            />}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/timers"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OSqrTimerView {...routeProps}
+                                                           rootStore={this.props.rootStore}
+                                                           title={this.getTitle('Просмотр таймеров')}
                                             />}
                         />
                         <Route exact

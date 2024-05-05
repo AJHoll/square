@@ -1,0 +1,95 @@
+@import "@ajholl/devsuikit/dist/scss";
+
+.sqr_timer_view {
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+  user-select: none;
+
+  &__content {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timer_toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    gap: 10px;
+    padding: 15px 0;
+  }
+
+  .timer_content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: auto;
+
+    .sqr_timer {
+      opacity: 100%;
+      transition: opacity 200ms;
+    }
+
+    .timer_hiding {
+      opacity: 0;
+      transition: opacity 500ms;
+    }
+
+    &__main_timer {
+      display: flex;
+      flex-direction: column;
+      flex: 80;
+
+      .sqr_timer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: $color-primary;
+        flex: auto;
+
+        &__caption {
+          font-size: clamp(20px, 6.333vw, 60px);
+          flex: none;
+        }
+
+        &__countLeft {
+
+          font-weight: 900;
+          font-size: clamp(40px, 16.666vw, 300px);
+        }
+      }
+    }
+
+    &__other_timers {
+      display: flex;
+      flex-direction: row;
+      min-height: 100px;
+      flex: 20;
+      gap: 15px;
+      flex-wrap: nowrap;
+      overflow: auto;
+
+      .sqr_timer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: $color-secondary;
+        flex: 1;
+
+        &__caption {
+          font-size: clamp(10px, 2.333vw, 20px);
+          flex: none;
+        }
+
+        &__countLeft {
+          font-weight: 900;
+          flex: 1;
+          font-size: clamp(20px, 4.666vw, 80px);
+        }
+      }
+    }
+  }
+}

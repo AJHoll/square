@@ -20,6 +20,7 @@ import SqrSquareUserStore from "./SqrSquare/components/SqrSquareUser.store";
 import SqrSquareTeamStore from "./SqrSquare/components/SqrSquareTeam.store";
 import SqrSquareTeamCardStore from "./SqrSquare/components/SqrSquareTeamCard.store";
 import SqrSquareTimerStore from "./SqrSquare/components/SqrSquareTimer.store";
+import {SqrTimerStore} from "./SqrTimer/SqrTimer.store";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
@@ -49,6 +50,8 @@ export default class RootStore {
     readonly sqrSquareCardStore: SqrSquareCardStore = new SqrSquareCardStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareTimerStore: SqrSquareTimerStore = new SqrSquareTimerStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareStore: SqrSquareStore = new SqrSquareStore(this, this.rootService.sqrSquareService);
+
+    readonly sqrTimerStore: SqrTimerStore = new SqrTimerStore(this, this.rootService.sqrSquareService);
 
     toastRef: React.RefObject<DevsToast> | null = null;
 

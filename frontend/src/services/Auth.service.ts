@@ -28,18 +28,18 @@ export default class AuthService {
 
     async login(username: string, password: string): Promise<void> {
         const response = await axios.post<{ access_token: string }>(`${this._restPath}/login`, {username, password});
-        localStorage.setItem(this._squareTokenName, response.data.access_token);
+        sessionStorage.setItem(this._squareTokenName, response.data.access_token);
         this.checkAndParseToken();
         this.setHeaders();
     }
 
     logout(): void {
-        localStorage.setItem(this._squareTokenName, 'null');
+        sessionStorage.setItem(this._squareTokenName, 'null');
         this._userService.user = undefined;
     }
 
     checkAndParseToken(): void {
-        const token = localStorage.getItem(this._squareTokenName);
+        const token = sessionStorage.getItem(this._squareTokenName);
         if (!token || token === 'null') {
             return;
         }
@@ -49,6 +49,6 @@ export default class AuthService {
     }
 
     setHeaders() {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(this._squareTokenName)}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem(this._squareTokenName)}`;
     }
 }

@@ -1,5 +1,6 @@
 import {SqrSquareDto} from "./SqrSquare.dto";
 import {SqrTeamDto} from "./SqrTeam.dto";
+import {SqrTimerState} from "./SqrTimerState";
 
 export interface SqrTimerDto {
     id?: number;
@@ -8,7 +9,7 @@ export interface SqrTimerDto {
     caption?: string;
     count?: number;
     countLeft?: number;
-    state?: { key: string, value: string };
+    state?: { key: SqrTimerState, value: string };
     beginTime?: Date;
     pauseTime?: Date;
     continueTime?: Date;

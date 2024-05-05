@@ -23,10 +23,10 @@ export class SqrSquareView extends React.Component<SqrSquareViewProps> {
 
     render() {
         return (
-            <div className="adm_square_view">
+            <div className="sqr_square_view">
                 <OSqrSquareCard rootStore={this.props.rootStore}/>
                 <ViewHeader title="Управление площадками"/>
-                <div className="adm_square_view__content">
+                <div className="sqr_square_view__content">
                     <DevsSplitter layout="vertical">
                         <DevsSplitterPanel>
                             <OSqrSquare rootStore={this.props.rootStore}/>
