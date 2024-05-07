@@ -3,7 +3,6 @@ import {BrowserRouter as Router, Redirect, Route, RouteComponentProps, Switch} f
 import AuthGuardRoute from './AuthGuardRoute';
 import OAuthView from '../views/Auth/Auth.view';
 import {StoreProps} from '../interfaces/StoreProps';
-import OMainMenuView from '../views/MainMenu/MainMenu.view';
 import DevsToast from '@ajholl/devsuikit/dist/DevsToast';
 import OAdmRoleView from '../views/AdmRole/AdmRole.view';
 import OAdmGroupView from '../views/AdmGroup/AdmGroup.view';
@@ -11,6 +10,8 @@ import OAdmUserView from "../views/AdmUser/AdmUser.view";
 import OSqrRoleView from "../views/SqrRole/SqrRole.view";
 import OSqrSquareView from "../views/SqrSquare/SqrSquare.view";
 import OSqrTimerView from "../views/SqrTimer/SqrTimer.view";
+import OMainMenuView from "../views/MainMenu/MainMenu.view";
+import OMenuLayout from "../layouts/MenuLayout";
 
 interface RoutesProps extends StoreProps {
 }
@@ -40,60 +41,6 @@ export default class Routes extends React.Component<RoutesProps> {
                                                            title={this.getTitle('Главное меню')}
                                             />}
                         />
-                        <AuthGuardRoute exact
-                                        path="/roles"
-                                        rootStore={this.props.rootStore}
-                                        render={(routeProps: RouteComponentProps) =>
-                                            <OAdmRoleView {...routeProps}
-                                                          rootStore={this.props.rootStore}
-                                                          title={this.getTitle('Управление ролями')}
-                                            />}
-                        />
-                        <AuthGuardRoute exact
-                                        path="/groups"
-                                        rootStore={this.props.rootStore}
-                                        render={(routeProps: RouteComponentProps) =>
-                                            <OAdmGroupView {...routeProps}
-                                                           rootStore={this.props.rootStore}
-                                                           title={this.getTitle('Управление группами')}
-                                            />}
-                        />
-                        <AuthGuardRoute exact
-                                        path="/users"
-                                        rootStore={this.props.rootStore}
-                                        render={(routeProps: RouteComponentProps) =>
-                                            <OAdmUserView {...routeProps}
-                                                          rootStore={this.props.rootStore}
-                                                          title={this.getTitle('Управление пользователями')}
-                                            />}
-                        />
-                        <AuthGuardRoute exact
-                                        path="/square-roles"
-                                        rootStore={this.props.rootStore}
-                                        render={(routeProps: RouteComponentProps) =>
-                                            <OSqrRoleView {...routeProps}
-                                                          rootStore={this.props.rootStore}
-                                                          title={this.getTitle('Управление ролями на площадке')}
-                                            />}
-                        />
-                        <AuthGuardRoute exact
-                                        path="/squares"
-                                        rootStore={this.props.rootStore}
-                                        render={(routeProps: RouteComponentProps) =>
-                                            <OSqrSquareView {...routeProps}
-                                                            rootStore={this.props.rootStore}
-                                                            title={this.getTitle('Управление площадоками')}
-                                            />}
-                        />
-                        <AuthGuardRoute exact
-                                        path="/timers"
-                                        rootStore={this.props.rootStore}
-                                        render={(routeProps: RouteComponentProps) =>
-                                            <OSqrTimerView {...routeProps}
-                                                           rootStore={this.props.rootStore}
-                                                           title={this.getTitle('Просмотр таймеров')}
-                                            />}
-                        />
                         <Route exact
                                path="/auth"
                                render={(routeProps: RouteComponentProps) =>
@@ -102,12 +49,96 @@ export default class Routes extends React.Component<RoutesProps> {
                                               title={this.getTitle('Авторизация')}
                                    />}
                         />
+                        <AuthGuardRoute exact
+                                        path="/roles"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OMenuLayout {...routeProps}
+                                                         rootStore={this.props.rootStore}
+                                                         title="Упралвение ролями">
+                                                <OAdmRoleView {...routeProps}
+                                                              rootStore={this.props.rootStore}
+                                                              title={this.getTitle('Управление ролями')}
+                                                />
+                                            </OMenuLayout>}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/groups"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OMenuLayout {...routeProps}
+                                                         rootStore={this.props.rootStore}
+                                                         title="Управление группами"
+                                            >
+                                                <OAdmGroupView {...routeProps}
+                                                               rootStore={this.props.rootStore}
+                                                               title={this.getTitle('Управление группами')}
+                                                />
+                                            </OMenuLayout>}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/users"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OMenuLayout {...routeProps}
+                                                         rootStore={this.props.rootStore}
+                                                         title="Управление пользователями"
+                                            >
+                                                <OAdmUserView {...routeProps}
+                                                              rootStore={this.props.rootStore}
+                                                              title={this.getTitle('Управление пользователями')}
+                                                />
+                                            </OMenuLayout>}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/square-roles"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OMenuLayout {...routeProps}
+                                                         rootStore={this.props.rootStore}
+                                                         title="Управление ролями на площадке"
+                                            >
+                                                <OSqrRoleView {...routeProps}
+                                                              rootStore={this.props.rootStore}
+                                                              title={this.getTitle('Управление ролями на площадке')}
+                                                />
+                                            </OMenuLayout>}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/squares"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OMenuLayout {...routeProps}
+                                                         rootStore={this.props.rootStore}
+                                                         title="Управление площадками"
+                                            >
+                                                <OSqrSquareView {...routeProps}
+                                                                rootStore={this.props.rootStore}
+                                                                title={this.getTitle('Управление площадками')}
+                                                />
+                                            </OMenuLayout>}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/timers"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OMenuLayout {...routeProps}
+                                                         rootStore={this.props.rootStore}
+                                                         title="Просмотр таймеров"
+                                            >
+                                                <OSqrTimerView {...routeProps}
+                                                               rootStore={this.props.rootStore}
+                                                               title={this.getTitle('Просмотр таймеров')}
+                                                />
+                                            </OMenuLayout>}
+                        />
                         <Route path="*">
                             <Redirect to="/"/>
                         </Route>
                     </Switch>
                 </Router>
-                <DevsToast ref={this.toastRef} appendTo="self"/></>
+                <DevsToast ref={this.toastRef} appendTo="self"/>
+            </>
         )
     }
 }

@@ -5,7 +5,7 @@ export const devsGridDateTimeFormatter: ValueFormatterFunc = <TData, TValue>(par
         return ''
     }
     try {
-        return new Date(<string>params.value).toLocaleString();
+        return new Date(params.value as string).toLocaleString();
     } catch (e) {
     }
     return 'Неверная дата';

@@ -2,7 +2,6 @@ import './AdmUser.view.scss';
 import React from "react";
 import {BaseViewProps} from "../../interfaces/BaseViewProps";
 import {observer} from "mobx-react";
-import ViewHeader from "../../components/ViewHeader/ViewHeader";
 import DevsSplitter from "@ajholl/devsuikit/dist/DevsSplitter";
 import DevsSplitterPanel from "@ajholl/devsuikit/dist/DevsSplitterPanel";
 import DevsTabView from "@ajholl/devsuikit/dist/DevsTabView";
@@ -23,7 +22,6 @@ export class AdmUserView extends React.Component<AdmUserViewProps> {
         return (
             <div className="adm_user_view">
                 <OAdmUserCard rootStore={this.props.rootStore}/>
-                <ViewHeader title="Управление пользователями"/>
                 <div className="adm_user_view__content">
                     <DevsSplitter layout="vertical">
                         <DevsSplitterPanel>

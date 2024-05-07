@@ -2,7 +2,6 @@ import React from "react";
 import {BaseViewProps} from "../../interfaces/BaseViewProps";
 import './SqrTimer.view.scss';
 import {observer} from "mobx-react";
-import ViewHeader from "../../components/ViewHeader/ViewHeader";
 import DevsSelect from "@ajholl/devsuikit/dist/DevsSelect";
 import {SqrTimer} from "./components/SqrTimer";
 import {SqrTimerStore} from "./SqrTimer.store";
@@ -25,7 +24,6 @@ export class SqrTimerView extends React.Component<SqrTimerViewProps> {
 
     render() {
         return <div className="sqr_timer_view">
-            <ViewHeader title="Просмотр таймров"/>
             <div className="sqr_timer_view__content">
                 <div className="timer_toolbar">
                     <DevsSelect ref={this.selectRef}

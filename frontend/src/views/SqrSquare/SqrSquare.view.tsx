@@ -2,7 +2,6 @@ import {observer} from "mobx-react";
 import React from "react";
 import {BaseViewProps} from "../../interfaces/BaseViewProps";
 import './SqrSquare.view.scss';
-import ViewHeader from "../../components/ViewHeader/ViewHeader";
 import OSqrSquareCard from "./components/SqrSquareCard";
 import OSqrSquare from "./components/SqrSquare";
 import DevsSplitter from "@ajholl/devsuikit/dist/DevsSplitter";
@@ -25,7 +24,6 @@ export class SqrSquareView extends React.Component<SqrSquareViewProps> {
         return (
             <div className="sqr_square_view">
                 <OSqrSquareCard rootStore={this.props.rootStore}/>
-                <ViewHeader title="Управление площадками"/>
                 <div className="sqr_square_view__content">
                     <DevsSplitter layout="vertical">
                         <DevsSplitterPanel>

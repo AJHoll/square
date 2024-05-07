@@ -1,6 +1,5 @@
 import {BaseViewProps} from '../../interfaces/BaseViewProps';
 import React from 'react';
-import ViewHeader from '../../components/ViewHeader/ViewHeader';
 import {observer} from 'mobx-react';
 import './SqrRole.view.scss';
 import OSqrRoleCard from "./components/SqrRoleCard";
@@ -19,7 +18,6 @@ export class SqrRoleView extends React.Component<SqrRoleViewProps> {
         return (
             <div className="adm_square_role_view">
                 <OSqrRoleCard rootStore={this.props.rootStore}/>
-                <ViewHeader title="Управление ролями на площадке"/>
                 <div className="adm_square_role_view__content">
                     <OSqrRole rootStore={this.props.rootStore}/>
                 </div>
