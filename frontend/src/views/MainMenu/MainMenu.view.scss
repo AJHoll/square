@@ -1,3 +1,5 @@
+@import '@ajholl/devsuikit/dist/scss/devs';
+
 .app_main_menu {
   display: flex;
   flex-direction: column;
@@ -5,6 +7,17 @@
   align-items: center;
   flex: auto;
   overflow: hidden;
+
+  &__logout {
+    color: $color-secondary;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: center;
+    width: 60%;
+    max-width: 1000px;
+  }
 
   &__search {
     display: flex;
@@ -25,9 +38,6 @@
     padding-bottom: 50px;
     flex: none;
 
-    img {
-      width: 100px;
-    }
 
     &-text {
       span {

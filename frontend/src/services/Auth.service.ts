@@ -36,6 +36,7 @@ export default class AuthService {
     logout(): void {
         sessionStorage.setItem(this._squareTokenName, 'null');
         this._userService.user = undefined;
+        window.location.reload();
     }
 
     checkAndParseToken(): void {

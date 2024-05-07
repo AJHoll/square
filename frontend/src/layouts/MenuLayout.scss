@@ -46,8 +46,16 @@
     flex: auto;
   }
 
-  .devs_menu_home_btn:hover {
-    cursor: pointer;
+  .devs_menu_home_btn {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .p-menubar {
