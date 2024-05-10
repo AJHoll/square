@@ -7,6 +7,7 @@ import AdmGroupService from './AdmGroup.service';
 import AdmUserService from "./AdmUser.service";
 import SqrRoleService from "./SqrRole.service";
 import SqrSquareService from "./SqrSquare.service";
+import {SqrManageCriteriaService} from "./SqrManageCriteria.service";
 
 export default class RootService {
     restUrl: string = 'http://localhost:1024'; // TODO: Переделать потом на config.json в assets
@@ -19,4 +20,5 @@ export default class RootService {
     krnMenuService: KrnMenuService = new KrnMenuService(this);
     sqrRoleService: SqrRoleService = new SqrRoleService(this);
     sqrSquareService: SqrSquareService = new SqrSquareService(this);
+    sqrManageCriteriaService: SqrManageCriteriaService = new SqrManageCriteriaService(this);
 }

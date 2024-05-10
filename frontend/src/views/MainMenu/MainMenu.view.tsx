@@ -73,7 +73,7 @@ export class MainMenuView extends React.Component<MainMenuProps> {
                                onChange={(event) => this.mainMenuStore.menuFilter = event.target?.value}
                     />
                 </div>
-                <div className="app_main_menu__content devs_styled_scrool">
+                <div className="app_main_menu__content">
                     {
                         this.mainMenuStore.menu.map((group) => (
                             <MainMenuGroup key={group.id} id={group.id} title={group.title} icon={group.icon}

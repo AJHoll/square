@@ -1,0 +1,46 @@
+.sqr_manage_subcriteria {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 15px;
+  border-left-width: 3px;
+
+  &__key {
+    font-size: 20px;
+    font-weight: 600;
+    align-self: start;
+    padding-top: 10px;
+    padding-left: 10px;
+  }
+
+  &__right {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+
+    .sqr_manage_subcriteria__title {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      height: 100%;
+      gap: 15px;
+
+
+      &-order {
+        flex: none;
+      }
+
+      &-caption {
+        flex: auto;
+      }
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 15px;
+  }
+}

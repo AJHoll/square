@@ -9,7 +9,7 @@ import {SqrTimerDto} from "../../dtos/SqrTimer.dto";
 export class SqrTimerStore {
 
     private readonly _rootStore: RootStore;
-    private readonly _sqrSqareService: SqrSquareService;
+    private readonly _sqrSquareService: SqrSquareService;
 
     private _selectSquareRef: React.RefObject<DevsSelect> | undefined;
     private _mainTimerChangeClass: string = '';
@@ -86,13 +86,13 @@ export class SqrTimerStore {
     constructor(rootStore: RootStore,
                 sqrSquareService: SqrSquareService) {
         this._rootStore = rootStore;
-        this._sqrSqareService = sqrSquareService;
+        this._sqrSquareService = sqrSquareService;
         makeAutoObservable(this);
     }
 
     async init(selectRef: React.RefObject<DevsSelect>): Promise<void> {
         this._selectSquareRef = selectRef;
-        this.squares = (await this._sqrSqareService.getSquares()).map((square) => ({
+        this.squares = (await this._sqrSquareService.getSquares()).map((square) => ({
             label: square.caption!,
             value: square.id!
         }));
@@ -114,7 +114,7 @@ export class SqrTimerStore {
     }
 
     async syncTimers(): Promise<void> {
-        this.timers = await this._sqrSqareService.getSquareTimers(+this.selectedSquare!.value);
+        this.timers = await this._sqrSquareService.getSquareTimers(+this.selectedSquare!.value);
     }
 
     changeMainTimer(): void {

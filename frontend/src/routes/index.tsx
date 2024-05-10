@@ -12,6 +12,7 @@ import OSqrSquareView from "../views/SqrSquare/SqrSquare.view";
 import OSqrTimerView from "../views/SqrTimer/SqrTimer.view";
 import OMainMenuView from "../views/MainMenu/MainMenu.view";
 import OMenuLayout from "../layouts/MenuLayout";
+import OSqrManageCriteriaView from "../views/SqrManageCriteria/SqrManageCriteria.view";
 
 interface RoutesProps extends StoreProps {
 }
@@ -129,6 +130,20 @@ export default class Routes extends React.Component<RoutesProps> {
                                                 <OSqrTimerView {...routeProps}
                                                                rootStore={this.props.rootStore}
                                                                title={this.getTitle('Просмотр таймеров')}
+                                                />
+                                            </OMenuLayout>}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/manage-criteria"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OMenuLayout {...routeProps}
+                                                         rootStore={this.props.rootStore}
+                                                         title="Управление критериями"
+                                            >
+                                                <OSqrManageCriteriaView {...routeProps}
+                                                                        rootStore={this.props.rootStore}
+                                                                        title={this.getTitle('Управление критериями')}
                                                 />
                                             </OMenuLayout>}
                         />

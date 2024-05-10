@@ -22,7 +22,7 @@ body {
   }
 }
 
-.devs_styled_scrool {
+* {
   &::-webkit-scrollbar, div::-webkit-scrollbar {
     width: 10px;
     height: 10px;

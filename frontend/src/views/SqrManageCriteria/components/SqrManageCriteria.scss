@@ -1,0 +1,36 @@
+.sqr_manage_criteria {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 100%;
+  border-left-width: 3px;
+
+  &__title {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+  }
+
+  &__key {
+    flex: 0.5;
+  }
+
+  &__caption {
+    flex: auto;
+  }
+
+  &__mark {
+    flex: 1;
+  }
+
+  &__delete, &__create {
+    flex: none;
+    align-self: flex-start;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+}
