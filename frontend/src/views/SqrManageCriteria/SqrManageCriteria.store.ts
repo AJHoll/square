@@ -50,6 +50,7 @@ export class SqrManageCriteriaStore {
 
     set criterias(value: SqrCriteriaDto[]) {
         this._criterias = value;
+        this._criterias.forEach((criteria) => this.recalcSumSubcriteriaMark(criteria));
     }
 
     private readonly _aspectTypes: SelectOption[] = [
@@ -190,6 +191,7 @@ export class SqrManageCriteriaStore {
         const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
         if (criteria !== undefined) {
             criteria.subcriterias = criteria.subcriterias.filter((subcriteria) => subcriteria.id !== subcriteriaId);
+            this.recalcSumSubcriteriaMark(criteria);
         }
     }
 
@@ -288,6 +290,7 @@ export class SqrManageCriteriaStore {
                 const aspect = subcriteria.aspects.find((aspect) => aspect.id === aspectId);
                 if (aspect !== undefined) {
                     aspect.mark = aspectMark;
+                    this.recalcSumSubcriteriaMark(criteria);
                 }
             }
         }
@@ -301,6 +304,7 @@ export class SqrManageCriteriaStore {
             const subcriteria = criteria.subcriterias.find((subcriteria) => subcriteria.id === subcriteriaId);
             if (subcriteria !== undefined) {
                 subcriteria.aspects = subcriteria.aspects.filter((aspect) => aspect.id !== aspectId);
+                this.recalcSumSubcriteriaMark(criteria);
             }
         }
     }
@@ -404,5 +408,13 @@ export class SqrManageCriteriaStore {
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
             }));
         }
+    }
+
+    recalcSumSubcriteriaMark(criteria: SqrCriteriaDto): void {
+        criteria.sumSubcriteriaMark = criteria.subcriterias.reduce((sumCriteria, subcriteria) => {
+            return sumCriteria + subcriteria.aspects.reduce((sumAspect, aspect) => {
+                return sumAspect + +aspect.mark;
+            }, 0);
+        }, 0);
     }
 }

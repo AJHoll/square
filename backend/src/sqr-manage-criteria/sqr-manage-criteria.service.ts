@@ -160,7 +160,7 @@ export class SqrManageCriteriaService {
         for (const criteria of criterias) {
             sheet.duplicateRow(headerStartRowIdx, 1, true);
             const headerRow = sheet.getRow(headerStartRowIdx);
-            headerRow.getCell('D').value = criteria.key;
+            headerRow.getCell('C').value = criteria.key;
             headerRow.getCell('E').value = criteria.caption;
             headerRow.getCell('F').value = +criteria.mark;
             headerStartRowIdx++;
@@ -270,7 +270,9 @@ export class SqrManageCriteriaService {
                     aspectRow.getCell('H').value = null;
                     aspectRow.getCell('I').value = aspect.sectionKey ?? '-';
                     aspectRow.getCell('J').value = +aspect.mark;
-                    if (ai < subcriteria.aspects.length - 1 || (aspect.extra ?? []).length > 0) {
+                    if (ai < subcriteria.aspects.length - 1 ||
+                        (aspect.extra ?? []).length > 0 ||
+                        criteria.subcriterias[sci + 1]) {
                         sheet.duplicateRow(duplicateRowIdx, 1, true);
                         duplicateRowIdx++;
                     }

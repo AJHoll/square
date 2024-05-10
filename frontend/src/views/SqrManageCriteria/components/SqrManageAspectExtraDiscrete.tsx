@@ -39,7 +39,8 @@ export class SqrManageAspectExtraDiscrete extends React.Component<SqrManageAspec
                             </label>
                             <label className="sqr_manage_aspect_extra_item__mark">
                                 Вес ошибки
-                                <DevsInput value={extra.mark}
+                                <DevsInput keyFilter="num"
+                                           value={extra.mark}
                                            onChange={(event) =>
                                                this.sqrManageCriteriaStore.setAspectExtraMark(criteria.id, subcriteria.id, aspect.id, extra.id, event.target.value)}
                                 />

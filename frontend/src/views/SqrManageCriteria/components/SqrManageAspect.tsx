@@ -53,7 +53,8 @@ export class SqrManageAspect extends React.Component<SqrManageAspectProps> {
                 </label>
                 <label className="aspect_mark">
                     Вес аспекта
-                    <DevsInput value={aspect.mark}
+                    <DevsInput keyFilter="num"
+                               value={aspect.mark}
                                onChange={(event) =>
                                    this.sqrManageCriteriaStore.setAspectMark(criteria.id, subcriteria.id, aspect.id, event.target.value)}
                     />
