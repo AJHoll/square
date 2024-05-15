@@ -24,6 +24,7 @@ import {SqrSquareUserDto} from "../dtos/sqr-square-user.dto";
 import {SqrTeamDto} from "../dtos/sqr-team.dto";
 import {SqrSquareTeamUserDto} from "../dtos/sqr-square-team-user.dto";
 import {SqrTimerDto} from "../dtos/sqr-timer.dto";
+import {SqrSquareEvalGroupDto} from "../dtos/sqr-square-eval-group.dto";
 
 @Controller('sqr-square')
 export class SqrSquareController {
@@ -266,5 +267,23 @@ export class SqrSquareController {
                     @Param('squareId') squareId: SqrSquareDto['id'],
                     @Param('timerId') timerId: SqrTimerDto['id']): Promise<void> {
         await this.sqrRoleService.stopTimer(user, squareId, timerId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-eval-group')
+    async getSquareEvalGroups(@Request() {user}: { user: UserDto },
+                              @Param('squareId') squareId: SqrSquareDto['id']): Promise<SqrSquareEvalGroupDto[]> {
+        return this.sqrRoleService.getSquareEvalGroups(squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-eval-group/:evalGroupId/user')
+    async getSquareEvalGroupUsers(@Request() {user}: { user: UserDto },
+                                  @Param('squareId') squareId: SqrSquareDto['id'],
+                                  @Param('evalGroupId', ParseFloatPipe) evalGroupId: SqrSquareEvalGroupDto['id'],
+                                  @Query('showAllUsers', ParseBoolPipe) showAllUsers: boolean,
+                                  @Query('fastFilter') fastFilter: string
+    ): Promise<SqrSquareTeamUserDto[]> {
+        return this.sqrRoleService.getSquareEvalGroupUsers(squareId, evalGroupId, showAllUsers, fastFilter);
     }
 }

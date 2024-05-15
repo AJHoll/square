@@ -1,23 +1,25 @@
-import { makeAutoObservable } from 'mobx';
+import {makeAutoObservable} from 'mobx';
 import RootService from './Root.service';
-import { UserDto } from '../dtos/User.dto';
+import {UserDto} from '../dtos/User.dto';
 
 export default class UserService {
-  rootService: RootService;
-  private readonly restPath: string;
+    rootService: RootService;
 
-  private _user: UserDto | undefined;
-  get user(): UserDto | undefined {
-    return this._user;
-  }
+    get restPath(): string {
+        return `${this.rootService.restUrl}/user`;
+    }
 
-  set user(value: UserDto | undefined) {
-    this._user = value;
-  }
+    private _user: UserDto | undefined;
+    get user(): UserDto | undefined {
+        return this._user;
+    }
 
-  constructor(rootService: RootService) {
-    this.rootService = rootService;
-    this.restPath = `${this.rootService.restUrl}/user`;
-    makeAutoObservable(this);
-  }
+    set user(value: UserDto | undefined) {
+        this._user = value;
+    }
+
+    constructor(rootService: RootService) {
+        this.rootService = rootService;
+        makeAutoObservable(this);
+    }
 }

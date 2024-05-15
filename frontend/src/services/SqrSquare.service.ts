@@ -8,42 +8,46 @@ import {UFilterItem} from "../components/DevsGrid/DevsGridFilterItem";
 import {SqrTeamDto} from "../dtos/SqrTeam.dto";
 import {SqrSquareTeamUserDto} from "../dtos/SqrSquareTeamUserDto";
 import {SqrTimerDto} from "../dtos/SqrTimer.dto";
+import {SqrSquareEvalGroupDto} from "../dtos/SqrSquareEvalGroup.dto";
+import {SqrSquareEvalGroupUserDto} from "../dtos/SqrSquareEvalGroupUser.dto";
 
 export default class SqrSquareService {
     private readonly _rootService: RootService;
-    private readonly _restPath: string;
+
+    get restPath(): string {
+        return `${this._rootService.restUrl}/sqr-square`;
+    }
 
     constructor(rootService: RootService) {
         this._rootService = rootService;
-        this._restPath = `${rootService.restUrl}/sqr-square`;
         makeAutoObservable(this);
     }
 
     async getSquares(): Promise<SqrSquareDto[]> {
-        return (await axios.get<SqrSquareDto[]>(`${this._restPath}`)).data;
+        return (await axios.get<SqrSquareDto[]>(`${this.restPath}`)).data;
     }
 
     async getSquare(id: SqrSquareDto['id']): Promise<SqrSquareDto> {
-        return (await axios.get<SqrSquareDto>(`${this._restPath}/${id}`)).data;
+        return (await axios.get<SqrSquareDto>(`${this.restPath}/${id}`)).data;
     }
 
     async createSquare(sqrSquare: SqrSquareDto): Promise<SqrSquareDto> {
-        return (await axios.post<SqrSquareDto>(`${this._restPath}`, sqrSquare)).data;
+        return (await axios.post<SqrSquareDto>(`${this.restPath}`, sqrSquare)).data;
     }
 
     async editSquare(id: SqrSquareDto['id'], sqrSquare: SqrSquareDto): Promise<SqrSquareDto> {
-        return (await axios.put<SqrSquareDto>(`${this._restPath}/${id}`, sqrSquare)).data;
+        return (await axios.put<SqrSquareDto>(`${this.restPath}/${id}`, sqrSquare)).data;
     }
 
     async deleteSquares(ids: SqrSquareDto['id'][]): Promise<void> {
-        await axios.delete(`${this._restPath}/${ids.join(',')}`);
+        await axios.delete(`${this.restPath}/${ids.join(',')}`);
     }
 
     async getSquareRoles(squareId: SqrSquareDto['id']): Promise<SqrRoleDto[]> {
         if (!squareId) {
             return [];
         }
-        return (await axios.get<SqrRoleDto[]>(`${this._restPath}/${squareId}/sqr-role`)).data;
+        return (await axios.get<SqrRoleDto[]>(`${this.restPath}/${squareId}/sqr-role`)).data;
     }
 
     async getSquareRoleUsers(squareId: SqrSquareDto['id'], roleId: SqrRoleDto['id'], filters: {
@@ -52,7 +56,7 @@ export default class SqrSquareService {
         if (!squareId || !roleId) {
             return [];
         }
-        return (await axios.get<SqrSquareUserDto[]>(`${this._restPath}/${squareId}/sqr-role/${roleId}/user`, {
+        return (await axios.get<SqrSquareUserDto[]>(`${this.restPath}/${squareId}/sqr-role/${roleId}/user`, {
             params: {
                 showAllUsers,
                 fastFilter: filters['fast_filter']?.value !== undefined && filters['fast_filter']?.value !== '' ? filters['fast_filter'].value : undefined
@@ -63,36 +67,36 @@ export default class SqrSquareService {
     async addUsersToSquareRole(squareId: SqrSquareDto['id'],
                                userIds: SqrSquareUserDto['id'][],
                                roleIds: SqrRoleDto['id'][]): Promise<void> {
-        await axios.post(`${this._restPath}/${squareId}/sqr-role/${roleIds.join(',')}/user/${userIds.join(',')}`, {});
+        await axios.post(`${this.restPath}/${squareId}/sqr-role/${roleIds.join(',')}/user/${userIds.join(',')}`, {});
     }
 
     async removeUsersFromSquareRole(squareId: SqrSquareDto['id'],
                                     userIds: SqrSquareUserDto['id'][],
                                     roleIds: SqrRoleDto['id'][]): Promise<void> {
-        await axios.delete(`${this._restPath}/${squareId}/sqr-role/${roleIds.join(',')}/user/${userIds.join(',')}`, {});
+        await axios.delete(`${this.restPath}/${squareId}/sqr-role/${roleIds.join(',')}/user/${userIds.join(',')}`, {});
     }
 
     async getSquareTeams(squareId: SqrSquareDto['id']): Promise<SqrTeamDto[]> {
         if (!squareId) {
             return [];
         }
-        return (await axios.get<SqrTeamDto[]>(`${this._restPath}/${squareId}/sqr-team`)).data;
+        return (await axios.get<SqrTeamDto[]>(`${this.restPath}/${squareId}/sqr-team`)).data;
     }
 
     async getSquareTeam(squareId: SqrSquareDto['id'], teamId: SqrTeamDto['id']): Promise<SqrTeamDto> {
-        return (await axios.get<SqrTeamDto>(`${this._restPath}/${squareId}/sqr-team/${teamId}`)).data;
+        return (await axios.get<SqrTeamDto>(`${this.restPath}/${squareId}/sqr-team/${teamId}`)).data;
     }
 
     async deleteTeams(squareId: SqrSquareDto['id'], teamIds: SqrTeamDto['id'][]): Promise<void> {
-        await axios.delete<void>(`${this._restPath}/${squareId}/sqr-team/${teamIds.join(',')}`);
+        await axios.delete<void>(`${this.restPath}/${squareId}/sqr-team/${teamIds.join(',')}`);
     }
 
     async createTeam(squareId: SqrSquareDto['id'], team: SqrTeamDto): Promise<SqrTeamDto> {
-        return (await axios.post<SqrTeamDto>(`${this._restPath}/${squareId}/sqr-team`, team)).data;
+        return (await axios.post<SqrTeamDto>(`${this.restPath}/${squareId}/sqr-team`, team)).data;
     }
 
     async editTeam(squareId: SqrSquareDto['id'], teamId: SqrTeamDto['id'], team: SqrTeamDto): Promise<SqrTeamDto> {
-        return (await axios.put<SqrTeamDto>(`${this._restPath}/${squareId}/sqr-team/${teamId}`, team)).data;
+        return (await axios.put<SqrTeamDto>(`${this.restPath}/${squareId}/sqr-team/${teamId}`, team)).data;
     }
 
     async getSquareTeamUsers(squareId: SqrSquareDto['id'],
@@ -104,7 +108,7 @@ export default class SqrSquareService {
         if (!squareId || !teamId) {
             return [];
         }
-        return (await axios.get<SqrSquareTeamUserDto[]>(`${this._restPath}/${squareId}/sqr-team/${teamId}/user`, {
+        return (await axios.get<SqrSquareTeamUserDto[]>(`${this.restPath}/${squareId}/sqr-team/${teamId}/user`, {
             params: {
                 showAllUsers,
                 fastFilter: filters['fast_filter']?.value !== undefined && filters['fast_filter']?.value !== '' ? filters['fast_filter'].value : undefined
@@ -115,66 +119,89 @@ export default class SqrSquareService {
     async addUsersToSquareTeam(squareId: SqrSquareDto['id'],
                                userIds: SqrSquareTeamUserDto['id'][],
                                teamIds: SqrTeamDto['id'][]): Promise<void> {
-        await axios.post(`${this._restPath}/${squareId}/sqr-team/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
+        await axios.post(`${this.restPath}/${squareId}/sqr-team/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
     }
 
     async removeUsersFromSquareTeam(squareId: SqrSquareDto['id'],
                                     userIds: SqrSquareTeamUserDto['id'][],
                                     teamIds: SqrTeamDto['id'][]): Promise<void> {
-        await axios.delete(`${this._restPath}/${squareId}/sqr-team/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
+        await axios.delete(`${this.restPath}/${squareId}/sqr-team/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
     }
 
     async getSquareTimers(squareId: SqrSquareDto['id']): Promise<SqrTimerDto[]> {
-        return (await axios.get<SqrTimerDto[]>(`${this._restPath}/${squareId}/sqr-timer`)).data;
+        return (await axios.get<SqrTimerDto[]>(`${this.restPath}/${squareId}/sqr-timer`)).data;
     }
 
     async getSquareTimer(squareId: SqrSquareDto['id'], timerId: SqrTimerDto['id']): Promise<SqrTimerDto> {
-        return (await axios.get<SqrTimerDto>(`${this._restPath}/${squareId}/sqr-timer/${timerId}`)).data;
+        return (await axios.get<SqrTimerDto>(`${this.restPath}/${squareId}/sqr-timer/${timerId}`)).data;
     }
 
     async recreateTimer(squareId: SqrSquareDto['id'], timerId?: SqrTimerDto['id']): Promise<void> {
         if (timerId) {
-            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/recreate`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/${timerId}/recreate`);
         } else {
-            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/recreate`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/recreate`);
         }
     }
 
     async setAllTimerCount(squareId: SqrSquareDto['id'],
                            count: SqrTimerDto['count']): Promise<void> {
-        await axios.patch<void>(`${this._restPath}/${squareId}/sqr-timer/set-count/${count}`);
+        await axios.patch<void>(`${this.restPath}/${squareId}/sqr-timer/set-count/${count}`);
     }
 
     async setTimerCount(squareId: SqrSquareDto['id'],
                         timerId: SqrTimerDto['id'],
                         count: SqrTimerDto['count']): Promise<void> {
-        await axios.patch<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/set-count/${count}`);
+        await axios.patch<void>(`${this.restPath}/${squareId}/sqr-timer/${timerId}/set-count/${count}`);
     }
 
     async startTimer(squareId: SqrSquareDto['id'],
                      timerId?: SqrTimerDto['id']): Promise<void> {
         if (timerId) {
-            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/start`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/${timerId}/start`);
         } else {
-            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/start`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/start`);
         }
     }
 
     async pauseTimer(squareId: SqrSquareDto['id'],
                      timerId?: SqrTimerDto['id']): Promise<void> {
         if (timerId) {
-            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/pause`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/${timerId}/pause`);
         } else {
-            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/pause`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/pause`);
         }
     }
 
     async stopTimer(squareId: SqrSquareDto['id'],
                     timerId?: SqrTimerDto['id']): Promise<void> {
         if (timerId) {
-            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/${timerId}/stop`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/${timerId}/stop`);
         } else {
-            await axios.post<void>(`${this._restPath}/${squareId}/sqr-timer/stop`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/stop`);
         }
+    }
+
+    async getSquareEvalGroups(squareId: SqrSquareDto['id']): Promise<SqrSquareEvalGroupDto[]> {
+        if (!squareId) {
+            return [];
+        }
+        return (await axios.get<SqrSquareEvalGroupDto[]>(`${this.restPath}/${squareId}/sqr-eval-group`)).data;
+    }
+
+    async getSquareEvalGroupUsers(squareId: SqrSquareDto['id'],
+                                  evalGroupId: SqrSquareEvalGroupDto['id'],
+                                  filters: { [p: string]: UFilterItem },
+                                  showAllUsers: boolean): Promise<SqrSquareEvalGroupUserDto[]> {
+        if (!squareId || !evalGroupId) {
+            return [];
+        }
+        return (await axios.get<SqrSquareEvalGroupUserDto[]>(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupId}/user`,
+            {
+                params: {
+                    showAllUsers,
+                    fastFilter: filters['fast_filter']?.value !== undefined && filters['fast_filter']?.value !== '' ? filters['fast_filter'].value : undefined
+                }
+            })).data;
     }
 }

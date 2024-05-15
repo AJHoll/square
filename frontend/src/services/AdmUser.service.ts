@@ -7,43 +7,45 @@ import {AdmUserGroupDto} from "../dtos/AdmUserGroup.dto";
 
 export default class AdmUserService {
     private readonly _rootService: RootService;
-    private readonly _restPath: string;
+
+    get restPath(): string {
+        return `${this._rootService.restUrl}/adm-user`;
+    }
 
     constructor(rootService: RootService) {
         this._rootService = rootService;
-        this._restPath = `${rootService.restUrl}/adm-user`;
         makeAutoObservable(this);
     }
 
     async getUsers(): Promise<AdmUserDto[]> {
-        return (await axios.get<AdmUserDto[]>(`${this._restPath}`)).data;
+        return (await axios.get<AdmUserDto[]>(`${this.restPath}`)).data;
     }
 
     async getUser(id: AdmUserDto['id']): Promise<AdmUserDto> {
-        return (await axios.get<AdmUserDto>(`${this._restPath}/${id}`)).data;
+        return (await axios.get<AdmUserDto>(`${this.restPath}/${id}`)).data;
     }
 
     async createUser(admRole: AdmUserDto): Promise<AdmUserDto> {
-        return (await axios.post<AdmUserDto>(`${this._restPath}`, admRole)).data;
+        return (await axios.post<AdmUserDto>(`${this.restPath}`, admRole)).data;
     }
 
     async editUser(id: AdmUserDto['id'], admRole: AdmUserDto): Promise<AdmUserDto> {
-        return (await axios.put<AdmUserDto>(`${this._restPath}/${id}`, admRole)).data;
+        return (await axios.put<AdmUserDto>(`${this.restPath}/${id}`, admRole)).data;
     }
 
     async deleteUsers(ids: AdmUserDto['id'][]): Promise<void> {
-        await axios.delete(`${this._restPath}/${ids.join(',')}`);
+        await axios.delete(`${this.restPath}/${ids.join(',')}`);
     }
 
     async getUserGroups(userId: AdmUserDto['id']): Promise<AdmUserGroupDto[]> {
-        return (await axios.get<AdmUserGroupDto[]>(`${this._restPath}/${userId}/group/`)).data;
+        return (await axios.get<AdmUserGroupDto[]>(`${this.restPath}/${userId}/group/`)).data;
     }
 
     async addGroupsToUser(userId: AdmUserDto['id'], groups: AdmGroupDto[]): Promise<void> {
-        await axios.post<void>(`${this._restPath}/${userId}/group/${groups.map(r => r.id).join(',')}`);
+        await axios.post<void>(`${this.restPath}/${userId}/group/${groups.map(r => r.id).join(',')}`);
     }
 
     async removeGroupsFromUser(userId: AdmGroupDto['id'], groups: AdmUserGroupDto[]): Promise<void> {
-        await axios.delete<void>(`${this._restPath}/${userId}/group/${groups.map(u => u.id).join(',')}`);
+        await axios.delete<void>(`${this.restPath}/${userId}/group/${groups.map(u => u.id).join(',')}`);
     }
 }

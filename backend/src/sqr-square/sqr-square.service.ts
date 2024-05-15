@@ -9,6 +9,8 @@ import {SqrSquareTeamUserDto} from "../dtos/sqr-square-team-user.dto";
 import {SqrTimerDto} from "../dtos/sqr-timer.dto";
 import {SqrTimerState, SqrTimerStateWithTitles} from "../dtos/sqr-timer-state";
 import {Interval} from "@nestjs/schedule";
+import {SqrSquareEvalGroupDto} from "../dtos/sqr-square-eval-group.dto";
+import {SqrSquareEvalGroupUserDto} from "../dtos/sqr-square-eval-group-user.dto";
 
 @Injectable()
 export class SqrSquareService {
@@ -564,5 +566,17 @@ export class SqrSquareService {
                 }
             }
         });
+    }
+
+    async getSquareEvalGroups(squareId: SqrSquareDto['id']): Promise<SqrSquareEvalGroupDto[]> {
+        return [];
+    }
+
+    async getSquareEvalGroupUsers(squareId: SqrSquareDto['id'],
+                                  evalGroupId: SqrSquareEvalGroupDto['id'],
+                                  showAllUsers: boolean,
+                                  fastFilter: string,
+    ): Promise<SqrSquareEvalGroupUserDto[]> {
+        return [];
     }
 }

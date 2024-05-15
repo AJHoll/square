@@ -15,6 +15,7 @@ export class SqrManageCriteriaView extends React.Component<SqrManageCriteriaView
     selectRef: React.RefObject<DevsSelect> = React.createRef();
 
     async componentDidMount(): Promise<void> {
+        document.title = this.props.title;
         await this.sqrManageCriteriaStore.init(this.selectRef);
     }
 

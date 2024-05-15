@@ -6,13 +6,15 @@ import UserService from './User.service';
 export default class AuthService {
     private readonly _rootService: RootService;
     private readonly _userService: UserService;
-    private readonly _restPath: string;
     private readonly _squareTokenName = 'square-token';
+
+    get restPath(): string {
+        return `${this._rootService.restUrl}/auth`;
+    }
 
     constructor(rootService: RootService) {
         this._rootService = rootService;
         this._userService = rootService.userService;
-        this._restPath = `${this._rootService.restUrl}/auth`;
         makeAutoObservable(this);
         this.setHeaders();
 
@@ -27,14 +29,14 @@ export default class AuthService {
     }
 
     async login(username: string, password: string): Promise<void> {
-        const response = await axios.post<{ access_token: string }>(`${this._restPath}/login`, {username, password});
-        sessionStorage.setItem(this._squareTokenName, response.data.access_token);
+        const response = await axios.post<{ access_token: string }>(`${this.restPath}/login`, {username, password});
+        window.sessionStorage.setItem(this._squareTokenName, response.data.access_token);
         this.checkAndParseToken();
         this.setHeaders();
     }
 
     logout(): void {
-        sessionStorage.setItem(this._squareTokenName, 'null');
+        window.sessionStorage.setItem(this._squareTokenName, 'null');
         this._userService.user = undefined;
         window.location.reload();
     }

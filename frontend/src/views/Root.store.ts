@@ -22,6 +22,8 @@ import SqrSquareTeamCardStore from "./SqrSquare/components/SqrSquareTeamCard.sto
 import SqrSquareTimerStore from "./SqrSquare/components/SqrSquareTimer.store";
 import {SqrTimerStore} from "./SqrTimer/SqrTimer.store";
 import {SqrManageCriteriaStore} from "./SqrManageCriteria/SqrManageCriteria.store";
+import SqrSquareEvalGroupStore from "./SqrSquare/components/SqrSquareEvalGroup.store";
+import {makeAutoObservable} from "mobx";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
@@ -50,6 +52,7 @@ export default class RootStore {
     readonly sqrSquareUserStore: SqrSquareUserStore = new SqrSquareUserStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareCardStore: SqrSquareCardStore = new SqrSquareCardStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareTimerStore: SqrSquareTimerStore = new SqrSquareTimerStore(this, this.rootService.sqrSquareService);
+    readonly sqrSquareEvalGroupStore: SqrSquareEvalGroupStore = new SqrSquareEvalGroupStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareStore: SqrSquareStore = new SqrSquareStore(this, this.rootService.sqrSquareService);
 
     readonly sqrTimerStore: SqrTimerStore = new SqrTimerStore(this, this.rootService.sqrSquareService);
@@ -60,5 +63,9 @@ export default class RootStore {
 
     get message(): DevsToast {
         return this.toastRef!.current!;
+    }
+
+    constructor() {
+        makeAutoObservable(this);
     }
 }

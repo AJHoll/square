@@ -7,6 +7,7 @@ import {makeAutoObservable} from "mobx";
 import SqrSquareUserStore from "./SqrSquareUser.store";
 import SqrSquareTeamStore from "./SqrSquareTeam.store";
 import SqrSquareTimerStore from "./SqrSquareTimer.store";
+import SqrSquareEvalGroupStore from "./SqrSquareEvalGroup.store";
 
 export default class SqrSquareStore {
     private readonly _rootStore: RootStore;
@@ -15,6 +16,7 @@ export default class SqrSquareStore {
     private readonly _sqrSquareTeamStore: SqrSquareTeamStore;
     private readonly _sqrSquareTimerStore: SqrSquareTimerStore;
     private readonly _sqrSquareService: SqrSquareService;
+    private readonly _sqrSquareEvalGRoupStore: SqrSquareEvalGroupStore;
 
     private _gridApi: GridApi<SqrSquareDto> | undefined;
     set gridApi(value: GridApi<SqrSquareDto>) {
@@ -49,6 +51,7 @@ export default class SqrSquareStore {
         this._sqrSquareTeamStore = rootStore.sqrSquareTeamStore;
         this._sqrSquareCardStore = rootStore.sqrSquareCardStore;
         this._sqrSquareTimerStore = rootStore.sqrSquareTimerStore;
+        this._sqrSquareEvalGRoupStore = rootStore.sqrSquareEvalGroupStore;
         this._sqrSquareService = sqrSquareService;
         makeAutoObservable(this);
     }
@@ -71,6 +74,7 @@ export default class SqrSquareStore {
             this._sqrSquareUserStore.setSquareId(squareId),
             this._sqrSquareTeamStore.setSquareId(squareId),
             this._sqrSquareTimerStore.setSquareId(squareId),
+            this._sqrSquareEvalGRoupStore.setSquareId(squareId),
         ]);
     }
 

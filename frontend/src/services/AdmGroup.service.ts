@@ -9,47 +9,49 @@ import {AdmUserDto} from "../dtos/AdmUser.dto";
 
 export default class AdmGroupService {
     private readonly _rootService: RootService;
-    private readonly _restPath: string;
+
+    get restPath(): string {
+        return `${this._rootService.restUrl}/adm-group`;
+    }
 
     constructor(rootService: RootService) {
         this._rootService = rootService;
-        this._restPath = `${rootService.restUrl}/adm-group`;
         makeAutoObservable(this);
     }
 
     async getGroups(): Promise<AdmGroupDto[]> {
-        return (await axios.get<AdmGroupDto[]>(`${this._restPath}`)).data;
+        return (await axios.get<AdmGroupDto[]>(`${this.restPath}`)).data;
     }
 
     async getGroupsExcludeUser(userId: AdmUserDto['id']): Promise<AdmGroupDto[]> {
-        return (await axios.get<AdmGroupDto[]>(`${this._restPath}/exclude-user/${userId}`)).data;
+        return (await axios.get<AdmGroupDto[]>(`${this.restPath}/exclude-user/${userId}`)).data;
     }
 
     async getGroup(id: AdmGroupDto['id']): Promise<AdmGroupDto> {
-        return (await axios.get<AdmGroupDto>(`${this._restPath}/${id}`)).data;
+        return (await axios.get<AdmGroupDto>(`${this.restPath}/${id}`)).data;
     }
 
     async createGroup(admRole: AdmGroupDto): Promise<AdmGroupDto> {
-        return (await axios.post<AdmGroupDto>(`${this._restPath}`, admRole)).data;
+        return (await axios.post<AdmGroupDto>(`${this.restPath}`, admRole)).data;
     }
 
     async editGroup(id: AdmGroupDto['id'], admRole: AdmGroupDto): Promise<AdmGroupDto> {
-        return (await axios.put<AdmGroupDto>(`${this._restPath}/${id}`, admRole)).data;
+        return (await axios.put<AdmGroupDto>(`${this.restPath}/${id}`, admRole)).data;
     }
 
     async deleteGroups(ids: AdmGroupDto['id'][]): Promise<void> {
-        await axios.delete(`${this._restPath}/${ids.join(',')}`);
+        await axios.delete(`${this.restPath}/${ids.join(',')}`);
     }
 
     async getGroupRoles(groupId: AdmGroupDto['id']): Promise<AdmGroupRoleDto[]> {
-        return (await axios.get<AdmRoleMenuDto[]>(`${this._restPath}/${groupId}/role/`)).data;
+        return (await axios.get<AdmRoleMenuDto[]>(`${this.restPath}/${groupId}/role/`)).data;
     }
 
     async addRolesToGroup(groupId: AdmGroupDto['id'], roles: AdmRoleDto[]): Promise<void> {
-        await axios.post<void>(`${this._restPath}/${groupId}/role/${roles.map(r => r.id).join(',')}`);
+        await axios.post<void>(`${this.restPath}/${groupId}/role/${roles.map(r => r.id).join(',')}`);
     }
 
     async remoeRolesFromGroup(groupId: AdmGroupDto['id'], roles: AdmGroupRoleDto[]): Promise<void> {
-        await axios.delete<void>(`${this._restPath}/${groupId}/role/${roles.map(r => r.id).join(',')}`);
+        await axios.delete<void>(`${this.restPath}/${groupId}/role/${roles.map(r => r.id).join(',')}`);
     }
 }

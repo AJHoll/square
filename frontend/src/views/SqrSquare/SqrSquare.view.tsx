@@ -11,6 +11,7 @@ import DevsTabPanel from "@ajholl/devsuikit/dist/DevsTabPanel";
 import OSqrSquareUser from "./components/SqrSquareUser";
 import OSqrSquareTeam from "./components/SqrSquareTeam";
 import OSqrSquareTimer from "./components/SqrSquareTimer";
+import OSqrSquareEvalGroup from "./components/SqrSquareEvalGroup";
 
 interface SqrSquareViewProps extends BaseViewProps {
 }
@@ -39,6 +40,9 @@ export class SqrSquareView extends React.Component<SqrSquareViewProps> {
                                 </DevsTabPanel>
                                 <DevsTabPanel header="Таймеры">
                                     <OSqrSquareTimer rootStore={this.props.rootStore}/>
+                                </DevsTabPanel>
+                                <DevsTabPanel header="Группы проверки">
+                                    <OSqrSquareEvalGroup rootStore={this.props.rootStore}/>
                                 </DevsTabPanel>
                             </DevsTabView>
                         </DevsSplitterPanel>
