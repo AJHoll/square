@@ -382,22 +382,12 @@ export class SqrManageCriteriaStore {
         }
     }
 
-    async uploadFromXLSX(): Promise<void> {
-        try {
-            const [fileHandle] = await window.showOpenFilePicker({
-                multiple: false,
-                types: [{
-                    description: 'Файлы .xlsx',
-                    accept: {
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
-                    }
-                }]
-            });
-            const file = await fileHandle.getFile();
-            this.criterias = await this._sqrManageCriteriaService.uploadXlsx(this._selectedSquare?.value as SqrSquareDto['id'],
-                file);
-        } catch (e) {
-            console.log(e);
+    async uploadFromXLSX(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
+        console.log();
+        const file = event.target.files?.item(0);
+        if (file) {
+            this.criterias = await this._sqrManageCriteriaService
+                .uploadXlsx(this._selectedSquare?.value as SqrSquareDto['id'], file);
         }
     }
 

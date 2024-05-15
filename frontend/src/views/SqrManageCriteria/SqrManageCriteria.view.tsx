@@ -13,6 +13,7 @@ export interface SqrManageCriteriaViewProps extends BaseViewProps {
 export class SqrManageCriteriaView extends React.Component<SqrManageCriteriaViewProps> {
     sqrManageCriteriaStore: SqrManageCriteriaStore = this.props.rootStore.sqrManageCriteriaStore;
     selectRef: React.RefObject<DevsSelect> = React.createRef();
+    inputFileRef: React.RefObject<HTMLInputElement> = React.createRef();
 
     async componentDidMount(): Promise<void> {
         document.title = this.props.title;
@@ -53,8 +54,15 @@ export class SqrManageCriteriaView extends React.Component<SqrManageCriteriaView
                             color="info"
                             title="из XLSX"
                             icon="lni lni-download"
-                            onClick={() => this.sqrManageCriteriaStore.uploadFromXLSX()}
+                            onClick={() => this.inputFileRef.current?.click()}
                 />
+                <input hidden
+                       ref={this.inputFileRef}
+                       type="file"
+                       multiple={false}
+                       onChange={async (event) => {
+                           await this.sqrManageCriteriaStore.uploadFromXLSX(event)
+                       }}/>
                 <DevsButton template="filled"
                             color="secondary"
                             title="в XLSX"
