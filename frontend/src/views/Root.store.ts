@@ -24,6 +24,7 @@ import {SqrTimerStore} from "./SqrTimer/SqrTimer.store";
 import {SqrManageCriteriaStore} from "./SqrManageCriteria/SqrManageCriteria.store";
 import SqrSquareEvalGroupStore from "./SqrSquare/components/SqrSquareEvalGroup.store";
 import {makeAutoObservable} from "mobx";
+import {ConfigFile} from "../dtos/ConfigFile";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
@@ -65,7 +66,8 @@ export default class RootStore {
         return this.toastRef!.current!;
     }
 
-    constructor() {
+    constructor(jsonConfig: ConfigFile) {
+        this.rootService.restUrl = jsonConfig.api;
         makeAutoObservable(this);
     }
 }

@@ -7,15 +7,20 @@ import './index.scss';
 import DevsContent from '@ajholl/devsuikit/dist/DevsContent';
 import Routes from './routes';
 import RootStore from './views/Root.store';
+import {ConfigFile} from "./dtos/ConfigFile";
 
 setTimeout(() => {
     const root = ReactDOM.createRoot(
         document.getElementById('root') as HTMLElement,
     );
-    const rootStore: RootStore = new RootStore();
-    root.render(
-        <DevsContent>
-            <Routes rootStore={rootStore}/>
-        </DevsContent>,
-    );
+    fetch('/config.json')
+        .then(async (config) => {
+            const jsonConfig: ConfigFile = (await config.json());
+            const rootStore: RootStore = new RootStore(jsonConfig);
+            root.render(
+                <DevsContent>
+                    <Routes rootStore={rootStore}/>
+                </DevsContent>,
+            );
+        });
 }, 1000);

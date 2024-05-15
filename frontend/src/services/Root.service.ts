@@ -33,6 +33,5 @@ export default class RootService {
 
     constructor() {
         makeAutoObservable(this);
-        fetch('/config.json').then(async (config) => (this.restUrl = (await config.json())['api']));
     }
 }
