@@ -128,6 +128,17 @@ export class SqrManageCriteriaStore {
         }
     }
 
+    setCriteriaModule(criteriaId: SqrCriteriaDto['id'],
+                      criteriaModule: SqrCriteriaDto['module']): void {
+        const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
+        if (criteria !== undefined) {
+            criteria.module = criteriaModule;
+            for (const subcriteria of criteria.subcriterias) {
+                this.setSubcriteriaModule(criteriaId, subcriteria.id, criteria.module);
+            }
+        }
+    }
+
     setCriteriaCaption(criteriaId: SqrCriteriaDto['id'],
                        criteriaCaption: SqrCriteriaDto['caption']): void {
         const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
@@ -169,6 +180,21 @@ export class SqrManageCriteriaStore {
                 subcriteria.order = subcriteriaOrder;
                 if (subcriteriaOrder !== undefined) {
                     criteria.subcriterias.sort((a, b) => +a.order - +b.order);
+                }
+            }
+        }
+    }
+
+    setSubcriteriaModule(criteriaId: SqrCriteriaDto['id'],
+                         subcriteriaId: SqrSubcriteriaDto['id'],
+                         subcriteriaModule: SqrSubcriteriaDto['module']): void {
+        const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
+        if (criteria !== undefined) {
+            const subcriteria = criteria.subcriterias.find((subcriteria) => subcriteria.id === subcriteriaId);
+            if (subcriteria !== undefined) {
+                subcriteria.module = subcriteriaModule;
+                for (const aspect of subcriteria.aspects) {
+                    this.setAspectModule(criteriaId, subcriteriaId, aspect.id, subcriteriaModule);
                 }
             }
         }
@@ -242,6 +268,22 @@ export class SqrManageCriteriaStore {
                             aspect.extra = undefined;
                         }
                     }
+                }
+            }
+        }
+    }
+
+    setAspectModule(criteriaId: SqrCriteriaDto['id'],
+                    subcriteriaId: SqrSubcriteriaDto['id'],
+                    aspectId: SqrAspectDto['id'],
+                    aspectModule: SqrAspectDto['module']): void {
+        const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
+        if (criteria !== undefined) {
+            const subcriteria = criteria.subcriterias.find((subcriteria) => subcriteria.id === subcriteriaId);
+            if (subcriteria !== undefined) {
+                const aspect = subcriteria.aspects.find((aspect) => aspect.id === aspectId);
+                if (aspect !== undefined) {
+                    aspect.module = aspectModule;
                 }
             }
         }

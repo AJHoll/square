@@ -12,7 +12,11 @@
   }
 
   &__key {
-    flex: 0.5;
+    flex: none;
+  }
+
+  &__module {
+    flex: none;
   }
 
   &__caption {

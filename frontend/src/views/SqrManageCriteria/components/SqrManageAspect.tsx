@@ -12,6 +12,7 @@ import DevsInput from "@ajholl/devsuikit/dist/DevsInput";
 import DevsButton from "@ajholl/devsuikit/dist/DevsButton";
 import {SqrManageCriteriaStore} from "../SqrManageCriteria.store";
 import OSqrManageAspectExtra from "./SqrManageAspectExtra";
+import {DevsInputWrapper} from "../../../components/DevsInputWrapper/DevsInputWrapper";
 
 export interface SqrManageAspectProps extends StoreProps {
     criteria: SqrCriteriaDto,
@@ -36,6 +37,16 @@ export class SqrManageAspect extends React.Component<SqrManageAspectProps> {
                                 onChange={(event) =>
                                     this.sqrManageCriteriaStore.setAspectType(criteria.id, subcriteria.id, aspect.id, event.target.value.value)}
                     />
+                </label>
+                <label className="aspect_module">
+                    Модуль
+                    {
+                        !!subcriteria.module ? <DevsInputWrapper value={aspect.module}/>
+                            : <DevsInput keyFilter="pint"
+                                         value={aspect.module}
+                                         onChange={(event) => this.sqrManageCriteriaStore.setAspectModule(criteria.id, subcriteria.id, aspect.id, event.target.value)}
+                            />
+                    }
                 </label>
                 <label className="aspect_caption">
                     Название аспекта

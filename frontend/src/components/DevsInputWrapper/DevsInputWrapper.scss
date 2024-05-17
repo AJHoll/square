@@ -1,0 +1,111 @@
+@import "@ajholl/devsuikit/dist/scss/devs";
+
+.devs_input {
+  $input-color: $color-secondary;
+  $input-hover-color: $color-primary;
+  $input-invalid-color: $color-danger;
+  $input-cover-trans-coeff: 0.95;
+  height: 31px;
+  font-size: 15px;
+  transition: 200ms;
+
+  .devs_input__prefix_icon, .devs_input__addon_before {
+    border-color: $input-color;
+    background-color: transparentize($input-color, $input-cover-trans-coeff);
+    color: $input-color;
+    padding: 0;
+  }
+
+  .devs_input__suffix_icon, .devs_input__addon_after {
+    border-color: $input-color;
+    background-color: transparentize($input-color, $input-cover-trans-coeff);
+    color: $input-color;
+    padding: 0;
+  }
+
+  &.devs_focused {
+    box-shadow: 0 3px 5px 1px transparentize($input-hover-color, 0.75);
+
+    .p-inputtext {
+      color: $input-hover-color;
+
+      &::-webkit-input-placeholder {
+        color: $input-hover-color;
+      }
+    }
+
+    .devs_input__prefix_icon, .devs_input__addon_before {
+      border-color: $input-hover-color;
+      background-color: transparentize($input-hover-color, $input-cover-trans-coeff);
+      color: $input-hover-color;
+    }
+
+    .devs_input__suffix_icon, .devs_input__addon_after {
+      border-color: $input-hover-color;
+      background-color: transparentize($input-hover-color, $input-cover-trans-coeff);
+      color: $input-hover-color;
+    }
+
+    &.devs_input__invalid {
+      box-shadow: 0 3px 5px 1px transparentize($input-invalid-color, 0.75);
+    }
+  }
+
+  &__invalid {
+    .p-inputtext {
+      color: $input-invalid-color !important;
+      border-color: $input-invalid-color !important;
+
+      &::-webkit-input-placeholder {
+        color: $input-invalid-color !important;
+      }
+    }
+
+    .devs_input__prefix_icon, .devs_input__addon_before {
+      border-color: $input-invalid-color !important;
+      background-color: transparentize($input-invalid-color, $input-cover-trans-coeff) !important;
+      color: $input-invalid-color !important;
+    }
+
+    .devs_input__suffix_icon, .devs_input__addon_after {
+      border-color: $input-invalid-color !important;
+      background-color: transparentize($input-invalid-color, $input-cover-trans-coeff) !important;
+      color: $input-invalid-color !important;
+    }
+  }
+
+  &:hover {
+    .p-inputtext {
+      color: $input-hover-color;
+      border-color: $input-hover-color;
+
+      &::-webkit-input-placeholder {
+        color: $input-hover-color;
+      }
+    }
+
+    .devs_input__prefix_icon, .devs_input__addon_before {
+      border-color: $input-hover-color;
+      background-color: transparentize($input-hover-color, $input-cover-trans-coeff);
+      color: $input-hover-color;
+    }
+
+    .devs_input__suffix_icon, .devs_input__addon_after {
+      border-color: $input-hover-color;
+      background-color: transparentize($input-hover-color, $input-cover-trans-coeff);
+      color: $input-hover-color;
+    }
+  }
+
+  &__disabled {
+    pointer-events: none;
+
+    .devs_input__prefix_icon, .devs_input__addon_before {
+      opacity: 0.6;
+    }
+
+    .devs_input__suffix_icon, .devs_input__addon_after {
+      opacity: 0.6;
+    }
+  }
+}

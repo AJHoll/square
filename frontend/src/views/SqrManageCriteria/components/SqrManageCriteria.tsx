@@ -27,6 +27,13 @@ export class SqrManageCriteria extends React.Component<SqrManageCriteriaProps> {
                                onChange={(event) => this.sqrManageCriteriaStore.setCriteriaKey(criteria.id, event.target.value)}
                     />
                 </label>
+                <label className="sqr_manage_criteria__module">
+                    Модуль
+                    <DevsInput keyFilter="pint"
+                               value={criteria.module}
+                               onChange={(event) => this.sqrManageCriteriaStore.setCriteriaModule(criteria.id, event.target.value)}
+                    />
+                </label>
                 <label className="sqr_manage_criteria__caption">
                     Название критерия
                     <DevsInput value={criteria.caption}

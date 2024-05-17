@@ -8,4 +8,5 @@ export interface SqrAspectDto {
     sectionKey?: string;
     mark: string;
     extra?: SqrAspectExtraDto[];
+    module?: string;
 }

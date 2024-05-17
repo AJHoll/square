@@ -9,6 +9,7 @@ import {SqrCriteriaDto} from "../../../dtos/SqrCriteria.dto";
 import DevsInput from "@ajholl/devsuikit/dist/DevsInput";
 import DevsButton from "@ajholl/devsuikit/dist/DevsButton";
 import OSqrManageAspect from "./SqrManageAspect";
+import {DevsInputWrapper} from "../../../components/DevsInputWrapper/DevsInputWrapper";
 
 interface SqrManageSubcriteriaProps extends StoreProps {
     criteria: SqrCriteriaDto,
@@ -32,6 +33,17 @@ export class SqrManageSubcriteria extends React.Component<SqrManageSubcriteriaPr
                                    onChange={(event) =>
                                        this.sqrManageCriteriaStore.setSubcriteriaOrder(criteria.id, subcriteria.id, event.target.value)}
                         />
+                    </label>
+                    <label className="sqr_manage_subcriteria__title-module">
+                        Модуль
+                        {
+                            !!criteria.module ? <DevsInputWrapper value={criteria.module}/>
+                                : <DevsInput keyFilter="pint"
+                                             value={criteria.module}
+                                             onChange={(event) => this.sqrManageCriteriaStore.setSubcriteriaModule(criteria.id, subcriteria.id, event.target.value)}
+                                />
+                        }
+
                     </label>
                     <label className="sqr_manage_subcriteria__title-caption">
                         Название субкритерия

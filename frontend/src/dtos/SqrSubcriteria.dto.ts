@@ -5,4 +5,5 @@ export interface SqrSubcriteriaDto {
     order: string;
     caption: string;
     aspects: SqrAspectDto[];
+    module?: string;
 }
