@@ -3,4 +3,5 @@ export interface SqrSquareEvalGroupDto {
     squareId?: number;
     code?: string;
     caption?: string;
+    modules?: string;
 }

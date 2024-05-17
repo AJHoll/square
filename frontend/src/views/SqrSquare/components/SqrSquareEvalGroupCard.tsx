@@ -21,7 +21,7 @@ export class SqrSquareEvalGroupCard extends React.Component<SqrSquareEvalGroupCa
                          cardItemWasChanged={this.sqrSquareEvalGroupCardStore.cardItemWasChanged}
                          onCloseBtnClicked={() => this.sqrSquareEvalGroupCardStore.close()}
                          onCancelBtnClicked={() => this.sqrSquareEvalGroupCardStore.close()}
-                         modalStyle={{width: '500px', height: '240px'}}
+                         modalStyle={{width: '500px', height: '300px'}}
                          onSaveBtnClicked={async () => await this.sqrSquareEvalGroupCardStore.save()}
         >
             <DevsForm labelflex={2} inputflex={5}>
@@ -34,6 +34,11 @@ export class SqrSquareEvalGroupCard extends React.Component<SqrSquareEvalGroupCa
                 <DevsFormItem label="Наименование">
                     <DevsInput value={this.sqrSquareEvalGroupCardStore.sqrEvalGroup.caption}
                                onChange={(event) => this.sqrSquareEvalGroupCardStore.setCaption(event.target.value)}
+                    />
+                </DevsFormItem>
+                <DevsFormItem label="Модули">
+                    <DevsInput value={this.sqrSquareEvalGroupCardStore.sqrEvalGroup.modules}
+                               onChange={(event) => this.sqrSquareEvalGroupCardStore.setModules(event.target.value)}
                     />
                 </DevsFormItem>
             </DevsForm>

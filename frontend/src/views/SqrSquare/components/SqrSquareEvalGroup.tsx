@@ -33,12 +33,17 @@ export class SqrSquareEvalGroup extends React.Component<SqrSquareEvalGroupProps>
         {
             field: 'code',
             headerName: 'Системное имя',
-            flex: 3
+            flex: 2
         },
         {
             field: 'caption',
             headerName: 'Наименование',
-            flex: 7
+            flex: 6
+        },
+        {
+            field: 'modules',
+            headerName: 'Модули',
+            flex: 2
         },
     ]
 

@@ -572,11 +572,12 @@ export class SqrSquareService {
         const recs = await this.databaseService.sqr_square_eval_group.findMany({
             where: {square_id: squareId}
         });
-        return recs.map((rec) => ({
+        return recs.map((rec): SqrSquareEvalGroupDto => ({
             id: rec.id.toNumber(),
             squareId: rec.square_id.toNumber(),
             code: rec.code,
             caption: rec.caption,
+            modules: rec.modules,
         }));
     }
 
@@ -590,6 +591,7 @@ export class SqrSquareService {
             squareId: rec.square_id.toNumber(),
             code: rec.code,
             caption: rec.caption,
+            modules: rec.modules,
         };
     }
 
@@ -637,6 +639,7 @@ export class SqrSquareService {
                 square_id: squareId,
                 code: evalGroup.code,
                 caption: evalGroup.caption,
+                modules: evalGroup.modules,
             }
         });
         return {
@@ -656,6 +659,7 @@ export class SqrSquareService {
                 square_id: squareId,
                 code: evalGroup.code,
                 caption: evalGroup.caption,
+                modules: evalGroup.modules,
             }
         });
         return {

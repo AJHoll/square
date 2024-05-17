@@ -113,11 +113,13 @@ export class SqrManageCriteriaStore {
     }
 
     async saveCriterias(): Promise<void> {
-        await this._sqrManageCriteriaService.saveCriterias(this._selectedSquare?.value as SqrSquareDto['id'], this._criterias)
+        await this._sqrManageCriteriaService.saveCriterias(this._selectedSquare?.value as SqrSquareDto['id'], this._criterias);
+        this._rootStore.message.success('Данные успешно сохранены');
     }
 
     async clearCriterias(): Promise<void> {
         this.criterias = [];
+        this._rootStore.message.success('Данные успешно очищены', 'Данные были удалены только на стороне браузера, для полного удаления данных нажмите на кнопку "Сохранить"');
     }
 
     setCriteriaKey(criteriaId: SqrCriteriaDto['id'],

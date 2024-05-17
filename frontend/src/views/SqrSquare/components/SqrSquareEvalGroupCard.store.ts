@@ -71,6 +71,11 @@ export class SqrSquareEvalGroupCardStore {
         this._cardItemWasChanged = true;
     }
 
+    setModules(modules: SqrSquareEvalGroupDto['modules']): void {
+        this._sqrEvalGroup.modules = modules;
+        this._cardItemWasChanged = true;
+    }
+
     close(): void {
         this._cardItemWasChanged = false;
         this._sqrEvalGroup = {};
