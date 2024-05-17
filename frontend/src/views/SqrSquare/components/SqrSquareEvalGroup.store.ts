@@ -6,9 +6,11 @@ import {SqrSquareEvalGroupDto} from "../../../dtos/SqrSquareEvalGroup.dto";
 import {SqrSquareEvalGroupUserDto} from "../../../dtos/SqrSquareEvalGroupUser.dto";
 import {SqrSquareDto} from "../../../dtos/SqrSquare.dto";
 import {UFilterItem} from "../../../components/DevsGrid/DevsGridFilterItem";
+import {SqrSquareEvalGroupCardStore} from "./SqrSquareEvalGroupCard.store";
 
 export default class SqrSquareEvalGroupStore {
     private readonly _rootStore: RootStore;
+    private readonly _sqrSquareEvalGroupCardStore: SqrSquareEvalGroupCardStore;
     private readonly _sqrSquareService: SqrSquareService;
 
     private _squareEvalGroupGridApi: GridApi<SqrSquareEvalGroupDto> | undefined;
@@ -52,29 +54,26 @@ export default class SqrSquareEvalGroupStore {
     }
 
     get editEvalGroupBtnDisabled(): boolean {
-        return false;
-        // return (this._selectionSqrTeams ?? []).length !== 1;
+        return (this._selectionSqrEvalGroups ?? []).length !== 1;
     }
 
     get deleteEvalGroupsBtnDisabled(): boolean {
-        return false;
-        // return (this._selectionSqrTeams ?? []).length === 0;
+        return (this._selectionSqrEvalGroups ?? []).length === 0;
     }
 
     get addUsersToEvalGroupBtnDisabled(): boolean {
-        return false;
-        /*         return this._mode !== 'modify' || (this._selectionSquareTeamUsers ?? []).length === 0
-                     || this._selectionSquareTeamUsers.findIndex(su => su.user?.activeInSquareRole) !== -1;*/
+        return this._mode !== 'modify' || (this._selectionSquareEvalGroupUsers ?? []).length === 0
+            || this._selectionSquareEvalGroupUsers.findIndex(gu => gu.activeInSquareRole) !== -1;
     }
 
     get removeUsersFromEvalGroupBtnDisabled(): boolean {
-        return false;
-        /*         return this._mode !== 'modify' || (this._selectionSquareTeamUsers ?? []).length === 0
-                     || this._selectionSquareTeamUsers.findIndex(su => !su.user?.activeInSquareRole) !== -1;*/
+        return this._mode !== 'modify' || (this._selectionSquareEvalGroupUsers ?? []).length === 0
+            || this._selectionSquareEvalGroupUsers.findIndex(gu => !gu.activeInSquareRole) !== -1;
     }
 
     constructor(rootStore: RootStore, sqrSquareService: SqrSquareService) {
         this._rootStore = rootStore;
+        this._sqrSquareEvalGroupCardStore = this._rootStore.sqrSquareEvalGroupCardStore;
         this._sqrSquareService = sqrSquareService;
         makeAutoObservable(this);
     }
@@ -125,29 +124,29 @@ export default class SqrSquareEvalGroupStore {
 
     async onEvalGroupUserFilterConfirm(filters: { [p: string]: UFilterItem }): Promise<void> {
         this._squareEvalGroupUserFilters = filters;
-        await this.reloadSqrEvalGroups();
+        await this.reloadSqrEvalGroupUsers();
     }
 
     createEvalGroup(): void {
-        /*        this._sqrSquareTeamCardStore.title = 'Новая команда';
-                this._sqrSquareTeamCardStore.sqrTeam = {squareId: this._squareId};
-                this._sqrSquareTeamCardStore.visible = true;*/
+        this._sqrSquareEvalGroupCardStore.title = 'Новая группа проверки';
+        this._sqrSquareEvalGroupCardStore.sqrEvalGroup = {squareId: this._squareId};
+        this._sqrSquareEvalGroupCardStore.visible = true;
     }
 
     async editEvalGroup(): Promise<void> {
-        /*const team = await this._sqrSquareService.getSquareTeam(this._squareId, this._selectionSqrTeams[0]?.id);
-        if (team) {
-            this._sqrSquareTeamCardStore.title = `Редактирование команды (id: ${team.id})`;
-            this._sqrSquareTeamCardStore.sqrTeam = team;
-            this._sqrSquareTeamCardStore.visible = true;
+        const evalGroup = await this._sqrSquareService.getSquareEvalGroup(this._squareId, this._selectionSqrEvalGroups[0]?.id);
+        if (evalGroup) {
+            this._sqrSquareEvalGroupCardStore.title = `Редактирование команды (id: ${evalGroup.id})`;
+            this._sqrSquareEvalGroupCardStore.sqrEvalGroup = evalGroup;
+            this._sqrSquareEvalGroupCardStore.visible = true;
         } else {
-            this._rootStore.message.error('Ошибка получения данных', `Не удалость найти команду с ID = ${this._selectionSqrTeams[0]}`);
-        }*/
+            this._rootStore.message.error('Ошибка получения данных', `Не удалость найти команду с ID = ${this._selectionSqrEvalGroups[0].id}`);
+        }
     }
 
     async deleteEvalGroups(): Promise<void> {
-        /*        await this._sqrSquareService.deleteTeams(this._squareId, this._selectionSqrTeams.map(team => team.id));
-                await this.reloadSqrTeams();*/
+        await this._sqrSquareService.deleteEvalGroups(this._squareId, this._selectionSqrEvalGroups.map(evalGroup => evalGroup.id));
+        await this.reloadSqrEvalGroups();
     }
 
     async toggleMode(): Promise<void> {
@@ -156,16 +155,16 @@ export default class SqrSquareEvalGroupStore {
     }
 
     async addUsersToEvalGroup(): Promise<void> {
-        /*        await this._sqrSquareService.addUsersToSquareTeam(this._squareId,
-                    this._selectionSquareTeamUsers.map(su => su.id),
-                    this._selectionSqrTeams.map(r => r.id));
-                await this.reloadSqrSquareTeamUsers();*/
+        await this._sqrSquareService.addUsersToEvalGroup(this._squareId,
+            this._selectionSquareEvalGroupUsers.map(gu => gu.id),
+            this._selectionSqrEvalGroups.map(g => g.id));
+        await this.reloadSqrEvalGroupUsers();
     }
 
     async removeUsersFromEvalGroup(): Promise<void> {
-        /*        await this._sqrSquareService.removeUsersFromSquareTeam(this._squareId,
-                    this._selectionSquareTeamUsers.map(su => su.id),
-                    this._selectionSqrTeams.map(r => r.id));
-                await this.reloadSqrSquareTeamUsers();*/
+        await this._sqrSquareService.removeUsersFromEvalGroup(this._squareId,
+            this._selectionSquareEvalGroupUsers.map(gu => gu.id),
+            this._selectionSqrEvalGroups.map(g => g.id));
+        await this.reloadSqrEvalGroupUsers();
     }
 }

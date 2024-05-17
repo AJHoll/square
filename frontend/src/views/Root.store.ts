@@ -25,6 +25,7 @@ import {SqrManageCriteriaStore} from "./SqrManageCriteria/SqrManageCriteria.stor
 import SqrSquareEvalGroupStore from "./SqrSquare/components/SqrSquareEvalGroup.store";
 import {makeAutoObservable} from "mobx";
 import {ConfigFile} from "../dtos/ConfigFile";
+import {SqrSquareEvalGroupCardStore} from "./SqrSquare/components/SqrSquareEvalGroupCard.store";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
@@ -53,6 +54,7 @@ export default class RootStore {
     readonly sqrSquareUserStore: SqrSquareUserStore = new SqrSquareUserStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareCardStore: SqrSquareCardStore = new SqrSquareCardStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareTimerStore: SqrSquareTimerStore = new SqrSquareTimerStore(this, this.rootService.sqrSquareService);
+    readonly sqrSquareEvalGroupCardStore: SqrSquareEvalGroupCardStore = new SqrSquareEvalGroupCardStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareEvalGroupStore: SqrSquareEvalGroupStore = new SqrSquareEvalGroupStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareStore: SqrSquareStore = new SqrSquareStore(this, this.rootService.sqrSquareService);
 

@@ -569,7 +569,28 @@ export class SqrSquareService {
     }
 
     async getSquareEvalGroups(squareId: SqrSquareDto['id']): Promise<SqrSquareEvalGroupDto[]> {
-        return [];
+        const recs = await this.databaseService.sqr_square_eval_group.findMany({
+            where: {square_id: squareId}
+        });
+        return recs.map((rec) => ({
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            code: rec.code,
+            caption: rec.caption,
+        }));
+    }
+
+    async getSquareEvalGroup(squareId: SqrSquareDto['id'],
+                             evalGroupId: SqrSquareEvalGroupDto['id']): Promise<SqrSquareEvalGroupDto> {
+        const rec = await this.databaseService.sqr_square_eval_group.findFirst({
+            where: {square_id: squareId, id: evalGroupId}
+        });
+        return {
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            code: rec.code,
+            caption: rec.caption,
+        };
     }
 
     async getSquareEvalGroupUsers(squareId: SqrSquareDto['id'],
@@ -577,6 +598,102 @@ export class SqrSquareService {
                                   showAllUsers: boolean,
                                   fastFilter: string,
     ): Promise<SqrSquareEvalGroupUserDto[]> {
-        return [];
+        const recs = await this.databaseService.sqr_square_user.findMany({
+            include: {
+                adm_user: true,
+                sqr_role: true,
+            },
+            where: {
+                square_id: squareId,
+                sqr_role: {name: {in: ['chiefExpert', 'deputyChiefExpert', 'technicalExpert', 'teamExpert', 'evaluationExpert']}},
+                eval_group_id: !showAllUsers ? evalGroupId : undefined,
+                adm_user: (fastFilter ?? '').length > 0 ? {
+                    caption: {
+                        contains: fastFilter,
+                        mode: "insensitive"
+                    }
+                } : undefined
+            }
+        });
+        return recs.map((rec) => ({
+            id: rec.id.toNumber(),
+            name: rec.adm_user.name,
+            caption: rec.adm_user.caption,
+            role: {
+                id: rec.sqr_role.id.toNumber(),
+                name: rec.sqr_role.name,
+                caption: rec.sqr_role.caption,
+                description: rec.sqr_role.description,
+                groupId: rec.sqr_role.group_id.toNumber()
+            },
+            activeInSquareRole: rec.eval_group_id?.toNumber() === evalGroupId
+        }));
+    }
+
+    async createSquareEvalGroup(squareId: SqrSquareDto['id'],
+                                evalGroup: SqrSquareEvalGroupDto): Promise<SqrSquareEvalGroupDto> {
+        const rec = await this.databaseService.sqr_square_eval_group.create({
+            data: {
+                square_id: squareId,
+                code: evalGroup.code,
+                caption: evalGroup.caption,
+            }
+        });
+        return {
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            code: rec.code,
+            caption: rec.caption
+        };
+    }
+
+    async editSquareEvalGroup(squareId: SqrSquareDto['id'],
+                              evalGroupId: SqrSquareEvalGroupDto['id'],
+                              evalGroup: SqrSquareEvalGroupDto): Promise<SqrSquareEvalGroupDto> {
+        const rec = await this.databaseService.sqr_square_eval_group.update({
+            where: {square_id: squareId, id: evalGroupId},
+            data: {
+                square_id: squareId,
+                code: evalGroup.code,
+                caption: evalGroup.caption,
+            }
+        });
+        return {
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            code: rec.code,
+            caption: rec.caption
+        };
+    }
+
+    async deleteSquareEvalGroups(squareId: SqrSquareDto['id'], evalGroupIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
+        await this.databaseService.sqr_square_eval_group.deleteMany({
+            where: {square_id: squareId, id: {in: evalGroupIds}}
+        });
+    }
+
+    async addUsersToEvalGroups(squareId: SqrSquareDto['id'],
+                               sqrEvalGroupIds: SqrSquareEvalGroupDto['id'][],
+                               userIds: SqrSquareEvalGroupUserDto['id'][]): Promise<void> {
+        await Promise.all(sqrEvalGroupIds.map(evalGroupId => this.databaseService.sqr_square_user.updateMany({
+            where: {
+                square_id: squareId,
+                id: {in: userIds},
+            },
+            data: {eval_group_id: evalGroupId}
+        })));
+    }
+
+    async removeUsersFromEvalGroups(squareId: SqrSquareDto['id'],
+                                    sqrEvalGroupIds: SqrSquareEvalGroupDto['id'][],
+                                    userIds: SqrSquareEvalGroupUserDto['id'][]): Promise<void> {
+        await Promise.all(sqrEvalGroupIds.map(evalGroupId => this.databaseService.sqr_square_user.updateMany({
+            where: {
+                square_id: squareId,
+                id: {in: userIds},
+                eval_group_id: evalGroupId,
+            },
+            data: {eval_group_id: null}
+        })));
     }
 }

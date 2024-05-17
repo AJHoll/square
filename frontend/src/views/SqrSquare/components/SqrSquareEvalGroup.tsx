@@ -10,6 +10,7 @@ import DevsButton from "@ajholl/devsuikit/dist/DevsButton";
 import {ColDef, GridReadyEvent} from "ag-grid-community";
 import {SqrSquareEvalGroupDto} from "../../../dtos/SqrSquareEvalGroup.dto";
 import {SqrSquareEvalGroupUserDto} from "../../../dtos/SqrSquareEvalGroupUser.dto";
+import OSqrSquareEvalGroupCard from "./SqrSquareEvalGroupCard";
 
 interface SqrSquareEvalGroupProps extends StoreProps {
 }
@@ -73,7 +74,7 @@ export class SqrSquareEvalGroup extends React.Component<SqrSquareEvalGroupProps>
     render() {
         return <DevsSplitter layout="horizontal">
             <DevsSplitterPanel>
-                {/*<OSqrSquareTeamCard rootStore={this.props.rootStore}/>*/}
+                <OSqrSquareEvalGroupCard rootStore={this.props.rootStore}/>
                 <DevsGrid title="Группы проверки"
                           gridDefaultColDef={this.defaultColDef}
                           gridColDef={this.sqrTeamColDef}

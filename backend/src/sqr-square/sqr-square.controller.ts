@@ -25,6 +25,7 @@ import {SqrTeamDto} from "../dtos/sqr-team.dto";
 import {SqrSquareTeamUserDto} from "../dtos/sqr-square-team-user.dto";
 import {SqrTimerDto} from "../dtos/sqr-timer.dto";
 import {SqrSquareEvalGroupDto} from "../dtos/sqr-square-eval-group.dto";
+import {SqrSquareEvalGroupUserDto} from "../dtos/sqr-square-eval-group-user.dto";
 
 @Controller('sqr-square')
 export class SqrSquareController {
@@ -277,13 +278,67 @@ export class SqrSquareController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-eval-group/:evalGroupId')
+    async getSquareEvalGroup(@Request() {user}: { user: UserDto },
+                             @Param('squareId') squareId: SqrSquareDto['id'],
+                             @Param('evalGroupId', ParseFloatPipe) evalGroupId: SqrSquareEvalGroupDto['id']
+    ): Promise<SqrSquareEvalGroupDto> {
+        return this.sqrRoleService.getSquareEvalGroup(squareId, evalGroupId);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get(':squareId/sqr-eval-group/:evalGroupId/user')
     async getSquareEvalGroupUsers(@Request() {user}: { user: UserDto },
                                   @Param('squareId') squareId: SqrSquareDto['id'],
                                   @Param('evalGroupId', ParseFloatPipe) evalGroupId: SqrSquareEvalGroupDto['id'],
                                   @Query('showAllUsers', ParseBoolPipe) showAllUsers: boolean,
                                   @Query('fastFilter') fastFilter: string
-    ): Promise<SqrSquareTeamUserDto[]> {
+    ): Promise<SqrSquareEvalGroupUserDto[]> {
         return this.sqrRoleService.getSquareEvalGroupUsers(squareId, evalGroupId, showAllUsers, fastFilter);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-eval-group')
+    async createSquareEvalGroup(@Request() {user}: { user: UserDto },
+                                @Param('squareId') squareId: SqrSquareDto['id'],
+                                @Body() sqrEvalGroup: SqrSquareEvalGroupDto): Promise<SqrSquareEvalGroupDto> {
+        return this.sqrRoleService.createSquareEvalGroup(squareId, sqrEvalGroup);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put(':squareId/sqr-eval-group/:sqrEvalGroupId')
+    async editSquareEvalGroup(@Request() {user}: { user: UserDto },
+                              @Param('squareId') squareId: SqrSquareDto['id'],
+                              @Param('sqrEvalGroupId') sqrEvalGroupId: SqrSquareEvalGroupDto['id'],
+                              @Body() sqrEvalGroup: SqrSquareEvalGroupDto): Promise<SqrSquareEvalGroupDto> {
+        return this.sqrRoleService.editSquareEvalGroup(squareId, sqrEvalGroupId, sqrEvalGroup);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete(':squareId/sqr-eval-group/:sqrEvalGroupIds')
+    async deleteSquareEvalGroups(@Request() {user}: { user: UserDto },
+                                 @Param('squareId') squareId: SqrSquareDto['id'],
+                                 @Param('sqrEvalGroupIds', ParseArrayPipe) sqrEvalGroupIds: string[]): Promise<void> {
+        await this.sqrRoleService.deleteSquareEvalGroups(squareId, sqrEvalGroupIds.map(val => +val));
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/sqr-eval-group/:sqrEvalGroupIds/user/:userIds')
+    async addUsersToEvalGroups(@Request() {user}: { user: UserDto },
+                               @Param('squareId') squareId: SqrSquareDto['id'],
+                               @Param('sqrEvalGroupIds', ParseArrayPipe) sqrEvalGroupIds: SqrSquareEvalGroupDto['id'][],
+                               @Param('userIds', ParseArrayPipe) userIds: SqrSquareEvalGroupUserDto['id'][]
+    ): Promise<void> {
+        await this.sqrRoleService.addUsersToEvalGroups(squareId, sqrEvalGroupIds, userIds);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete(':squareId/sqr-eval-group/:sqrEvalGroupIds/user/:userIds')
+    async removeUsersFromEvalGroups(@Request() {user}: { user: UserDto },
+                                    @Param('squareId') squareId: SqrSquareDto['id'],
+                                    @Param('sqrEvalGroupIds', ParseArrayPipe) sqrEvalGroupIds: SqrSquareEvalGroupDto['id'][],
+                                    @Param('userIds', ParseArrayPipe) userIds: SqrSquareEvalGroupUserDto['id'][]
+    ): Promise<void> {
+        await this.sqrRoleService.removeUsersFromEvalGroups(squareId, sqrEvalGroupIds, userIds);
     }
 }

@@ -98,6 +98,14 @@ model krn_menu_item {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sqr_criteria {
+  id         Decimal    @id(map: "pk_sqr_criteria") @default(dbgenerated("nextval('seq_sqr_criteria'::regclass)")) @db.Decimal(15, 0)
+  square_id  Decimal    @unique(map: "udx_sqr_criteria_square_id") @db.Decimal(15, 0)
+  criterias  Json       @db.Json
+  sqr_square sqr_square @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_criteria_square_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model sqr_role {
   id              Decimal           @id(map: "pk_sqr_role") @default(dbgenerated("nextval('seq_sqr_role'::regclass)")) @db.Decimal(15, 0)
   name            String            @unique(map: "udx_sqr_role_name") @default("") @db.VarChar(30)
@@ -113,16 +121,42 @@ model sqr_role {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model sqr_square {
-  id               Decimal            @id(map: "pk_sqr_square") @default(dbgenerated("nextval('seq_sqr_square'::regclass)")) @db.Decimal(15, 0)
-  name             String             @unique(map: "udx_sqr_square_name") @default("") @db.VarChar(30)
-  caption          String?            @db.VarChar(254)
-  description      String?            @db.VarChar(4000)
-  sqr_criteria     sqr_criteria?
-  sqr_square_team  sqr_square_team[]
-  sqr_square_timer sqr_square_timer[]
-  sqr_square_user  sqr_square_user[]
+  id                    Decimal                 @id(map: "pk_sqr_square") @default(dbgenerated("nextval('seq_sqr_square'::regclass)")) @db.Decimal(15, 0)
+  name                  String                  @unique(map: "udx_sqr_square_name") @default("") @db.VarChar(30)
+  caption               String?                 @db.VarChar(254)
+  description           String?                 @db.VarChar(4000)
+  sqr_criteria          sqr_criteria?
+  sqr_square_eval_group sqr_square_eval_group[]
+  sqr_square_module     sqr_square_module[]
+  sqr_square_team       sqr_square_team[]
+  sqr_square_timer      sqr_square_timer[]
+  sqr_square_user       sqr_square_user[]
 
   @@index([caption], map: "idx_sqr_square_caption")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sqr_square_eval_group {
+  id              Decimal           @id(map: "pk_sqr_square_eval_group") @default(dbgenerated("nextval('seq_sqr_square_eval_team'::regclass)")) @db.Decimal(15, 0)
+  square_id       Decimal           @db.Decimal(15, 0)
+  caption         String            @db.VarChar(254)
+  code            String            @db.VarChar(254)
+  sqr_square      sqr_square        @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_eval_group_square_id")
+  sqr_square_user sqr_square_user[]
+
+  @@unique([square_id, code], map: "udx_sqr_square_eval_group_square_id_code")
+  @@index([square_id], map: "idx_sqr_square_eval_group_square_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sqr_square_module {
+  id         Decimal    @id(map: "pk_sqr_square_module") @default(dbgenerated("nextval('seq_sqr_square_module'::regclass)")) @db.Decimal(15, 0)
+  square_id  Decimal    @db.Decimal(15, 0)
+  code       String     @db.VarChar(254)
+  caption    String     @db.VarChar(254)
+  sqr_square sqr_square @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_module_sqr_square")
+
+  @@unique([code, square_id], map: "udx_sqr_square_module_code_square_id_code")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -174,24 +208,19 @@ model sqr_square_timer_detail {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model sqr_square_user {
-  id              Decimal          @id(map: "pk_sqr_square_user") @default(dbgenerated("nextval('seq_sqr_square_role'::regclass)")) @db.Decimal(15, 0)
-  square_id       Decimal          @db.Decimal(15, 0)
-  user_id         Decimal          @db.Decimal(15, 0)
-  role_id         Decimal          @db.Decimal(15, 0)
-  team_id         Decimal?         @db.Decimal(15, 0)
-  sqr_role        sqr_role         @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_role_id")
-  sqr_square      sqr_square       @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_square_id")
-  sqr_square_team sqr_square_team? @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_team_id")
-  adm_user        adm_user         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_user_id")
+  id                    Decimal                @id(map: "pk_sqr_square_user") @default(dbgenerated("nextval('seq_sqr_square_role'::regclass)")) @db.Decimal(15, 0)
+  square_id             Decimal                @db.Decimal(15, 0)
+  user_id               Decimal                @db.Decimal(15, 0)
+  role_id               Decimal                @db.Decimal(15, 0)
+  team_id               Decimal?               @db.Decimal(15, 0)
+  eval_group_id         Decimal?               @db.Decimal(15, 0)
+  sqr_square_eval_group sqr_square_eval_group? @relation(fields: [eval_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_eval_group_id")
+  sqr_role              sqr_role               @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_role_id")
+  sqr_square            sqr_square             @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_square_id")
+  sqr_square_team       sqr_square_team?       @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_team_id")
+  adm_user              adm_user               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_user_id")
 
   @@unique([square_id, user_id, role_id], map: "udx_sqr_square_user_square_id_user_id_role_id")
   @@index([team_id], map: "idx_sqr_square_user_team_id")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model sqr_criteria {
-  id         Decimal    @id(map: "pk_sqr_criteria") @default(dbgenerated("nextval('seq_sqr_criteria'::regclass)")) @db.Decimal(15, 0)
-  square_id  Decimal    @unique(map: "udx_sqr_criteria_square_id") @db.Decimal(15, 0)
-  criterias  Json       @db.Json
-  sqr_square sqr_square @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_criteria_square_id")
+  @@index([eval_group_id], map: "idx_sqr_square_user_eval_group_id")
 }

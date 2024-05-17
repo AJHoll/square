@@ -189,6 +189,10 @@ export default class SqrSquareService {
         return (await axios.get<SqrSquareEvalGroupDto[]>(`${this.restPath}/${squareId}/sqr-eval-group`)).data;
     }
 
+    async getSquareEvalGroup(squareId: SqrSquareDto['id'], evalGroupId: SqrSquareEvalGroupDto['id']): Promise<SqrSquareEvalGroupDto> {
+        return (await axios.get<SqrSquareEvalGroupDto>(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupId}`)).data;
+    }
+
     async getSquareEvalGroupUsers(squareId: SqrSquareDto['id'],
                                   evalGroupId: SqrSquareEvalGroupDto['id'],
                                   filters: { [p: string]: UFilterItem },
@@ -204,4 +208,29 @@ export default class SqrSquareService {
                 }
             })).data;
     }
+
+    async createEvalGroup(squareId: SqrSquareDto['id'], evalGroup: SqrSquareEvalGroupDto): Promise<SqrSquareEvalGroupDto> {
+        return (await axios.post<SqrSquareEvalGroupDto>(`${this.restPath}/${squareId}/sqr-eval-group`, evalGroup)).data;
+    }
+
+    async editEvalGroup(squareId: SqrSquareDto['id'], evalGroupId: SqrSquareEvalGroupDto['id'], evalGroup: SqrSquareEvalGroupDto): Promise<SqrSquareEvalGroupDto> {
+        return (await axios.put<SqrSquareEvalGroupDto>(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupId}`, evalGroup)).data;
+    }
+
+    async deleteEvalGroups(squareId: SqrSquareDto['id'], evalGroupIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
+        await axios.delete<void>(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupIds.join(',')}`);
+    }
+
+    async addUsersToEvalGroup(squareId: SqrSquareDto['id'],
+                              userIds: SqrSquareEvalGroupUserDto['id'][],
+                              teamIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
+        await axios.post(`${this.restPath}/${squareId}/sqr-eval-group/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
+    }
+
+    async removeUsersFromEvalGroup(squareId: SqrSquareDto['id'],
+                                   userIds: SqrSquareEvalGroupUserDto['id'][],
+                                   teamIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
+        await axios.delete(`${this.restPath}/${squareId}/sqr-eval-group/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
+    }
+
 }
