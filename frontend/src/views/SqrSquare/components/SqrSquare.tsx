@@ -37,6 +37,10 @@ export class SqrSquare extends React.Component<SqrSquareProps> {
             field: 'description',
             headerName: 'Описание',
         },
+        {
+            field: 'activeModules',
+            headerName: 'Проверяемые модули',
+        },
     ]
 
     async onGridReady(event: GridReadyEvent<SqrSquareDto>): Promise<void> {

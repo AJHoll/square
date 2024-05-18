@@ -125,6 +125,7 @@ model sqr_square {
   name                  String                  @unique(map: "udx_sqr_square_name") @default("") @db.VarChar(30)
   caption               String?                 @db.VarChar(254)
   description           String?                 @db.VarChar(4000)
+  active_modules        String?                 @db.VarChar(254)
   sqr_criteria          sqr_criteria?
   sqr_square_eval_group sqr_square_eval_group[]
   sqr_square_module     sqr_square_module[]

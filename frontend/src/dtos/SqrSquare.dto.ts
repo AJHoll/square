@@ -3,4 +3,5 @@ export interface SqrSquareDto {
     name?: string;
     caption?: string;
     description?: string;
+    activeModules?: string;
 }

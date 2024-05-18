@@ -19,7 +19,7 @@ export class SqrSquareService {
     }
 
     async getSquares(user: UserDto): Promise<SqrSquareDto[]> {
-        const dbData = await this.databaseService.sqr_square.findMany(
+        const recs = await this.databaseService.sqr_square.findMany(
             {
                 where: user.roles.includes('admin') ? undefined : {
                     sqr_square_user: {
@@ -28,54 +28,60 @@ export class SqrSquareService {
                 }
             }
         );
-        return dbData.map<SqrSquareDto>(d => ({
-            id: d.id.toNumber(),
-            name: d.name,
-            caption: d.caption,
-            description: d.description,
+        return recs.map<SqrSquareDto>(rec => ({
+            id: rec.id.toNumber(),
+            name: rec.name,
+            caption: rec.caption,
+            description: rec.description,
+            activeModules: rec.active_modules,
         }));
     }
 
     async getSquare(id: SqrSquareDto['id']): Promise<SqrSquareDto> {
-        const dbData = await this.databaseService.sqr_square.findFirst({where: {id}});
+        const rec = await this.databaseService.sqr_square.findFirst({where: {id}});
         return {
-            id: dbData.id.toNumber(),
-            name: dbData.name,
-            caption: dbData.caption,
-            description: dbData.description,
+            id: rec.id.toNumber(),
+            name: rec.name,
+            caption: rec.caption,
+            description: rec.description,
+            activeModules: rec.active_modules,
         };
     }
 
     async createSquare(admRole: SqrSquareDto): Promise<SqrSquareDto> {
-        const dbResult = await this.databaseService.sqr_square.create({
+        const rec = await this.databaseService.sqr_square.create({
             data: {
                 name: admRole.name,
                 caption: admRole.caption,
                 description: admRole.description,
+                active_modules: admRole.activeModules,
             },
         });
         return {
-            id: dbResult.id.toNumber(),
-            name: dbResult.name,
-            caption: dbResult.caption,
-            description: dbResult.description,
+            id: rec.id.toNumber(),
+            name: rec.name,
+            caption: rec.caption,
+            description: rec.description,
+            activeModules: rec.active_modules,
         };
     }
 
     async editSquare(id: SqrSquareDto['id'], admRole: SqrSquareDto): Promise<SqrSquareDto> {
-        const dbResult = await this.databaseService.sqr_square.update({
+        const rec = await this.databaseService.sqr_square.update({
             data: {
                 name: admRole.name,
                 caption: admRole.caption,
                 description: admRole.description,
+                active_modules: admRole.activeModules,
             },
             where: {id},
         });
         return {
-            id: dbResult.id.toNumber(),
-            name: dbResult.name,
-            caption: dbResult.caption,
-            description: dbResult.description,
+            id: rec.id.toNumber(),
+            name: rec.name,
+            caption: rec.caption,
+            description: rec.description,
+            activeModules: rec.active_modules,
         };
     }
 

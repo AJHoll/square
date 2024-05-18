@@ -22,10 +22,10 @@ export class SqrSquareCard extends React.Component<SqrSquareCardProps> {
                          cardItemWasChanged={this.sqrSquareCardStore.cardItemWasChanged}
                          onCloseBtnClicked={() => this.sqrSquareCardStore.close()}
                          onCancelBtnClicked={() => this.sqrSquareCardStore.close()}
-                         modalStyle={{width: '500px', height: '300px'}}
+                         modalStyle={{width: '560px', height: '370px'}}
                          onSaveBtnClicked={async () => await this.sqrSquareCardStore.save()}
         >
-            <DevsForm labelflex={2} inputflex={5}>
+            <DevsForm labelflex={3} inputflex={5}>
                 <DevsFormItem label="Системное имя">
                     <DevsInput keyFilter="alphanum"
                                value={this.sqrSquareCardStore.sqrSquare.name}
@@ -40,6 +40,11 @@ export class SqrSquareCard extends React.Component<SqrSquareCardProps> {
                 <DevsFormItem label="Описание">
                     <DevsTextArea value={this.sqrSquareCardStore.sqrSquare.description}
                                   onChange={(event) => this.sqrSquareCardStore.setDescription(event.target.value)}
+                    />
+                </DevsFormItem>
+                <DevsFormItem label="Проверяемые модули">
+                    <DevsInput value={this.sqrSquareCardStore.sqrSquare.activeModules}
+                               onChange={(event) => this.sqrSquareCardStore.setActiveModules(event.target.value)}
                     />
                 </DevsFormItem>
             </DevsForm>

@@ -74,6 +74,11 @@ export default class SqrSquareCardStore {
         this._cardItemWasChanged = true;
     }
 
+    setActiveModules(activeModules: SqrSquareDto['activeModules']): void {
+        this._sqrSquare.activeModules = activeModules;
+        this._cardItemWasChanged = true;
+    }
+
     close(): void {
         this._cardItemWasChanged = false;
         this._sqrSquare = {};
