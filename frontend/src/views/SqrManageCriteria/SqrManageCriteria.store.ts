@@ -117,6 +117,11 @@ export class SqrManageCriteriaStore {
         this._rootStore.message.success('Данные успешно сохранены');
     }
 
+    async createRates(): Promise<void> {
+        await this._sqrManageCriteriaService.createRates(this._selectedSquare?.value as SqrSquareDto['id']);
+        this._rootStore.message.success('Оценочные листы успешно пересозданы');
+    }
+
     async clearCriterias(): Promise<void> {
         this.criterias = [];
         this._rootStore.message.success('Данные успешно очищены', 'Данные были удалены только на стороне браузера, для полного удаления данных нажмите на кнопку "Сохранить"');
@@ -440,7 +445,7 @@ export class SqrManageCriteriaStore {
         if (fileArrayBuffer) {
             saveAs(new Blob([fileArrayBuffer], {
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
-            }));
+            }),`${this._selectedSquare?.label.replaceAll(' ','_')}__критерии`);
         }
     }
 

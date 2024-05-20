@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {StrictMode} from 'react';
 import ReactDOM from 'react-dom/client';
 import 'ag-grid-community/styles/ag-grid.css';
 import '@ajholl/devsuikit/dist/styles/devs-ui-kit.css';
@@ -20,7 +20,7 @@ setTimeout(() => {
             root.render(
                 <DevsContent>
                     <Routes rootStore={rootStore}/>
-                </DevsContent>,
+                </DevsContent>
             );
         });
 }, 1000);

@@ -6,4 +6,6 @@ export interface SqrCriteriaDto {
     caption: string;
     mark: string;
     subcriterias: SqrSubcriteriaDto[];
+    sumSubcriteriaMark?: number;
+    module?: string;
 }

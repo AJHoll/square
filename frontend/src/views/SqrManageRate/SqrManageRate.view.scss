@@ -1,0 +1,28 @@
+.sqr_manage_rate_view {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-top: 10px;
+  overflow: hidden;
+
+  &__toolbar {
+    display: flex;
+    flex-direction: row;
+    gap: 5px 10px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+
+    > .devs_select {
+      flex: 1;
+      min-width: 250px;
+    }
+  }
+
+  &__content {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    gap: 25px;
+  }
+}

@@ -26,6 +26,7 @@ import SqrSquareEvalGroupStore from "./SqrSquare/components/SqrSquareEvalGroup.s
 import {makeAutoObservable} from "mobx";
 import {ConfigFile} from "../dtos/ConfigFile";
 import {SqrSquareEvalGroupCardStore} from "./SqrSquare/components/SqrSquareEvalGroupCard.store";
+import SqrManageRateStore from "./SqrManageRate/SqrManageRate.store";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
@@ -61,6 +62,7 @@ export default class RootStore {
     readonly sqrTimerStore: SqrTimerStore = new SqrTimerStore(this, this.rootService.sqrSquareService);
 
     readonly sqrManageCriteriaStore: SqrManageCriteriaStore = new SqrManageCriteriaStore(this, this.rootService.sqrManageCriteriaService, this.rootService.sqrSquareService);
+    readonly sqrManageRateStore: SqrManageRateStore = new SqrManageRateStore(this, this.rootService.sqrManageRateService, this.rootService.sqrSquareService);
 
     toastRef: React.RefObject<DevsToast> | null = null;
 

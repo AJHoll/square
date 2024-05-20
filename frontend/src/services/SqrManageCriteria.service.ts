@@ -25,6 +25,10 @@ export class SqrManageCriteriaService {
         await axios.post<SqrCriteriaDto[]>(`${this.restPath}`, criterias, {params: {squareId}});
     }
 
+    async createRates(squareId: SqrSquareDto['id']): Promise<void> {
+        await axios.post<SqrCriteriaDto[]>(`${this.restPath}/create-rates`, {}, {params: {squareId}});
+    }
+
     async uploadXlsx(squareId: SqrSquareDto['id'], file: File): Promise<SqrCriteriaDto[]> {
         const formData = new FormData();
         formData.append('file', file);

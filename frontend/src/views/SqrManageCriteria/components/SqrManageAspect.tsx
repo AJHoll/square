@@ -85,7 +85,7 @@ export class SqrManageAspect extends React.Component<SqrManageAspectProps> {
                                            aspect={aspect}/>
                     : <></>
             }
-        </DevsPanel>
+        </DevsPanel>;
     }
 }
 

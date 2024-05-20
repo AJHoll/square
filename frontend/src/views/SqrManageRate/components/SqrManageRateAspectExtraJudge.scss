@@ -1,0 +1,39 @@
+.extra_judge {
+  display: flex;
+  flex-direction: row;
+  flex: auto;
+
+  &__describe {
+    display:flex;
+    flex-direction: column;
+    flex: auto;
+    justify-content: center;
+    gap: 7px;
+
+    &_item {
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+      justify-content: flex-start;
+      align-items: center;
+
+      &_score {
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    flex: none;
+
+    &_score {
+      &_index {
+        text-align: center;
+        font-weight: 600;
+      }
+    }
+  }
+}

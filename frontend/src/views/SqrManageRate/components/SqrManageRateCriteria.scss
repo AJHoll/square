@@ -1,0 +1,33 @@
+.sqr_manage_rate_criteria {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 100%;
+  border-left-width: 3px;
+
+  &__title {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  &__key {
+    flex: none;
+  }
+
+  &__module {
+    flex: none;
+  }
+
+  &__caption {
+    flex: auto;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+}

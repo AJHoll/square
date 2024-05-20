@@ -9,6 +9,7 @@ import SqrRoleService from "./SqrRole.service";
 import SqrSquareService from "./SqrSquare.service";
 import {SqrManageCriteriaService} from "./SqrManageCriteria.service";
 import {makeAutoObservable} from "mobx";
+import SqrManageRateService from "./SqrManageRate.service";
 
 export default class RootService {
     private _restUrl: string | undefined;
@@ -30,6 +31,7 @@ export default class RootService {
     sqrRoleService: SqrRoleService = new SqrRoleService(this);
     sqrSquareService: SqrSquareService = new SqrSquareService(this);
     sqrManageCriteriaService: SqrManageCriteriaService = new SqrManageCriteriaService(this);
+    sqrManageRateService: SqrManageRateService = new SqrManageRateService(this);
 
     constructor() {
         makeAutoObservable(this);

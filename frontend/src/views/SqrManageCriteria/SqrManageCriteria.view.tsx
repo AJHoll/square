@@ -42,7 +42,12 @@ export class SqrManageCriteriaView extends React.Component<SqrManageCriteriaView
                             icon="lni lni-save"
                             onClick={() => this.sqrManageCriteriaStore.saveCriterias()}
                 />
-
+                <DevsButton template="filled"
+                            color="help"
+                            title="Сформировать листы проверки"
+                            icon="lni lni-save"
+                            onClick={() => this.sqrManageCriteriaStore.createRates()}
+                />
                 <DevsButton template="filled"
                             color="danger"
                             title="Очистить"

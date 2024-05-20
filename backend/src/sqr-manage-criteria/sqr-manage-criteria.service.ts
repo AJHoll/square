@@ -10,10 +10,12 @@ import {Style, Workbook} from 'exceljs';
 import * as path from 'path';
 import {createReadStream} from 'fs';
 import * as process from "process";
+import {SqrSquareService} from "../sqr-square/sqr-square.service";
 
 @Injectable()
 export class SqrManageCriteriaService {
-    constructor(private databaseService: DatabaseService) {
+    constructor(private databaseService: DatabaseService,
+                private sqrSquareService: SqrSquareService) {
     }
 
     async getCriterias(squareId: SqrSquareDto['id']): Promise<SqrCriteriaDto[]> {
@@ -21,6 +23,34 @@ export class SqrManageCriteriaService {
             where: {square_id: squareId}
         })
         return (dbResult?.criterias ?? []) as unknown as SqrCriteriaDto[];
+    }
+
+    async createRates(squareId: SqrSquareDto['id']): Promise<void> {
+        const criterias = ((await this.databaseService.sqr_criteria.findFirst({
+            where: {square_id: squareId}
+        })).criterias ?? []) as unknown as SqrCriteriaDto[];
+        const rates = criterias.map((criteria) => ({
+            ...criteria,
+            mark: undefined,
+            sumSubcriteriaMark: undefined,
+            subcriterias: criteria.subcriterias.map((subcriteria) => ({
+                ...subcriteria,
+                aspects: subcriteria.aspects.map((aspect) => ({
+                    ...aspect,
+                    mark: undefined,
+                    extra: aspect.extra?.map((extra) => ({
+                        ...extra,
+                        order: aspect.type === 'J' ? extra.mark : undefined,
+                        mark: undefined,
+                    }))
+                }))
+            }))
+        }));
+        await this.databaseService.sqr_square_team.updateMany({
+            where: {square_id: squareId}, data: {
+                rates: rates as unknown as JsonArray
+            }
+        })
     }
 
     async saveCriterias(squareId: SqrSquareDto['id'],
@@ -135,18 +165,32 @@ export class SqrManageCriteriaService {
         const workbook = new Workbook();
         // read excel tempalte
         await workbook.xlsx.readFile(path.join(process.env.TEMPLATE_DIR, 'criteria_template.xlsx'));
+        const square = await this.sqrSquareService.getSquare(squareId);
         // modificate workbook
-        this.mapCriteriasToExcel(squareId, criterias, workbook);
+        this.mapCriteriasToExcel(square, criterias, workbook);
         // return streaming result file
         await workbook.xlsx.writeFile(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
         const file = createReadStream(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
         return new StreamableFile(file);
     }
 
-    mapCriteriasToExcel(squareId: SqrSquareDto['id'],
+    mapCriteriasToExcel(square: SqrSquareDto,
                         criterias: SqrCriteriaDto[],
                         workbook: Workbook): void {
         const sheet = workbook.getWorksheet('CIS Marking Scheme Import');
+        // Найдем название компетенции
+        let titleRowIdx = 0;
+        sheet.eachRow((row) => {
+            if (row.getCell('E').text.includes('Skill name')) {
+                if (titleRowIdx === 0) {
+                    titleRowIdx = row.number + 1;
+                }
+            }
+        });
+        const titleRow = sheet.getRow(titleRowIdx);
+        if (titleRow) {
+            titleRow.getCell('E').value = square.caption;
+        }
         // Найдем начало шапки
         let headerStartRowIdx = 0;
         sheet.eachRow((row) => {

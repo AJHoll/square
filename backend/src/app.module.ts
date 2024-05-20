@@ -14,6 +14,7 @@ import {SqrSquareModule} from "./sqr-square/sqr-square.module";
 import {JwtService} from "@nestjs/jwt";
 import {ScheduleModule} from "@nestjs/schedule";
 import {SqrManageCriteriaModule} from "./sqr-manage-criteria/sqr-manage-criteria.module";
+import {SqrManageRateModule} from "./sqr-manage-rate/sqr-manage-rate.module";
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import {SqrManageCriteriaModule} from "./sqr-manage-criteria/sqr-manage-criteria
         SqrRoleModule,
         SqrSquareModule,
         SqrManageCriteriaModule,
+        SqrManageRateModule,
     ],
     controllers: [KrnMenuController, AdmUserController],
     providers: [JwtService],

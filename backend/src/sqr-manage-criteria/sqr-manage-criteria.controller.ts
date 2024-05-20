@@ -40,6 +40,13 @@ export class SqrManageCriteriaController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Post('create-rates')
+    async createRates(@Request() {user}: { user: UserDto },
+                      @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id']): Promise<void> {
+        await this.sqrManageCriteriaService.createRates(squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post('upload-xlsx')
     @UseInterceptors(FileInterceptor('file'))
     async loadFromXlsx(@Request() {user}: { user: UserDto },

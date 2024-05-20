@@ -1,0 +1,18 @@
+.extra_discrete {
+  display: flex;
+  flex-direction: column;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    &_description {
+
+    }
+
+    &_mark {
+      width: 150px;
+    }
+  }
+}
