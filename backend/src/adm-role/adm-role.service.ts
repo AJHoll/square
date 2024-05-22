@@ -13,7 +13,7 @@ export class AdmRoleService {
 
   async getRoles(): Promise<AdmRoleDto[]> {
     const dbData = await this.databaseService.adm_role.findMany();
-    return dbData.map<AdmRoleDto>(d => ({
+    return dbData.map((d) => ({
       id: d.id.toNumber(),
       name: d.name,
       caption: d.caption,

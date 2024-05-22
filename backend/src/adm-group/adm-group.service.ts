@@ -13,7 +13,7 @@ export class AdmGroupService {
 
     async getGroups(): Promise<AdmGroupDto[]> {
         const dbData = await this.databaseService.adm_group.findMany();
-        return dbData.map<AdmGroupDto>(d => ({
+        return dbData.map((d) => ({
             id: d.id.toNumber(),
             name: d.name,
             caption: d.caption,

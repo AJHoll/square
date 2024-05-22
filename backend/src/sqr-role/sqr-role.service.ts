@@ -12,7 +12,7 @@ export class SqrRoleService {
 
     async getRoles(): Promise<SqrRoleDto[]> {
         const dbData = await this.databaseService.sqr_role.findMany();
-        return dbData.map<SqrRoleDto>(d => ({
+        return dbData.map(d => ({
             id: d.id.toNumber(),
             name: d.name,
             caption: d.caption,

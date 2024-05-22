@@ -28,7 +28,7 @@ export class SqrSquareService {
                 }
             }
         );
-        return recs.map<SqrSquareDto>(rec => ({
+        return recs.map(rec => ({
             id: rec.id.toNumber(),
             name: rec.name,
             caption: rec.caption,
@@ -95,7 +95,7 @@ export class SqrSquareService {
 
     async getSquareRoles(): Promise<SqrRoleDto[]> {
         const dbData = await this.databaseService.sqr_role.findMany();
-        return dbData.map<SqrRoleDto>(d => ({
+        return dbData.map(d => ({
             id: d.id.toNumber(),
             name: d.name,
             caption: d.caption,
@@ -113,7 +113,7 @@ export class SqrSquareService {
                 caption: (fastFilter ?? '').length > 0 ? {contains: fastFilter, mode: "insensitive"} : undefined
             }
         });
-        return dbData.map<SqrSquareUserDto>(d => ({
+        return dbData.map(d => ({
             id: d.id.toNumber(),
             name: d.name,
             caption: d.caption,
@@ -169,7 +169,7 @@ export class SqrSquareService {
 
     async getSquareTeams(squareId: SqrSquareDto['id']): Promise<SqrTeamDto[]> {
         const dbData = await this.databaseService.sqr_square_team.findMany({where: {square_id: squareId}});
-        return dbData.map<SqrTeamDto>(d => ({
+        return dbData.map(d => ({
             id: d.id.toNumber(),
             squareId: d.square_id.toNumber(),
             name: d.name,
@@ -252,7 +252,7 @@ export class SqrSquareService {
                 } : undefined
             }
         });
-        return dbData.map<SqrSquareTeamUserDto>(d => ({
+        return dbData.map(d => ({
             id: d.id.toNumber(),
             team: {
                 id: d.sqr_square_team?.id.toNumber(),

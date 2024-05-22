@@ -1,0 +1,14 @@
+version: "1"
+services:
+  square-backend:
+    container_name: "devs-square-backend"
+    build: .
+    command: node ./dist/main.js
+    environment:
+      AUTH_SECRET_KEY: 'secret-key'
+      AUTH_EXPIRES_IN: '8h'
+      DATABASE_URL: "postgresql://square:gfhjkbr@host.docker.internal:5432/square?schema=square"
+      USER_PASSWORD_SALT_LEN: 10
+      TEMPLATE_DIR: "./templates"
+    ports:
+      - 1024:1024
