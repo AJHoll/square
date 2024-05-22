@@ -1,9 +1,9 @@
-version: "1"
+version: "2"
 services:
   square-backend:
     container_name: "devs-square-backend"
-    build: .
-    command: node ./dist/main.js
+    build: "./backend"
+    command: "node ./dist/main.js"
     environment:
       AUTH_SECRET_KEY: 'secret-key'
       AUTH_EXPIRES_IN: '8h'
@@ -11,4 +11,13 @@ services:
       USER_PASSWORD_SALT_LEN: 10
       TEMPLATE_DIR: "./templates"
     ports:
-      - 1024:1024
+      - "1024:1024"
+  square-frontend:
+    container_name: "devs-square-frontend"
+    build: "./frontend"
+    volumes:
+      - ./nginx:/etc/nginx/templates
+    environment:
+      BACKEND_API_URL: "host.docker.internal"
+    ports:
+      - "80:80"
