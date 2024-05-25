@@ -17,13 +17,16 @@ import {SqrSquareDto} from "../dtos/sqr-square.dto";
 import {SqrCriteriaDto} from "../dtos/sqr-criteria.dto";
 import {SqrSquareEvalGroupDto} from "../dtos/sqr-square-eval-group.dto";
 import {SqrTeamDto} from "../dtos/sqr-team.dto";
+import {HasRoles} from "../guards/roles.decorator";
+import {RolesGuard} from "../guards/roles.guard";
 
 @Controller('manage-rate')
 export class SqrManageRateController {
     constructor(private sqrManageRateService: SqrManageRateService) {
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['rateManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get()
     async getRates(@Request() {user}: { user: UserDto },
                    @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id'],
@@ -34,7 +37,8 @@ export class SqrManageRateController {
         return this.sqrManageRateService.getRates(squareId, evalGroupId, module, teamId, user);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['rateManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('/modules')
     async getAvailableModules(@Request() {user}: { user: UserDto },
                               @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id'],
@@ -42,7 +46,8 @@ export class SqrManageRateController {
         return this.sqrManageRateService.getAvailableModules(squareId, evalGroupId, user);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['rateManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()
     async saveRates(@Request() {user}: { user: UserDto },
                     @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id'],
@@ -51,7 +56,8 @@ export class SqrManageRateController {
         return this.sqrManageRateService.saveRates(squareId, teamId, rates);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['rateExporter', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('download-xlsx')
     async downloadXlsx(@Request() {user}: { user: UserDto },
                        @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id'],

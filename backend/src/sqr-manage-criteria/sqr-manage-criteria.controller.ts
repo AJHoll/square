@@ -18,20 +18,24 @@ import {UserDto} from "../dtos/user.dto";
 import {SqrSquareDto} from "../dtos/sqr-square.dto";
 import {SqrCriteriaDto} from "../dtos/sqr-criteria.dto";
 import {FileInterceptor} from "@nestjs/platform-express";
+import {HasRoles} from "../guards/roles.decorator";
+import {RolesGuard} from "../guards/roles.guard";
 
 @Controller('manage-criteria')
 export class SqrManageCriteriaController {
     constructor(private sqrManageCriteriaService: SqrManageCriteriaService) {
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['criteriaManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get()
     async getCriterias(@Request() {user}: { user: UserDto },
                        @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id']): Promise<SqrCriteriaDto[]> {
         return this.sqrManageCriteriaService.getCriterias(squareId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['criteriaManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()
     async saveCriterias(@Request() {user}: { user: UserDto },
                         @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id'],
@@ -39,14 +43,16 @@ export class SqrManageCriteriaController {
         await this.sqrManageCriteriaService.saveCriterias(squareId, criterias);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['criteriaManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('create-rates')
     async createRates(@Request() {user}: { user: UserDto },
                       @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id']): Promise<void> {
         await this.sqrManageCriteriaService.createRates(squareId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['criteriaManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('upload-xlsx')
     @UseInterceptors(FileInterceptor('file'))
     async loadFromXlsx(@Request() {user}: { user: UserDto },
@@ -55,7 +61,8 @@ export class SqrManageCriteriaController {
         return this.sqrManageCriteriaService.loadFromXlsx(squareId, file);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['criteriaManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('download-xlsx')
     async saveTolsx(@Request() {user}: { user: UserDto },
                     @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id'],

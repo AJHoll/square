@@ -26,6 +26,8 @@ import {SqrSquareTeamUserDto} from "../dtos/sqr-square-team-user.dto";
 import {SqrTimerDto} from "../dtos/sqr-timer.dto";
 import {SqrSquareEvalGroupDto} from "../dtos/sqr-square-eval-group.dto";
 import {SqrSquareEvalGroupUserDto} from "../dtos/sqr-square-eval-group-user.dto";
+import {HasRoles} from "../guards/roles.decorator";
+import {RolesGuard} from "../guards/roles.guard";
 
 @Controller('sqr-square')
 export class SqrSquareController {
@@ -46,14 +48,16 @@ export class SqrSquareController {
         return this.sqrRoleService.getSquare(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()
     async createSquare(@Request() {user}: { user: UserDto },
                        @Body() admRole: SqrSquareDto): Promise<SqrSquareDto> {
         return this.sqrRoleService.createSquare(admRole);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put(':id')
     async editSquare(@Request() {user}: { user: UserDto },
                      @Param('id') id: SqrSquareDto['id'],
@@ -61,7 +65,8 @@ export class SqrSquareController {
         return this.sqrRoleService.editSquare(id, admRole);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':ids')
     async deleteSquares(@Request() {user}: { user: UserDto },
                         @Param('ids') ids: string): Promise<void> {
@@ -86,7 +91,8 @@ export class SqrSquareController {
         return this.sqrRoleService.getSquareRoleUsers(id, roleId, fastFilter, showAllUsers);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':id/sqr-role/:roleIds/user/:userIds')
     async addUsersToSquareRole(@Request() {user}: { user: UserDto },
                                @Param('id') id: SqrSquareDto['id'],
@@ -96,7 +102,8 @@ export class SqrSquareController {
         await this.sqrRoleService.addUsersToSquareRole(id, roleIds, userIds);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':id/sqr-role/:roleIds/user/:userIds')
     async removeUsersFromSquareRole(@Request() {user}: { user: UserDto },
                                     @Param('id') id: SqrSquareDto['id'],
@@ -122,7 +129,8 @@ export class SqrSquareController {
         return this.sqrRoleService.getSquareTeam(squareId, teamId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-team/')
     async createSquareTeam(@Request() {user}: { user: UserDto },
                            @Param('squareId') squareId: SqrSquareDto['id'],
@@ -130,7 +138,8 @@ export class SqrSquareController {
         return this.sqrRoleService.createSquareTeam(squareId, sqrTeam);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put(':squareId/sqr-team/:teamId')
     async editSquareTeam(@Request() {user}: { user: UserDto },
                          @Param('squareId') squareId: SqrSquareDto['id'],
@@ -139,7 +148,8 @@ export class SqrSquareController {
         return this.sqrRoleService.editSquareTeam(squareId, teamId, sqrTeam);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':squareId/sqr-team/:teamIds')
     async deleteSquareTeams(@Request() {user}: { user: UserDto },
                             @Param('squareId') squareId: SqrSquareDto['id'],
@@ -158,7 +168,8 @@ export class SqrSquareController {
         return this.sqrRoleService.getSquareTeamUsers(squareId, teamId, showAllUsers, fastFilter);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-team/:teamIds/user/:userIds')
     async addUsersToSquareTeams(@Request() {user}: { user: UserDto },
                                 @Param('squareId') squareId: SqrSquareDto['id'],
@@ -168,7 +179,8 @@ export class SqrSquareController {
         await this.sqrRoleService.addUsersToSquareTeams(squareId, teamIds, userIds);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':squareId/sqr-team/:teamIds/user/:userIds')
     async removeUsersFromSquareTeams(@Request() {user}: { user: UserDto },
                                      @Param('squareId') squareId: SqrSquareDto['id'],
@@ -193,14 +205,16 @@ export class SqrSquareController {
         return this.sqrRoleService.getSquareTimer(squareId, timerId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/recreate')
     async recreateSquareTimers(@Request() {user}: { user: UserDto },
                                @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
         await this.sqrRoleService.recreateSquareTimer(squareId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/:timerId/recreate')
     async recreateSquareTimer(@Request() {user}: { user: UserDto },
                               @Param('squareId') squareId: SqrSquareDto['id'],
@@ -208,7 +222,8 @@ export class SqrSquareController {
         await this.sqrRoleService.recreateSquareTimer(squareId, timerId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch(':squareId/sqr-timer/set-count/:count')
     async setAllTimerCount(@Request() {user}: { user: UserDto },
                            @Param('squareId') squareId: SqrSquareDto['id'],
@@ -216,7 +231,8 @@ export class SqrSquareController {
         await this.sqrRoleService.setTimerCount(squareId, count);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch(':squareId/sqr-timer/:timerId/set-count/:count')
     async setTimerCount(@Request() {user}: { user: UserDto },
                         @Param('squareId') squareId: SqrSquareDto['id'],
@@ -225,14 +241,16 @@ export class SqrSquareController {
         await this.sqrRoleService.setTimerCount(squareId, count, timerId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/start')
     async startAllTimers(@Request() {user}: { user: UserDto },
                          @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
         await this.sqrRoleService.startTimer(squareId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/:timerId/start')
     async startTimer(@Request() {user}: { user: UserDto },
                      @Param('squareId') squareId: SqrSquareDto['id'],
@@ -240,14 +258,16 @@ export class SqrSquareController {
         await this.sqrRoleService.startTimer(squareId, timerId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/pause')
     async pauseAllTimers(@Request() {user}: { user: UserDto },
                          @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
         await this.sqrRoleService.pauseTimer(squareId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/:timerId/pause')
     async pauseTimer(@Request() {user}: { user: UserDto },
                      @Param('squareId') squareId: SqrSquareDto['id'],
@@ -255,14 +275,16 @@ export class SqrSquareController {
         await this.sqrRoleService.pauseTimer(squareId, timerId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/stop')
     async stopAllTimers(@Request() {user}: { user: UserDto },
                         @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
         await this.sqrRoleService.stopTimer(user, squareId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/:timerId/stop')
     async stopTimer(@Request() {user}: { user: UserDto },
                     @Param('squareId') squareId: SqrSquareDto['id'],
@@ -297,7 +319,8 @@ export class SqrSquareController {
         return this.sqrRoleService.getSquareEvalGroupUsers(squareId, evalGroupId, showAllUsers, fastFilter);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-eval-group')
     async createSquareEvalGroup(@Request() {user}: { user: UserDto },
                                 @Param('squareId') squareId: SqrSquareDto['id'],
@@ -305,7 +328,8 @@ export class SqrSquareController {
         return this.sqrRoleService.createSquareEvalGroup(squareId, sqrEvalGroup);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put(':squareId/sqr-eval-group/:sqrEvalGroupId')
     async editSquareEvalGroup(@Request() {user}: { user: UserDto },
                               @Param('squareId') squareId: SqrSquareDto['id'],
@@ -314,7 +338,8 @@ export class SqrSquareController {
         return this.sqrRoleService.editSquareEvalGroup(squareId, sqrEvalGroupId, sqrEvalGroup);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':squareId/sqr-eval-group/:sqrEvalGroupIds')
     async deleteSquareEvalGroups(@Request() {user}: { user: UserDto },
                                  @Param('squareId') squareId: SqrSquareDto['id'],
@@ -322,7 +347,8 @@ export class SqrSquareController {
         await this.sqrRoleService.deleteSquareEvalGroups(squareId, sqrEvalGroupIds.map(val => +val));
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-eval-group/:sqrEvalGroupIds/user/:userIds')
     async addUsersToEvalGroups(@Request() {user}: { user: UserDto },
                                @Param('squareId') squareId: SqrSquareDto['id'],
@@ -332,7 +358,8 @@ export class SqrSquareController {
         await this.sqrRoleService.addUsersToEvalGroups(squareId, sqrEvalGroupIds, userIds);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':squareId/sqr-eval-group/:sqrEvalGroupIds/user/:userIds')
     async removeUsersFromEvalGroups(@Request() {user}: { user: UserDto },
                                     @Param('squareId') squareId: SqrSquareDto['id'],

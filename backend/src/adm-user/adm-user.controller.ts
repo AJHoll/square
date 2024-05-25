@@ -4,6 +4,8 @@ import {UserDto} from "../dtos/user.dto";
 import {AdmUserService} from "./adm-user.service";
 import {AdmUserDto} from "../dtos/adm-user.dto";
 import {AdmUserGroupDto} from "../dtos/adm-user-group.dto";
+import {HasRoles} from "../guards/roles.decorator";
+import {RolesGuard} from "../guards/roles.guard";
 
 @Controller('adm-user')
 export class AdmUserController {
@@ -24,14 +26,16 @@ export class AdmUserController {
         return this.admUserService.getUser(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()
     async createAdmGroup(@Request() {user}: { user: UserDto },
                          @Body() admUser: AdmUserDto): Promise<AdmUserDto> {
         return this.admUserService.createUser(admUser);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put(':id')
     async editAdmGroup(@Request() {user}: { user: UserDto },
                        @Param('id') id: AdmUserDto['id'],
@@ -39,7 +43,8 @@ export class AdmUserController {
         return this.admUserService.editUser(id, admUser);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':ids')
     async deleteAdmGroups(@Request() {user}: { user: UserDto },
                           @Param('ids') ids: string): Promise<void> {
@@ -53,7 +58,8 @@ export class AdmUserController {
         return this.admUserService.getUserGroups(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':id/group/:groupIds')
     async addRolesToGroup(@Request() {user}: { user: UserDto },
                           @Param('id') idUser: AdmUserDto['id'],
@@ -61,7 +67,8 @@ export class AdmUserController {
         await this.admUserService.addGroupsToUser(idUser, groupIds.split(',').map(id => +id));
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':id/group/:userGroupIds')
     async removeRolesFromGroup(@Request() {user}: { user: UserDto },
                                @Param('id') idUser: AdmUserDto['id'],

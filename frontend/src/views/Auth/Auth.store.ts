@@ -11,7 +11,7 @@ export default class AuthStore {
   username: string = '';
   password: string = '';
 
-  get isAuth(): boolean {
+  get isLogin(): boolean {
     if (!this.userService.user) {
       this.authService.checkAndParseToken();
     }

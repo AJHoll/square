@@ -5,6 +5,8 @@ import {AdmGroupService} from './adm-group.service';
 import {AdmGroupDto} from '../dtos/adm-group.dto';
 import {AdmGroupRoleDto} from '../dtos/adm-group-role.dto';
 import {AdmUserDto} from "../dtos/adm-user.dto";
+import {HasRoles} from "../guards/roles.decorator";
+import {RolesGuard} from "../guards/roles.guard";
 
 @Controller('adm-group')
 export class AdmGroupController {
@@ -25,14 +27,16 @@ export class AdmGroupController {
         return this.admGroupService.getGroup(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()
     async createAdmGroup(@Request() {user}: { user: UserDto },
                          @Body() admGroup: AdmGroupDto): Promise<AdmGroupDto> {
         return this.admGroupService.createGroup(admGroup);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put(':id')
     async editAdmGroup(@Request() {user}: { user: UserDto },
                        @Param('id') id: AdmGroupDto['id'],
@@ -40,7 +44,8 @@ export class AdmGroupController {
         return this.admGroupService.editGroup(id, admGroup);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':ids')
     async deleteAdmGroups(@Request() {user}: { user: UserDto },
                           @Param('ids') ids: string): Promise<void> {
@@ -54,7 +59,8 @@ export class AdmGroupController {
         return this.admGroupService.getGroupRoles(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':id/role/:roleIds')
     async addRolesToGroup(@Request() {user}: { user: UserDto },
                           @Param('id') idGroup: AdmGroupDto['id'],
@@ -62,7 +68,8 @@ export class AdmGroupController {
         await this.admGroupService.addRolesToGroup(idGroup, roleIds.split(',').map(id => +id));
     }
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(['admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':id/role/:groupRoleIds')
     async removeRolesFromGroup(@Request() {user}: { user: UserDto },
                                @Param('id') idGroup: AdmGroupDto['id'],

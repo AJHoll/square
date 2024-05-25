@@ -54,6 +54,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         <AuthGuardRoute exact
                                         path="/roles"
                                         rootStore={this.props.rootStore}
+                                        // guardByRoles={['admin']}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}
                                                          rootStore={this.props.rootStore}
@@ -66,6 +67,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         />
                         <AuthGuardRoute exact
                                         path="/groups"
+                                        guardByRoles={['admin']}
                                         rootStore={this.props.rootStore}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}
@@ -80,6 +82,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         />
                         <AuthGuardRoute exact
                                         path="/users"
+                                        guardByRoles={['admin']}
                                         rootStore={this.props.rootStore}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}
@@ -94,6 +97,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         />
                         <AuthGuardRoute exact
                                         path="/square-roles"
+                                        guardByRoles={['admin']}
                                         rootStore={this.props.rootStore}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}
@@ -108,6 +112,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         />
                         <AuthGuardRoute exact
                                         path="/squares"
+                                        guardByRoles={['squareManage', 'admin']}
                                         rootStore={this.props.rootStore}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}
@@ -122,6 +127,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         />
                         <AuthGuardRoute exact
                                         path="/timers"
+                                        guardByRoles={['timerViewer', 'admin']}
                                         rootStore={this.props.rootStore}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}
@@ -136,6 +142,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         />
                         <AuthGuardRoute exact
                                         path="/manage-criteria"
+                                        guardByRoles={['criteriaManager', 'admin']}
                                         rootStore={this.props.rootStore}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}
@@ -150,6 +157,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         />
                         <AuthGuardRoute exact
                                         path="/manage-rate"
+                                        guardByRoles={['rateManager', 'admin']}
                                         rootStore={this.props.rootStore}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}
