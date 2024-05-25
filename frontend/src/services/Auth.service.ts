@@ -21,8 +21,19 @@ export default class AuthService {
         axios.interceptors.response.use(response => {
             return response;
         }, error => {
-            if (error.response?.status === 401) {
-                this.logout();
+            switch (error.response?.status ?? 500) {
+                case 401: {
+                    this.logout();
+                    break;
+                }
+                case 403: {
+                    this._rootService.rootStore.message.error("Доступ запрещен", "Для выполнения данной функции не хватает привелегий, либо доступ до запрашиваемых данных ограничен.");
+                    break;
+                }
+                default: {
+                    this._rootService.rootStore.message.error("Ошибка на сервере");
+                    break;
+                }
             }
             return error;
         });

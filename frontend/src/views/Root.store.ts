@@ -30,7 +30,7 @@ import SqrManageRateStore from "./SqrManageRate/SqrManageRate.store";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
-    readonly rootService: RootService = new RootService();
+    readonly rootService: RootService = new RootService(this);
     readonly authStore: AuthStore = new AuthStore(this);
     readonly mainMenuStore: MainMenuStore = new MainMenuStore(this, this.rootService.mainMenuService);
 

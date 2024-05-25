@@ -10,6 +10,7 @@ import SqrSquareService from "./SqrSquare.service";
 import {SqrManageCriteriaService} from "./SqrManageCriteria.service";
 import {makeAutoObservable} from "mobx";
 import SqrManageRateService from "./SqrManageRate.service";
+import RootStore from "../views/Root.store";
 
 export default class RootService {
     private _restUrl: string | undefined;
@@ -20,6 +21,8 @@ export default class RootService {
     set restUrl(value: string | undefined) {
         this._restUrl = value;
     }
+
+    rootStore: RootStore;
 
     userService: UserService = new UserService(this);
     authService: AuthService = new AuthService(this);
@@ -33,7 +36,8 @@ export default class RootService {
     sqrManageCriteriaService: SqrManageCriteriaService = new SqrManageCriteriaService(this);
     sqrManageRateService: SqrManageRateService = new SqrManageRateService(this);
 
-    constructor() {
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
         makeAutoObservable(this);
     }
 }
