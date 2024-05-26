@@ -26,6 +26,10 @@
     padding-bottom: 15px;
     width: 60%;
     max-width: 1000px;
+
+    @media (max-width: 480px) {
+      width: 100% !important;
+    }
   }
 
   &__icon {
@@ -37,6 +41,14 @@
     padding-top: 50px;
     padding-bottom: 50px;
     flex: none;
+    @media (max-height: 480px) or (max-width: 480px) {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      svg {
+        height: 55px;
+        width: fit-content;
+      }
+    }
 
 
     &-text {
@@ -47,6 +59,17 @@
       p {
         font-size: 13px;
         text-align: right;
+      }
+
+      @media (max-height: 480px) or (max-width: 480px) {
+        span {
+          font-size: 25px;
+        }
+
+        p {
+          font-size: 9px;
+          text-align: right;
+        }
       }
     }
   }
@@ -60,5 +83,9 @@
     width: 60%;
     max-width: 1000px;
     gap: 10px;
+
+    @media (max-width: 480px) {
+      width: 100% !important;
+    }
   }
 }
