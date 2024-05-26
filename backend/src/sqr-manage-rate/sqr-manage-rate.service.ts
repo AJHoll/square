@@ -318,7 +318,8 @@ export class SqrManageRateService {
 
     private getAspectMark(aspect: SqrAspectDto): string | number | null {
         switch (aspect.type) {
-            case "B": {
+            case "B":
+            case "Z": {
                 return aspect.mark !== undefined ? +aspect.mark : null;
             }
             case "D": {

@@ -123,6 +123,13 @@ export default class SqrManageRateStore {
         this._rates = value;
     }
 
+    get zedAspects(): SqrAspectDto[] {
+        return this._rates.reduce((accCriteria, criteria) => [...accCriteria,
+            ...criteria.subcriterias.reduce((accSubcriteria, subcriteria) => [...accSubcriteria,
+                ...subcriteria.aspects.filter((aspect) => aspect.type === 'Z')], [] as SqrAspectDto[])
+        ], [] as SqrAspectDto[]);
+    }
+
     constructor(rootStore: RootStore,
                 sqrManageRateService: SqrManageRateService,
                 sqrSquareService: SqrSquareService) {
@@ -202,6 +209,42 @@ export default class SqrManageRateStore {
                 const aspect = subcriteria.aspects.find((aspect) => aspect.id === aspectId);
                 if (aspect !== undefined) {
                     aspect.mark = value ? '1' : '0';
+                }
+                if (aspect?.type === 'Z' && aspect.mark === '1') {
+                    const prevRates = [...this._rates];
+                    this.rates = [];
+                    setTimeout(() => {
+                        this.rates = prevRates;
+                        this.clearAllZedLinkedAspects(aspect.id);
+                    });
+                }
+            }
+        }
+    }
+
+    clearAllZedLinkedAspects(zedAspectId: SqrAspectDto['id']): void {
+        for (const rate of this._rates) {
+            for (const subcriteria of rate.subcriterias) {
+                for (const aspect of subcriteria.aspects) {
+                    if (aspect.zedLink === zedAspectId) {
+                        switch (aspect.type) {
+                            case "B":
+                            case "Z": {
+                                aspect.mark = '';
+                                break;
+                            }
+                            case "D":
+                            case "J": {
+                                if (aspect.extra) {
+                                    aspect.mark = '';
+                                    for (const extra of aspect.extra) {
+                                        extra.mark = '';
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }

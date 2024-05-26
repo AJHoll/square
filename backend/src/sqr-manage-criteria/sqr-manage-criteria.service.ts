@@ -109,14 +109,15 @@ export class SqrManageCriteriaService {
                             }
                             sheet.getRows(rowNumber + 1, aspectsMaxRowNum - (rowNumber + 1))?.forEach((aspectRow) => {
                                 if (aspectRow.hasValues) {
-                                    if (['B', 'D', 'J'].indexOf(aspectRow.getCell('C').text) !== -1) {
+                                    if (['B', 'D', 'J', 'Z'].indexOf(aspectRow.getCell('C').text) !== -1) {
                                         const newAspect: SqrAspectDto = {
                                             id: uuid(),
-                                            type: aspectRow.getCell('C').text as 'B' | 'J' | 'D',
+                                            type: aspectRow.getCell('C').text as 'B' | 'J' | 'D' | 'Z',
                                             caption: aspectRow.getCell('E').text,
                                             description: aspectRow.getCell('G').text,
                                             mark: aspectRow.getCell('J').text,
-                                            extra: []
+                                            extra: [],
+                                            zedLink: aspectRow.getCell('D').text
                                         };
                                         let extraMaxRowNum = aspectRow.number + 1;
                                         while (sheet.getRow(extraMaxRowNum).getCell('E').text.length === 0 && extraMaxRowNum < sheet.rowCount) {
@@ -128,8 +129,7 @@ export class SqrManageCriteriaService {
                                         sheet.getRows(aspectRow.number + 1, extraMaxRowNum - aspectRow.number)?.forEach((extraRow) => {
                                             if (extraRow.hasValues) {
                                                 if (newAspect.type === 'D'
-                                                    && extraRow.getCell('G').text.length > 0
-                                                    && (extraRow.getCell('J').text.match('\\d+') ?? []).length > 0) {
+                                                    && extraRow.getCell('G').text.length > 0) {
                                                     newAspect.extra.push({
                                                         id: uuid(),
                                                         description: extraRow.getCell('G').text,
@@ -156,7 +156,31 @@ export class SqrManageCriteriaService {
                 });
             });
         }
+        this.makeZedLinkFromIndex(data);
         return data;
+    }
+
+    makeZedLinkFromIndex(data: SqrCriteriaDto[]): void {
+        const zedLinkMap: { [key: string]: string } = {};
+        for (const criteria of data) {
+            for (const subcriteria of criteria.subcriterias) {
+                for (const aspect of subcriteria.aspects) {
+                    if (aspect.type === 'Z') {
+                        zedLinkMap[aspect.zedLink] = aspect.id;
+                        aspect.zedLink = undefined;
+                    }
+                }
+            }
+        }
+        for (const criteria of data) {
+            for (const subcriteria of criteria.subcriterias) {
+                for (const aspect of subcriteria.aspects) {
+                    if (aspect.type !== 'Z' && aspect.zedLink !== undefined) {
+                        aspect.zedLink = zedLinkMap[aspect.zedLink];
+                    }
+                }
+            }
+        }
     }
 
     async saveToXlsx(squareId: SqrSquareDto['id'],
@@ -167,11 +191,37 @@ export class SqrManageCriteriaService {
         await workbook.xlsx.readFile(path.join(process.env.TEMPLATE_DIR, 'criteria_template.xlsx'));
         const square = await this.sqrSquareService.getSquare(squareId);
         // modificate workbook
+        this.makeZedIndexFromLink(criterias);
         this.mapCriteriasToExcel(square, criterias, workbook);
         // return streaming result file
         await workbook.xlsx.writeFile(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
         const file = createReadStream(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
         return new StreamableFile(file);
+    }
+
+    makeZedIndexFromLink(data: SqrCriteriaDto[]): void {
+        let index = 1;
+        const zedLinkMap: { [key: string]: number } = {};
+        for (const criteria of data) {
+            for (const subcriteria of criteria.subcriterias) {
+                for (const aspect of subcriteria.aspects) {
+                    if (aspect.type === 'Z') {
+                        zedLinkMap[aspect.id] = index;
+                        aspect.zedLink = String(index);
+                        index++;
+                    }
+                }
+            }
+        }
+        for (const criteria of data) {
+            for (const subcriteria of criteria.subcriterias) {
+                for (const aspect of subcriteria.aspects) {
+                    if (aspect.type !== 'Z' && aspect.zedLink !== undefined) {
+                        aspect.zedLink = String(zedLinkMap[aspect.zedLink]);
+                    }
+                }
+            }
+        }
     }
 
     mapCriteriasToExcel(square: SqrSquareDto,
@@ -269,7 +319,10 @@ export class SqrManageCriteriaService {
                 ...allStyle,
                 alignment: {...allStyle.alignment, horizontal: 'center'}
             };
-            row.getCell('D').style = allStyle;
+            row.getCell('D').style = {
+                ...allStyle,
+                alignment: {...allStyle.alignment, horizontal: 'center'}
+            };
             row.getCell('E').style = allStyle;
             row.getCell('F').style = {
                 ...allStyle,
@@ -307,7 +360,7 @@ export class SqrManageCriteriaService {
                     aspectRow.getCell('A').value = null;
                     aspectRow.getCell('B').value = null;
                     aspectRow.getCell('C').value = aspect.type;
-                    aspectRow.getCell('D').value = null;
+                    aspectRow.getCell('D').value = aspect.zedLink !== undefined ? +aspect.zedLink : null;
                     aspectRow.getCell('E').value = `${aspect.caption}${aspect.description ? '\n' + aspect.description : ''}`;
                     aspectRow.getCell('F').value = null;
                     aspectRow.getCell('G').value = null;

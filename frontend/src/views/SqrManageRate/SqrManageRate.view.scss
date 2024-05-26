@@ -1,3 +1,5 @@
+@import "@ajholl/devsuikit/dist/scss/devs";
+
 .sqr_manage_rate_view {
   display: flex;
   flex-direction: column;
@@ -25,4 +27,8 @@
     overflow: auto;
     gap: 25px;
   }
+}
+
+.zed_aspect_message {
+  color: $color-danger;
 }

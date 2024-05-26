@@ -66,6 +66,10 @@ export class SqrManageCriteriaStore {
             label: 'Судейский',
             value: 'J',
         },
+        {
+            label: 'Отсекающий',
+            value: 'Z',
+        },
     ];
 
     get aspectTypes(): SelectOption[] {
@@ -74,6 +78,16 @@ export class SqrManageCriteriaStore {
 
     get alphabet(): string {
         return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    }
+
+    get zedAspects(): SelectOption[] {
+        return this._criterias.reduce((accCriteria, criteria) => [...accCriteria,
+            ...criteria.subcriterias.reduce((accSubcriteria, subcriteria) => [...accSubcriteria,
+                ...subcriteria.aspects.filter((aspect) => aspect.type === 'Z').map((aspect) => ({
+                    label: `${criteria.key}${subcriteria.order} - ${aspect.caption}`,
+                    value: aspect.id
+                }))], [] as SelectOption[])
+        ], [] as SelectOption[]);
     }
 
     constructor(rootStore: RootStore,
@@ -163,6 +177,13 @@ export class SqrManageCriteriaStore {
     }
 
     removeCriteria(criteriaId: SqrCriteriaDto['id']): void {
+        const zedAspects = this._criterias.find((criteria) => criteria.id === criteriaId)
+                ?.subcriterias.reduce((subcriteriaAcc, subcriteria) =>
+                    [...subcriteriaAcc, ...subcriteria.aspects.filter((aspect) => aspect.type === 'Z')], [] as SqrAspectDto[])
+            ?? [];
+        if (zedAspects.length > 0) {
+            this.clearZedAspects(zedAspects.map((zedASpect) => zedASpect.id));
+        }
         this.criterias = this._criterias.filter((criteria) => criteria.id !== criteriaId);
     }
 
@@ -223,6 +244,12 @@ export class SqrManageCriteriaStore {
                       subcriteriaId: SqrSubcriteriaDto['id']): void {
         const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
         if (criteria !== undefined) {
+            const zedAspects = criteria.subcriterias
+                .find((subcriteria) => subcriteria.id === subcriteriaId)
+                ?.aspects.filter((aspect) => aspect.type === 'Z') ?? [];
+            if (zedAspects.length > 0) {
+                this.clearZedAspects(zedAspects.map((zedAspect) => zedAspect.id))
+            }
             criteria.subcriterias = criteria.subcriterias.filter((subcriteria) => subcriteria.id !== subcriteriaId);
             this.recalcSumSubcriteriaMark(criteria);
         }
@@ -352,6 +379,9 @@ export class SqrManageCriteriaStore {
         if (criteria !== undefined) {
             const subcriteria = criteria.subcriterias.find((subcriteria) => subcriteria.id === subcriteriaId);
             if (subcriteria !== undefined) {
+                if (this.zedAspects.findIndex((zedAspect) => zedAspect.value === aspectId) !== -1) {
+                    this.clearZedAspects([aspectId]);
+                }
                 subcriteria.aspects = subcriteria.aspects.filter((aspect) => aspect.id !== aspectId);
                 this.recalcSumSubcriteriaMark(criteria);
             }
@@ -372,6 +402,53 @@ export class SqrManageCriteriaStore {
                     const extra = aspect.extra?.find((extra) => extra.id === aspectExtraId);
                     if (extra !== undefined) {
                         extra.description = aspectExtraDescription;
+                    }
+                }
+            }
+        }
+    }
+
+    toggleZedLink(criteriaId: SqrCriteriaDto['id'],
+                  subcriteriaId: SqrSubcriteriaDto['id'],
+                  aspectId: SqrAspectDto['id']): void {
+        const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
+        if (criteria !== undefined) {
+            const subcriteria = criteria.subcriterias.find((subcriteria) => subcriteria.id === subcriteriaId);
+            if (subcriteria !== undefined) {
+                const aspect = subcriteria.aspects.find((aspect) => aspect.id === aspectId);
+                if (aspect !== undefined) {
+                    if (aspect.zedLink !== undefined) {
+                        aspect.zedLink = undefined;
+                    } else {
+                        aspect.zedLink = '';
+                    }
+                }
+            }
+        }
+    }
+
+    setZedLink(criteriaId: SqrCriteriaDto['id'],
+               subcriteriaId: SqrSubcriteriaDto['id'],
+               aspectId: SqrAspectDto['id'],
+               zedAspectId: string): void {
+        const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
+        if (criteria !== undefined) {
+            const subcriteria = criteria.subcriterias.find((subcriteria) => subcriteria.id === subcriteriaId);
+            if (subcriteria !== undefined) {
+                const aspect = subcriteria.aspects.find((aspect) => aspect.id === aspectId);
+                if (aspect !== undefined) {
+                    aspect.zedLink = zedAspectId;
+                }
+            }
+        }
+    }
+
+    clearZedAspects(zedAspectIds: SqrAspectDto['id'][]): void {
+        for (const criteria of this._criterias) {
+            for (const subcriteria of criteria.subcriterias) {
+                for (const aspect of subcriteria.aspects) {
+                    if (zedAspectIds.includes(aspect.zedLink ?? '')) {
+                        aspect.zedLink = undefined;
                     }
                 }
             }
@@ -445,7 +522,7 @@ export class SqrManageCriteriaStore {
         if (fileArrayBuffer) {
             saveAs(new Blob([fileArrayBuffer], {
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
-            }),`${this._selectedSquare?.label.replaceAll(' ','_')}__критерии`);
+            }), `${this._selectedSquare?.label.replaceAll(' ', '_')}__критерии`);
         }
     }
 

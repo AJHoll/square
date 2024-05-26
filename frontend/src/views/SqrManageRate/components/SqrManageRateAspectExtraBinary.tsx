@@ -13,18 +13,23 @@ export class SqrManageRateAspectExtraBinary extends React.Component<SqrManageRat
 
     render() {
         const {criteria, subcriteria, aspect} = this.props;
+        const zedAspect = this.sqrManageRateStore.zedAspects.find((zedAspect) => zedAspect.id === aspect.zedLink);
         return <>
+            {zedAspect?.mark === '1' ? <div className="zed_aspect_message">Оценка аннулирована отсекающим
+                аспектом <b>"{zedAspect.caption}"</b></div> : <></>}
             <div className="extra_binary">
                 <DevsRadioButton name={aspect.id}
                                  label="Да"
                                  labelSide="left"
                                  value={aspect.mark === '1'}
+                                 disabled={zedAspect?.mark === '1'}
                                  onChange={() => this.sqrManageRateStore.setAspectExtraBinaryMark(criteria.id, subcriteria.id, aspect.id, true)}
                 />
                 <DevsRadioButton name={aspect.id}
                                  label="Нет"
                                  labelSide="left"
                                  value={aspect.mark === '0'}
+                                 disabled={zedAspect?.mark === '1'}
                                  onChange={() => this.sqrManageRateStore.setAspectExtraBinaryMark(criteria.id, subcriteria.id, aspect.id, false)}
                 />
             </div>

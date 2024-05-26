@@ -22,7 +22,8 @@ export class SqrManageRateAspectExtra extends React.Component<SqrManageRateAspec
     render() {
         const {criteria, subcriteria, aspect} = this.props;
         switch (aspect.type) {
-            case "B": {
+            case "B":
+            case "Z": {
                 return <OSqrManageRateAspectExtraBinary rootStore={this.props.rootStore}
                                                         criteria={criteria}
                                                         subcriteria={subcriteria}

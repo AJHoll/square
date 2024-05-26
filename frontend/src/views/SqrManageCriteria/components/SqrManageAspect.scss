@@ -7,10 +7,14 @@
 
   &__common {
     display: flex;
-    flex-direction: row;
-    gap: 15px;
+    flex-direction: column;
+    gap: 10px;
 
     .aspect {
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+
       &_type {
         flex: none;
       }
@@ -43,10 +47,17 @@
         flex: none;
       }
 
-      &_delete {
+      &_buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
         flex: none;
         align-self: flex-start;
       }
+    }
+
+    .zed_link {
+      //border: solid 1px red;
     }
   }
 }

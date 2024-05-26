@@ -13,18 +13,24 @@ export class SqrManageRateAspectExtraDiscrete extends React.Component<SqrManageR
 
     render() {
         const {criteria, subcriteria, aspect} = this.props;
-        return <div className="extra_discrete">
-            {aspect.extra?.map((extra) => (
-                <div key={`${aspect.id}-${extra.id}`}
-                className="extra_discrete__item">
-                    <div className="extra_discrete__item_description">{extra.description}</div>
-                    <DevsInput className="extra_discrete__item_mark"
-                               value={extra.mark}
-                               onChange={(event) => this.sqrManageRateStore.setAspectExtraDiscreteMark(criteria.id, subcriteria.id, aspect.id, extra.id, event.target.value)}
-                    />
-                </div>
-            ))}
-        </div>
+        const zedAspect = this.sqrManageRateStore.zedAspects.find((zedAspect) => zedAspect.id === aspect.zedLink);
+        return <>
+            {zedAspect?.mark === '1' ? <div className="zed_aspect_message">Оценка аннулирована отсекающим
+                аспектом <b>"{zedAspect.caption}"</b></div> : <></>}
+            <div className="extra_discrete">
+                {aspect.extra?.map((extra) => (
+                    <div key={`${aspect.id}-${extra.id}`}
+                         className="extra_discrete__item">
+                        <div className="extra_discrete__item_description">{extra.description}</div>
+                        <DevsInput className="extra_discrete__item_mark"
+                                   value={extra.mark}
+                                   disabled={zedAspect?.mark === '1'}
+                                   onChange={(event) => this.sqrManageRateStore.setAspectExtraDiscreteMark(criteria.id, subcriteria.id, aspect.id, extra.id, event.target.value)}
+                        />
+                    </div>
+                ))}
+            </div>
+        </>
     }
 }
 
