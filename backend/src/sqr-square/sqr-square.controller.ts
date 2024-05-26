@@ -262,8 +262,9 @@ export class SqrSquareController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/pause')
     async pauseAllTimers(@Request() {user}: { user: UserDto },
-                         @Param('squareId') squareId: SqrSquareDto['id']): Promise<void> {
-        await this.sqrRoleService.pauseTimer(squareId);
+                         @Param('squareId') squareId: SqrSquareDto['id'],
+                         @Body() body: { description: string }): Promise<void> {
+        await this.sqrRoleService.pauseTimer(squareId, body.description);
     }
 
     @HasRoles(['squareManage', 'admin'])
@@ -271,8 +272,9 @@ export class SqrSquareController {
     @Post(':squareId/sqr-timer/:timerId/pause')
     async pauseTimer(@Request() {user}: { user: UserDto },
                      @Param('squareId') squareId: SqrSquareDto['id'],
-                     @Param('timerId') timerId: SqrTimerDto['id']): Promise<void> {
-        await this.sqrRoleService.pauseTimer(squareId, timerId);
+                     @Param('timerId') timerId: SqrTimerDto['id'],
+                     @Body() body: { description: string }): Promise<void> {
+        await this.sqrRoleService.pauseTimer(squareId, body.description, timerId);
     }
 
     @HasRoles(['squareManage', 'admin'])

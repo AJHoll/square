@@ -165,11 +165,12 @@ export default class SqrSquareService {
     }
 
     async pauseTimer(squareId: SqrSquareDto['id'],
+                     description: string,
                      timerId?: SqrTimerDto['id']): Promise<void> {
         if (timerId) {
-            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/${timerId}/pause`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/${timerId}/pause`, {description});
         } else {
-            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/pause`);
+            await axios.post<void>(`${this.restPath}/${squareId}/sqr-timer/pause`, {description});
         }
     }
 

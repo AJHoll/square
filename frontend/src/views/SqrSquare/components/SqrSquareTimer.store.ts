@@ -88,6 +88,24 @@ export default class SqrSquareTimerStore {
         }
     }, 1000);
 
+    private _timerDescriptionVisible: boolean = false;
+    get timerDescriptionVisible(): boolean {
+        return this._timerDescriptionVisible;
+    }
+
+    set timerDescriptionVisible(value: boolean) {
+        this._timerDescriptionVisible = value;
+    }
+
+    private _timerDescription: string = '';
+    get timerDescription(): string {
+        return this._timerDescription;
+    }
+
+    set timerDescription(value: string) {
+        this._timerDescription = value;
+    }
+
     constructor(rootStore: RootStore,
                 sqrSquareService: SqrSquareService) {
         this._rootStore = rootStore;
@@ -199,19 +217,7 @@ export default class SqrSquareTimerStore {
 
     async pauseTimer(onlyOne: boolean = false): Promise<void> {
         this._timerCountCardType = onlyOne ? 'oneTimer' : 'all';
-        if (this._squareId) {
-            switch (this._timerCountCardType) {
-                case "oneTimer": {
-                    await this._sqrSquareService.pauseTimer(this._squareId, this._selectionSqrTimers[0].id);
-                    break;
-                }
-                case "all": {
-                    await this._sqrSquareService.pauseTimer(this._squareId);
-                    break;
-                }
-            }
-            await this.reloadSqrTimers();
-        }
+        this.timerDescriptionVisible = true;
     }
 
     async stopTimer(onlyOne: boolean = false): Promise<void> {
@@ -224,6 +230,22 @@ export default class SqrSquareTimerStore {
                 }
                 case "all": {
                     await this._sqrSquareService.stopTimer(this._squareId);
+                    break;
+                }
+            }
+            await this.reloadSqrTimers();
+        }
+    }
+
+    async pauseTimerWithDescription(): Promise<void> {
+        if (this._squareId) {
+            switch (this._timerCountCardType) {
+                case "oneTimer": {
+                    await this._sqrSquareService.pauseTimer(this._squareId, this._timerDescription ?? '', this._selectionSqrTimers[0].id);
+                    break;
+                }
+                case "all": {
+                    await this._sqrSquareService.pauseTimer(this._squareId, this._timerDescription ?? '');
                     break;
                 }
             }

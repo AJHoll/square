@@ -469,7 +469,7 @@ export class SqrSquareService {
         });
     }
 
-    async pauseTimer(squareId: SqrSquareDto['id'], timerId?: SqrTimerDto['id']): Promise<void> {
+    async pauseTimer(squareId: SqrSquareDto['id'], description: string, timerId?: SqrTimerDto['id']): Promise<void> {
         await this.databaseService.$transaction(async (prisma) => {
             const timers = await prisma.sqr_square_timer.findMany({
                 where: {
@@ -493,7 +493,7 @@ export class SqrSquareService {
                     timer_id: timer.id,
                     state: 'PAUSE',
                     time: new Date(),
-                    description: 'Пауза таймера'
+                    description: description ?? 'Пауза таймера'
                 }))
             });
         });

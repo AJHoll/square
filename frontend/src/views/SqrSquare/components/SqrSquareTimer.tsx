@@ -10,6 +10,7 @@ import DevsButton from "@ajholl/devsuikit/dist/DevsButton";
 import DevsModal from "@ajholl/devsuikit/dist/DevsModal";
 import DevsInput from "@ajholl/devsuikit/dist/DevsInput";
 import {devsGridDateTimeFormatter} from "../../../components/DevsGrid/DevsGridFunctions";
+import DevsTextArea from "@ajholl/devsuikit/dist/DevsTextArea";
 
 interface SqrSquareTimerProps extends StoreProps {
 }
@@ -111,6 +112,21 @@ export class SqrSquareTimer extends React.Component<SqrSquareTimerProps> {
                                onChange={(event) => this.sqrSquareTimerStore.timerCardSecondsCount = +event.target.value}
                     ></DevsInput>
                 </div>
+            </DevsModal>
+            <DevsModal visible={this.sqrSquareTimerStore.timerDescriptionVisible}
+                       title={`Задайте причину приостановки ${this.sqrSquareTimerStore.timerCountCardType === 'all' ? 'таймеров' : 'таймера'}`}
+                       onClose={() => this.sqrSquareTimerStore.timerDescriptionVisible = false}
+                       style={{width: '400px', height: '230px'}}
+                       className="timer_description_dialog"
+                       footer={<DevsButton template="filled"
+                                           color="success"
+                                           icon="lni lni-pause"
+                                           title="Приостановить"
+                                           onClick={() => this.sqrSquareTimerStore.pauseTimerWithDescription()}
+                       />}
+            >
+
+                <DevsTextArea onChange={(event) => this.sqrSquareTimerStore.timerDescription = event.target.value}/>
             </DevsModal>
             <DevsGrid title="Таймеры"
                       gridDefaultColDef={this.defaultColDef}
