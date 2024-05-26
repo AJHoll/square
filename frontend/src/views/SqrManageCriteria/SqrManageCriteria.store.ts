@@ -323,6 +323,22 @@ export class SqrManageCriteriaStore {
         }
     }
 
+    setAspectSectionKey(criteriaId: SqrCriteriaDto['id'],
+                        subcriteriaId: SqrSubcriteriaDto['id'],
+                        aspectId: SqrAspectDto['id'],
+                        sectionKey: SqrAspectDto['sectionKey']): void {
+        const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
+        if (criteria !== undefined) {
+            const subcriteria = criteria.subcriterias.find((subcriteria) => subcriteria.id === subcriteriaId);
+            if (subcriteria !== undefined) {
+                const aspect = subcriteria.aspects.find((aspect) => aspect.id === aspectId);
+                if (aspect !== undefined) {
+                    aspect.sectionKey = sectionKey;
+                }
+            }
+        }
+    }
+
     setAspectCaption(criteriaId: SqrCriteriaDto['id'],
                      subcriteriaId: SqrSubcriteriaDto['id'],
                      aspectId: SqrAspectDto['id'],
@@ -509,12 +525,14 @@ export class SqrManageCriteriaStore {
     }
 
     async uploadFromXLSX(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
-        console.log();
-        const file = event.target.files?.item(0);
-        if (file) {
-            this.criterias = await this._sqrManageCriteriaService
-                .uploadXlsx(this._selectedSquare?.value as SqrSquareDto['id'], file);
-        }
+        this.criterias = [];
+        setTimeout(async () => {
+            const file = event.target.files?.item(0);
+            if (file) {
+                this.criterias = await this._sqrManageCriteriaService
+                    .uploadXlsx(this._selectedSquare?.value as SqrSquareDto['id'], file);
+            }
+        });
     }
 
     async downloadXLSX(): Promise<void> {

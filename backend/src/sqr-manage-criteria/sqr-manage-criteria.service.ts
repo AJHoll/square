@@ -116,8 +116,9 @@ export class SqrManageCriteriaService {
                                             caption: aspectRow.getCell('E').text,
                                             description: aspectRow.getCell('G').text,
                                             mark: aspectRow.getCell('J').text,
+                                            sectionKey: aspectRow.getCell('I').text,
                                             extra: [],
-                                            zedLink: aspectRow.getCell('D').text
+                                            zedLink: aspectRow.getCell('D').text,
                                         };
                                         let extraMaxRowNum = aspectRow.number + 1;
                                         while (sheet.getRow(extraMaxRowNum).getCell('E').text.length === 0 && extraMaxRowNum < sheet.rowCount) {

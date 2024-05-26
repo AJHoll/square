@@ -15,6 +15,30 @@
       flex-direction: row;
       gap: 15px;
 
+      .aspect_common_col {
+        display:flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: none;
+
+        .aspect_common_first_row {
+          display: flex;
+          flex-direction: row;
+          flex: none;
+          gap: 15px;
+        }
+        .aspect_common_second_row {
+          display: flex;
+          flex-direction: row;
+          flex: none;
+          gap: 15px;
+
+          .aspect_asss {
+            width: 100%;
+          }
+        }
+      }
+
       &_type {
         flex: none;
       }

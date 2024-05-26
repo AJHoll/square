@@ -10,4 +10,5 @@ export interface SqrAspectDto {
     extra?: SqrAspectExtraDto[];
     module?: string;
     zedLink?: SqrAspectDto['id'];
+    asssSection?: string;
 }

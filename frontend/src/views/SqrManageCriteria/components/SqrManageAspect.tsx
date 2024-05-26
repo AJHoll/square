@@ -29,26 +29,39 @@ export class SqrManageAspect extends React.Component<SqrManageAspectProps> {
         return <DevsPanel className="sqr_manage_aspect">
             <div className="sqr_manage_aspect__common">
                 <div className="aspect">
-                    <label className="aspect_type">
-                        Тип аспекта
-                        <DevsSelect value={aspectTypes.find((type) => type.value === aspect.type)}
-                                    onlySelection
-                                    forceSelection
-                                    options={aspectTypes}
-                                    onChange={(event) =>
-                                        this.sqrManageCriteriaStore.setAspectType(criteria.id, subcriteria.id, aspect.id, event.target.value.value)}
-                        />
-                    </label>
-                    <label className="aspect_module">
-                        Модуль
-                        {
-                            !!subcriteria.module ? <DevsInputWrapper value={aspect.module}/>
-                                : <DevsInput keyFilter="pint"
-                                             value={aspect.module}
-                                             onChange={(event) => this.sqrManageCriteriaStore.setAspectModule(criteria.id, subcriteria.id, aspect.id, event.target.value)}
+                    <div className="aspect_common_col">
+                        <div className="aspect_common_first_row">
+                            <label className="aspect_type">
+                                Тип аспекта
+                                <DevsSelect value={aspectTypes.find((type) => type.value === aspect.type)}
+                                            onlySelection
+                                            forceSelection
+                                            options={aspectTypes}
+                                            onChange={(event) =>
+                                                this.sqrManageCriteriaStore.setAspectType(criteria.id, subcriteria.id, aspect.id, event.target.value.value)}
                                 />
-                        }
-                    </label>
+                            </label>
+                            <label className="aspect_module">
+                                Модуль
+                                {
+                                    !!subcriteria.module ? <DevsInputWrapper value={aspect.module}/>
+                                        : <DevsInput keyFilter="pint"
+                                                     value={aspect.module}
+                                                     onChange={(event) => this.sqrManageCriteriaStore.setAspectModule(criteria.id, subcriteria.id, aspect.id, event.target.value)}
+                                        />
+                                }
+                            </label>
+                        </div>
+                        <div className="aspect_common_second_row">
+                            <label className="aspect_asss">
+                                ASSS Секция
+                                <DevsInput value={aspect.sectionKey}
+                                           onChange={(event) =>
+                                               this.sqrManageCriteriaStore.setAspectSectionKey(criteria.id, subcriteria.id, aspect.id, event.target.value)}
+                                />
+                            </label>
+                        </div>
+                    </div>
                     <label className="aspect_caption">
                         Название аспекта
                         <DevsTextArea value={aspect.caption}
