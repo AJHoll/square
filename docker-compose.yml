@@ -1,18 +1,37 @@
-version: "2"
+version: "1"
 services:
+  square-database:
+    container_name: "devs-square-database"
+    build: "./database"
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "6432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   square-backend:
+    depends_on:
+      square-database:
+        condition: service_healthy
     container_name: "devs-square-backend"
     build: "./backend"
     command: "node ./dist/main.js"
     environment:
       AUTH_SECRET_KEY: 'secret-key'
       AUTH_EXPIRES_IN: '8h'
-      DATABASE_URL: "postgresql://square:gfhjkbr@host.docker.internal:5432/square?schema=square"
+      DATABASE_URL: "postgresql://square:gfhjkbr@host.docker.internal:6432/square?schema=square"
       USER_PASSWORD_SALT_LEN: 10
       TEMPLATE_DIR: "./templates"
     ports:
       - "1024:1024"
   square-frontend:
+    depends_on:
+      - square-backend
     container_name: "devs-square-frontend"
     build: "./frontend"
     volumes:
