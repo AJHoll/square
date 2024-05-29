@@ -4,6 +4,7 @@ import {AdmUserDto} from "../dtos/AdmUser.dto";
 import axios from "axios";
 import {AdmGroupDto} from "../dtos/AdmGroup.dto";
 import {AdmUserGroupDto} from "../dtos/AdmUserGroup.dto";
+import {SqrCriteriaDto} from "../dtos/SqrCriteria.dto";
 
 export default class AdmUserService {
     private readonly _rootService: RootService;
@@ -47,5 +48,17 @@ export default class AdmUserService {
 
     async removeGroupsFromUser(userId: AdmGroupDto['id'], groups: AdmUserGroupDto[]): Promise<void> {
         await axios.delete<void>(`${this.restPath}/${userId}/group/${groups.map(u => u.id).join(',')}`);
+    }
+
+    async downloadImportTemplate(): Promise<ArrayBuffer> {
+        return (await axios.post<ArrayBuffer>(`${this.restPath}/download-import-template`, {}, {
+            responseType: 'arraybuffer'
+        }))?.data;
+    }
+
+    async importUser(file: File): Promise<void> {
+        const formData = new FormData();
+        formData.append('file', file);
+        await axios.post<SqrCriteriaDto[]>(`${this.restPath}/import-users`, formData)
     }
 }

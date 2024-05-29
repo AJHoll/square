@@ -82,7 +82,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         />
                         <AuthGuardRoute exact
                                         path="/users"
-                                        guardByRoles={['admin']}
+                                        guardByRoles={['admin', 'userManager']}
                                         rootStore={this.props.rootStore}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}

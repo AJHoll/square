@@ -1,4 +1,17 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Put,
+    Request,
+    StreamableFile,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors
+} from '@nestjs/common';
 import {JwtAuthGuard} from "../guards/jwt-auth.guard";
 import {UserDto} from "../dtos/user.dto";
 import {AdmUserService} from "./adm-user.service";
@@ -6,6 +19,7 @@ import {AdmUserDto} from "../dtos/adm-user.dto";
 import {AdmUserGroupDto} from "../dtos/adm-user-group.dto";
 import {HasRoles} from "../guards/roles.decorator";
 import {RolesGuard} from "../guards/roles.guard";
+import {FileInterceptor} from "@nestjs/platform-express";
 
 @Controller('adm-user')
 export class AdmUserController {
@@ -26,7 +40,7 @@ export class AdmUserController {
         return this.admUserService.getUser(id);
     }
 
-    @HasRoles(['admin'])
+    @HasRoles(['admin', 'userManager'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()
     async createAdmGroup(@Request() {user}: { user: UserDto },
@@ -34,7 +48,7 @@ export class AdmUserController {
         return this.admUserService.createUser(admUser);
     }
 
-    @HasRoles(['admin'])
+    @HasRoles(['admin', 'userManager'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Put(':id')
     async editAdmGroup(@Request() {user}: { user: UserDto },
@@ -43,7 +57,7 @@ export class AdmUserController {
         return this.admUserService.editUser(id, admUser);
     }
 
-    @HasRoles(['admin'])
+    @HasRoles(['admin', 'userManager'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':ids')
     async deleteAdmGroups(@Request() {user}: { user: UserDto },
@@ -74,5 +88,21 @@ export class AdmUserController {
                                @Param('id') idUser: AdmUserDto['id'],
                                @Param('userGroupIds') userGroupIds: string): Promise<void> {
         await this.admUserService.removeGroupsFromUser(idUser, userGroupIds.split(',').map(id => +id));
+    }
+
+    @HasRoles(['userManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Post('download-import-template')
+    async downloadImportTemplate(@Request() {user}: { user: UserDto }): Promise<StreamableFile> {
+        return this.admUserService.downloadImportTemplate();
+    }
+
+    @HasRoles(['userManager', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Post('import-users')
+    @UseInterceptors(FileInterceptor('file'))
+    async loadFromXlsx(@Request() {user}: { user: UserDto },
+                       @UploadedFile() file: Express.Multer.File): Promise<void> {
+        return this.admUserService.importUsers(file);
     }
 }

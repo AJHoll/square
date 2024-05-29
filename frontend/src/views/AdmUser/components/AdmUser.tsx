@@ -6,12 +6,15 @@ import AdmUserStore from "./AdmUser.store";
 import DevsGrid from "../../../components/DevsGrid/DevsGrid";
 import {ColDef, GridReadyEvent} from "ag-grid-community";
 import {AdmUserDto} from "../../../dtos/AdmUser.dto";
+import DevsButton from "@ajholl/devsuikit/dist/DevsButton";
 
 interface AdmUserProps extends StoreProps {
 }
 
 export class AdmUser extends React.Component<AdmUserProps> {
     readonly admUserStore: AdmUserStore = this.props.rootStore.admUserStore;
+
+    inputFileRef: React.RefObject<HTMLInputElement> = React.createRef();
 
     defaultColDef: ColDef<AdmUserDto> = {
         flex: 1,
@@ -52,6 +55,26 @@ export class AdmUser extends React.Component<AdmUserProps> {
                          onEditBtnClicked={() => this.admUserStore.editUser()}
                          onDeleteBtnClicked={() => this.admUserStore.deleteUsers()}
                          onGridRowDoubleClicked={() => !this.admUserStore.editBtnDisabled ? this.admUserStore.editUser() : undefined}
+                         additionalOperations={<>
+                             <DevsButton template={"filled"}
+                                         color={"info"}
+                                         style={{marginLeft: '20px'}}
+                                         title="Скачать шаблон импорта"
+                                         icon="lni lni-download"
+                                         onClick={() => this.admUserStore.downloadImportTemplate()}
+                             />
+                             <DevsButton template={"filled"}
+                                         color={"secondary"}
+                                         title="Импортировать"
+                                         icon="lni lni-download"
+                                         onClick={() => this.inputFileRef.current?.click()}
+                             />
+                             <input hidden
+                                    ref={this.inputFileRef}
+                                    type="file"
+                                    multiple={false}
+                                    onChange={async (event) => await this.admUserStore.importUser(event)}/>
+                         </>}
         />;
     }
 }

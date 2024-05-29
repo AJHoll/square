@@ -1,10 +1,13 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, StreamableFile} from '@nestjs/common';
 import {AdmUserDto} from "../dtos/adm-user.dto";
 import {DatabaseService} from "../services/database.service";
 import * as bcrypt from "bcrypt";
 import * as process from 'process';
 import {AdmUserGroupDto} from "../dtos/adm-user-group.dto";
 import {AdmGroupDto} from "../dtos/adm-group.dto";
+import * as path from "path";
+import {createReadStream} from "fs";
+import {Workbook} from "exceljs";
 
 @Injectable()
 export class AdmUserService {
@@ -109,5 +112,71 @@ export class AdmUserService {
         await this.databaseService.adm_user_group.deleteMany({
             where: {user_id: idUser, id: {in: userGroupIds}},
         });
+    }
+
+    async downloadImportTemplate(): Promise<StreamableFile> {
+        const file = createReadStream(path.join(process.env.TEMPLATE_DIR, 'user_import_template.xlsx'));
+        return new StreamableFile(file);
+    }
+
+    async importUsers(file: Express.Multer.File): Promise<void> {
+        const userDtoList: AdmUserDto[] = [];
+        if (file) {
+            const workbook = new Workbook();
+            await workbook.xlsx.load(file.buffer);
+            const sheet = workbook.getWorksheet(1);
+            sheet.eachRow((row) => {
+                if (row.number !== 1) {
+                    userDtoList.push({
+                        name: row.getCell('A').text.toLowerCase(),
+                        caption: row.getCell('B').text,
+                        password: row.getCell('C').text,
+                    })
+                }
+            });
+            userDtoList.forEach((userDto) => {
+                if (userDto.caption && !userDto.name) {
+                    userDto.name = userDto.caption.replace(/([А-ЯЁа-яё]+)\s+([А-ЯЁа-яё]).+\s+([А-ЯЁа-яё]).+/, '$2$3$1').toLowerCase();
+                    userDto.name = this.translit(userDto.name);
+                }
+            });
+            const existedUsers = await this.databaseService.adm_user.findMany({
+                where: {name: {in: userDtoList.map((userDto) => userDto.name)}}
+            });
+            for (const userDto1 of userDtoList.filter((userDto) => !existedUsers.map((dbUsers) => dbUsers.name).includes(userDto.name))) {
+                await this.createUser(userDto1);
+            }
+        } else {
+            throw Error('Файл не задан!');
+        }
+    }
+
+    translit(word): string {
+        let answer = '';
+        const converter = {
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+            'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i',
+            'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+            'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+            'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch',
+            'ш': 'sh', 'щ': 'sch', 'ь': '', 'ы': 'y', 'ъ': '',
+            'э': 'e', 'ю': 'yu', 'я': 'ya',
+
+            'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D',
+            'Е': 'E', 'Ё': 'E', 'Ж': 'Zh', 'З': 'Z', 'И': 'I',
+            'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N',
+            'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T',
+            'У': 'U', 'Ф': 'F', 'Х': 'H', 'Ц': 'C', 'Ч': 'Ch',
+            'Ш': 'Sh', 'Щ': 'Sch', 'Ь': '', 'Ы': 'Y', 'Ъ': '',
+            'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'
+        };
+        for (let i = 0; i < word.length; ++i) {
+            if (converter[word[i]] == undefined) {
+                answer += word[i];
+            } else {
+                answer += converter[word[i]];
+            }
+        }
+        return answer;
     }
 }

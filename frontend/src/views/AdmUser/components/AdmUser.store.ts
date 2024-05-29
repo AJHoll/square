@@ -5,6 +5,8 @@ import {ColumnApi, GridApi, SelectionChangedEvent} from "ag-grid-community";
 import {AdmUserDto} from "../../../dtos/AdmUser.dto";
 import AdmUserCardStore from "./AdmUserCard.store";
 import AdmUserGroupStore from "./AdmUserGroup.store";
+import {saveAs} from "file-saver";
+import React from "react";
 
 export default class AdmUserStore {
     private readonly _rootStore: RootStore;
@@ -87,5 +89,22 @@ export default class AdmUserStore {
     async deleteUsers(): Promise<void> {
         await this._admUserService.deleteUsers(this._selectedUserIds);
         await this.reloadUsers();
+    }
+
+    async downloadImportTemplate(): Promise<void> {
+        const fileArrayBuffer = await this._admUserService.downloadImportTemplate();
+        if (fileArrayBuffer) {
+            saveAs(new Blob([fileArrayBuffer], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+            }), 'Скверъ__шаблон_импорта_пользователей');
+        }
+    }
+
+    async importUser(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
+        const file = event.target.files?.item(0);
+        if (file) {
+            await this._admUserService.importUser(file);
+            await this.reloadUsers();
+        }
     }
 }
