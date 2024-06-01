@@ -27,12 +27,14 @@ import {makeAutoObservable} from "mobx";
 import {ConfigFile} from "../dtos/ConfigFile";
 import {SqrSquareEvalGroupCardStore} from "./SqrSquare/components/SqrSquareEvalGroupCard.store";
 import SqrManageRateStore from "./SqrManageRate/SqrManageRate.store";
+import ProfileStore from "./Profile/Profile.store";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
     readonly rootService: RootService = new RootService(this);
     readonly authStore: AuthStore = new AuthStore(this);
     readonly mainMenuStore: MainMenuStore = new MainMenuStore(this, this.rootService.mainMenuService);
+    readonly profileStore: ProfileStore = new ProfileStore(this, this.rootService.admUserService);
 
     readonly admRoleMenuStore: AdmRoleMenuStore = new AdmRoleMenuStore(this, this.rootService.admRoleService, this.rootService.krnMenuService);
     readonly admRoleCardStore: AdmRoleCardStore = new AdmRoleCardStore(this, this.rootService.admRoleService);

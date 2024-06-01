@@ -28,7 +28,12 @@ export class MainMenuView extends React.Component<MainMenuProps> {
             <div className="app_main_menu">
                 <div className="app_main_menu__logout">
                     <span className="greetings_text">Здравствуйте, {this.userService.user?.caption}</span>
-                    <div className="logout_btn">
+                    <div className="profile_logout_bar">
+                        <DevsButton template={"outlined"}
+                                    color={"primary"}
+                                    title="Профиль"
+                                    icon="lni lni-user"
+                                    onClick={() => this.props.history.push('/profile')}/>
                         <DevsButton template={"outlined"}
                                     color={"primary"}
                                     title="Выйти"
@@ -53,7 +58,7 @@ export class MainMenuView extends React.Component<MainMenuProps> {
                     </svg>
                     <div className="app_main_menu__icon-text">
                         <span>{this.props.rootStore.projectName}</span>
-                        <p>by <a href="https://devsystem.space">devsystem.space</a></p>
+                        <p>by <a href="http://devsystem.space">devsystem.space</a></p>
                     </div>
                 </div>
                 <div className="app_main_menu__search">

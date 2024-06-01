@@ -249,6 +249,7 @@ export default class SqrSquareTimerStore {
                     break;
                 }
             }
+            this.timerDescriptionVisible = false;
             await this.reloadSqrTimers();
         }
     }

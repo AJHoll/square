@@ -8,10 +8,14 @@ import {AdmGroupDto} from "../dtos/adm-group.dto";
 import * as path from "path";
 import {createReadStream} from "fs";
 import {Workbook} from "exceljs";
+import {SqrTimerDto} from "../dtos/sqr-timer.dto";
+import {SqrTimerState, SqrTimerStateWithTitles} from "../dtos/sqr-timer-state";
+import {SqrSquareService} from "../sqr-square/sqr-square.service";
 
 @Injectable()
 export class AdmUserService {
-    constructor(private databaseService: DatabaseService) {
+    constructor(private databaseService: DatabaseService,
+                private sqrSquareService: SqrSquareService) {
     }
 
     async getUsers(): Promise<AdmUserDto[]> {
@@ -48,13 +52,18 @@ export class AdmUserService {
         };
     }
 
-    async editUser(id: AdmUserDto['id'], admGroup: AdmUserDto): Promise<AdmUserDto> {
+    async editUser(id: AdmUserDto['id'], admUser: AdmUserDto, myUser?: boolean): Promise<AdmUserDto> {
+        let hash: string;
+        if (admUser.password) {
+            hash = await bcrypt.hash(admUser.password, (+process.env.USER_PASSWORD_SALT_LEN ?? 0));
+        }
         const dbResult = await this.databaseService.adm_user.update({
             data: {
-                name: admGroup.name,
-                caption: admGroup.caption,
+                name: admUser.name,
+                caption: admUser.caption,
+                hash
             },
-            where: {id, AND: {name: {not: {equals: 'admin'}}}},
+            where: {id, AND: !myUser ? {name: {not: {equals: 'admin'}}} : undefined},
         });
         return {
             id: dbResult.id.toNumber(),
@@ -178,5 +187,35 @@ export class AdmUserService {
             }
         }
         return answer;
+    }
+
+    async getMyTimer(admUserId: AdmUserDto['id']): Promise<SqrTimerDto> {
+        const rec = await this.databaseService.sqr_square_timer.findFirst({
+            where: {sqr_square_team: {sqr_square_user: {some: {user_id: admUserId}}}},
+            include: {sqr_square_timer_detail: true}
+        });
+        if (rec) {
+            return {
+                id: rec.id.toNumber(),
+                squareId: rec.square_id.toNumber(),
+                teamId: rec.team_id.toNumber(),
+                caption: rec.caption,
+                state: {key: rec.state, value: SqrTimerStateWithTitles[<SqrTimerState>rec.state]},
+                count: Number(rec.count),
+                beginTime: rec.begin_time,
+                pauseTime: rec.pause_time,
+                continueTime: rec.continue_time,
+                stopTime: rec.stop_time,
+                countLeft: this.sqrSquareService.calcTimerLeftTime(rec.begin_time,
+                    Number(rec.count),
+                    Number(rec.sqr_square_timer_detail.reduce((acc, detailRec) => {
+                        if (detailRec.state === 'PAUSE') {
+                            acc += (detailRec.count ?? BigInt(Math.floor((Date.now() - detailRec.time.getTime()) / 1000)))
+                        }
+                        return acc;
+                    }, BigInt(0))))
+            };
+        }
+        return null;
     }
 }

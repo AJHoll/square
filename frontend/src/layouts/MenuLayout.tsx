@@ -11,6 +11,7 @@ import AuthService from "../services/Auth.service";
 interface MenuLayoutProps extends RouteComponentProps, StoreProps {
     children: React.ReactNode;
     title?: string;
+    hideEnd?: boolean;
 }
 
 export class MenuLayout extends React.Component<MenuLayoutProps> {
@@ -22,6 +23,7 @@ export class MenuLayout extends React.Component<MenuLayoutProps> {
     }
 
     render() {
+        const {hideEnd} = this.props;
         const start: React.ReactNode = <div className="devs_menu_layout__menubar-start">
             <div className="devs_menu_home_btn"
                  onClick={() => this.props.history.push('/')}
@@ -43,16 +45,23 @@ export class MenuLayout extends React.Component<MenuLayoutProps> {
             {this.props?.title ? <span className="title">{this.props.title}</span> : undefined}
         </div>;
 
-        const end: React.ReactNode = <DevsButton template={"outlined"}
-                                                 color={"primary"}
-                                                 title="Выйти"
-                                                 icon="lni lni-exit"
-                                                 onClick={() => this.authService.logout()}/>
+        const end: React.ReactNode = <div className="devs_menu_layout__menubar-end">
+            <DevsButton template={"outlined"}
+                        color={"primary"}
+                        title="Профиль"
+                        icon="lni lni-user"
+                        onClick={() => this.props.history.push('/profile')}/>
+            <DevsButton template={"outlined"}
+                        color={"primary"}
+                        title="Выйти"
+                        icon="lni lni-exit"
+                        onClick={() => this.authService.logout()}/>
+        </div>
 
         return <div className="devs_menu_layout">
             <div className="devs_menu_layout__menubar">
                 <DevsMenubar start={start}
-                             end={end}
+                             end={hideEnd ? undefined : end}
                              model={this.mainMenuStore.menubarItems}
                 />
             </div>

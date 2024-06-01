@@ -5,6 +5,7 @@ import axios from "axios";
 import {AdmGroupDto} from "../dtos/AdmGroup.dto";
 import {AdmUserGroupDto} from "../dtos/AdmUserGroup.dto";
 import {SqrCriteriaDto} from "../dtos/SqrCriteria.dto";
+import {SqrTimerDto} from "../dtos/SqrTimer.dto";
 
 export default class AdmUserService {
     private readonly _rootService: RootService;
@@ -60,5 +61,13 @@ export default class AdmUserService {
         const formData = new FormData();
         formData.append('file', file);
         await axios.post<SqrCriteriaDto[]>(`${this.restPath}/import-users`, formData)
+    }
+
+    async changeUserCaptionAndPassword(userDto: AdmUserDto): Promise<void> {
+        await axios.post<void>(`${this.restPath}/change-my-user-data`, userDto);
+    }
+
+    async getMyTimer(): Promise<SqrTimerDto> {
+        return (await axios.get<SqrTimerDto>(`${this.restPath}/get-my-timer`)).data;
     }
 }

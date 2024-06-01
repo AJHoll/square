@@ -528,7 +528,7 @@ export class SqrSquareService {
         });
     }
 
-    private calcTimerLeftTime(startDate: Date, count: number, pausedTime: number): number {
+    calcTimerLeftTime(startDate: Date, count: number, pausedTime: number): number {
         if (!startDate) {
             return count;
         }
