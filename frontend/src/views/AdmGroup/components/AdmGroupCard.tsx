@@ -38,7 +38,7 @@ export class AdmGroupCard extends React.Component<AdmGroupCardProps> {
           />
         </DevsFormItem>
         <DevsFormItem label="Описание">
-          <DevsTextArea value={this.admGroupCardStore.admGroup.caption}
+          <DevsTextArea value={this.admGroupCardStore.admGroup.description}
                         onChange={(event) => this.admGroupCardStore.setDescription(event.target.value)}
           />
         </DevsFormItem>

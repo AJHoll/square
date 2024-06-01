@@ -114,7 +114,9 @@ export class SqrTimerStore {
     }
 
     async syncTimers(): Promise<void> {
-        this.timers = await this._sqrSquareService.getSquareTimers(+this.selectedSquare!.value);
+        if (this.selectedSquare?.value) {
+            this.timers = await this._sqrSquareService.getSquareTimers(+this.selectedSquare.value);
+        }
     }
 
     changeMainTimer(): void {
