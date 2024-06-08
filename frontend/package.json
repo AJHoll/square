@@ -41,7 +41,9 @@
     "primereact": "^9.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
     "react-router-dom": "5.3.4",
+    "remark-gfm": "^4.0.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

@@ -15,6 +15,7 @@ import OMenuLayout from "../layouts/MenuLayout";
 import OSqrManageCriteriaView from "../views/SqrManageCriteria/SqrManageCriteria.view";
 import OSqrManageRateView from "../views/SqrManageRate/SqrManageRate.view";
 import OProfileView from "../views/Profile/Profile.view";
+import OHelpView from "../views/Help/Help.view";
 
 interface RoutesProps extends StoreProps {
 }
@@ -63,6 +64,20 @@ export default class Routes extends React.Component<RoutesProps> {
                                                 <OProfileView {...routeProps}
                                                               rootStore={this.props.rootStore}
                                                               title={this.getTitle('Профиль')}
+                                                />
+                                            </OMenuLayout>}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/help"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OMenuLayout {...routeProps}
+                                                         rootStore={this.props.rootStore}
+                                                         hideEnd={true}
+                                                         title="Справка по системе">
+                                                <OHelpView {...routeProps}
+                                                           rootStore={this.props.rootStore}
+                                                           title={this.getTitle('Справка по системе')}
                                                 />
                                             </OMenuLayout>}
                         />
