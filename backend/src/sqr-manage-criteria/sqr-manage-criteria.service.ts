@@ -8,7 +8,7 @@ import {SqrSubcriteriaDto} from "../dtos/sqr-subcriteria.dto";
 import {SqrAspectDto} from "../dtos/sqr-aspect.dto";
 import {Style, Workbook} from 'exceljs';
 import * as path from 'path';
-import {createReadStream} from 'fs';
+import {createReadStream, unlink} from 'fs';
 import * as process from "process";
 import {SqrSquareService} from "../sqr-square/sqr-square.service";
 
@@ -195,8 +195,14 @@ export class SqrManageCriteriaService {
         this.makeZedIndexFromLink(criterias);
         this.mapCriteriasToExcel(square, criterias, workbook);
         // return streaming result file
-        await workbook.xlsx.writeFile(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
+        const filePath = path.join(process.env.TEMPLATE_DIR, 'generated', fileName);
+        await workbook.xlsx.writeFile(filePath);
         const file = createReadStream(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
+        file.on('end', () => {
+            unlink(filePath, () => ((error: unknown) => {
+                if (error) console.error(error);
+            }));
+        });
         return new StreamableFile(file);
     }
 

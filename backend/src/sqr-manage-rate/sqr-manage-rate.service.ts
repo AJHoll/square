@@ -10,7 +10,7 @@ import {JsonArray} from "@prisma/client/runtime/library";
 import {Style, Workbook} from "exceljs";
 import * as path from 'path';
 import * as process from "process";
-import {createReadStream} from "fs";
+import {createReadStream, unlink} from "fs";
 import {v4 as uuid} from 'uuid';
 import {SqrSquareService} from "../sqr-square/sqr-square.service";
 
@@ -140,7 +140,13 @@ export class SqrManageRateService {
         this.mapRatesToExcel(square, dbRates, workbook);
         // return streaming result file
         await workbook.xlsx.writeFile(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
-        const file = createReadStream(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
+        const filePath = path.join(process.env.TEMPLATE_DIR, 'generated', fileName);
+        const file = createReadStream(filePath);
+        file.on('end', () => {
+            unlink(filePath, () => ((error: unknown) => {
+                if (error) console.error(error);
+            }));
+        });
         return new StreamableFile(file);
     }
 

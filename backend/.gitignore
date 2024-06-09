@@ -2,7 +2,6 @@
 /dist
 /node_modules
 /release
-/templates/generated
 
 # Logs
 logs
