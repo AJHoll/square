@@ -62,7 +62,7 @@ export class SqrManageRateService {
         const rates = (await this.databaseService.sqr_square_team.findFirst({
             where: {square_id: squareId, id: teamId,}
         })).rates as unknown as SqrCriteriaDto[];
-        return rates
+        return (rates ?? [])
             .filter((criteria) => (availableModules.includes(+criteria.module) ||
                 criteria.subcriterias.findIndex((subcriteria) => (availableModules.includes(+subcriteria.module) ||
                     subcriteria.aspects.findIndex((aspect) => (availableModules.includes(+aspect.module))) !== -1)) !== -1
