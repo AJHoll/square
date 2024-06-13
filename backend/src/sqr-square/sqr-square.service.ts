@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, StreamableFile} from '@nestjs/common';
 import {DatabaseService} from '../services/database.service';
 import {SqrSquareDto} from "../dtos/sqr-square.dto";
 import {SqrRoleDto} from "../dtos/sqr-role.dto";
@@ -11,6 +11,11 @@ import {SqrTimerState, SqrTimerStateWithTitles} from "../dtos/sqr-timer-state";
 import {Interval} from "@nestjs/schedule";
 import {SqrSquareEvalGroupDto} from "../dtos/sqr-square-eval-group.dto";
 import {SqrSquareEvalGroupUserDto} from "../dtos/sqr-square-eval-group-user.dto";
+import {Workbook} from "exceljs";
+import * as path from 'path';
+import * as process from "process";
+import {v4 as uuid} from "uuid";
+import {createReadStream, unlink} from "fs";
 
 @Injectable()
 export class SqrSquareService {
@@ -705,5 +710,74 @@ export class SqrSquareService {
             },
             data: {eval_group_id: null}
         })));
+    }
+
+    async getTimerPauseReport(squareId: SqrSquareDto['id']): Promise<StreamableFile> {
+        const chiefExpertCaption: string = (await this.databaseService.sqr_square_user.findFirst({
+            where: {square_id: squareId, sqr_role: {name: 'chiefExpert'}},
+            include: {adm_user: true}
+        }))?.adm_user?.caption;
+        const squareCaption = (await this.databaseService.sqr_square.findFirst({where: {id: squareId}}))?.caption;
+        const timerPauses = (await this.databaseService.sqr_square_timer_detail.findMany({
+            where: {sqr_square_timer: {square_id: squareId}, state: 'PAUSE', time: {not: null}},
+            include: {sqr_square_timer: {include: {sqr_square_team: true}}},
+            orderBy: {time: 'desc'}
+        }));
+        const fileName = uuid() + '.xlsx';
+        const workbook = new Workbook();
+        // read excel tempalte
+        await workbook.xlsx.readFile(path.join(process.env.TEMPLATE_DIR, 'timer-protocol-template.xlsx'));
+
+        const sheet = workbook.getWorksheet('Протокол остановки времени');
+        let titleCell, chiefExpertCell, pausesTemplateRowNum;
+        sheet.eachRow((row) => {
+            row.eachCell((cell) => {
+                if ((cell?.value ?? '') === '$title') {
+                    titleCell = cell;
+                }
+                if ((cell?.value ?? '') === '$chiefExpert') {
+                    chiefExpertCell = cell;
+                }
+                if ((cell?.value ?? '') === '$teamCaption') {
+                    pausesTemplateRowNum = row.number;
+                }
+            });
+        });
+        if (titleCell) {
+            titleCell.value = `Протокол учета времени компетенции "${squareCaption}"`;
+        }
+        if (chiefExpertCell) {
+            chiefExpertCell.value = chiefExpertCaption;
+        }
+        if (pausesTemplateRowNum) {
+            for (const timerPause of timerPauses) {
+                sheet.duplicateRow(pausesTemplateRowNum, 1, true);
+                const pausesRow = sheet.getRow(pausesTemplateRowNum + 1);
+                pausesRow.eachCell((pauseCell) => {
+                    if (pauseCell.value === '$teamCaption') {
+                        pauseCell.value = timerPause.sqr_square_timer?.sqr_square_team?.caption;
+                    }
+                    if (pauseCell.value === '$pauseTime') {
+                        pauseCell.value = timerPause.time.toLocaleString();
+                    }
+                    if (pauseCell.value === '$startTime') {
+                        pauseCell.value = new Date(timerPause.time.setSeconds(timerPause.time.getSeconds() + Number(timerPause.count))).toLocaleString();
+                    }
+                    if (pauseCell.value === '$description') {
+                        pauseCell.value = timerPause.description;
+                    }
+                });
+            }
+            sheet.spliceRows(pausesTemplateRowNum, 1);
+        }
+        const filePath = path.join(process.env.TEMPLATE_DIR, 'generated', fileName);
+        await workbook.xlsx.writeFile(filePath);
+        const file = createReadStream(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
+        file.on('end', () => {
+            unlink(filePath, () => ((error: unknown) => {
+                if (error) console.error(error);
+            }));
+        });
+        return new StreamableFile(file);
     }
 }

@@ -40,7 +40,11 @@ export class SqrManageCriteriaStore {
             this._selectSquareRef.current?.setState({cValue: value});
         }
         this._selectedSquare = value;
-        this.reloadCriterias().then();
+        if (this._selectedSquare?.value) {
+            this.reloadCriterias().then();
+        } else {
+            this.criterias = [];
+        }
     }
 
     private _criterias: SqrCriteriaDto[] = [];
@@ -106,7 +110,9 @@ export class SqrManageCriteriaStore {
             value: square.id!
         }));
         this.selectedSquare = this.squares[0];
-        await this.reloadCriterias();
+        if (this._selectedSquare?.value) {
+            await this.reloadCriterias();
+        }
     }
 
     async reloadCriterias(): Promise<void> {

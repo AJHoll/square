@@ -234,4 +234,9 @@ export default class SqrSquareService {
         await axios.delete(`${this.restPath}/${squareId}/sqr-eval-group/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
     }
 
+    async downloadTimerPauseReport(squareId: SqrSquareDto['id']): Promise<ArrayBuffer> {
+        return (await axios.post<ArrayBuffer>(`${this.restPath}/${squareId}/timer-pause-report`, {}, {
+            responseType: 'arraybuffer'
+        }))?.data;
+    }
 }

@@ -13,6 +13,7 @@ import {
     Put,
     Query,
     Request,
+    StreamableFile,
     UseGuards
 } from '@nestjs/common';
 import {JwtAuthGuard} from '../guards/jwt-auth.guard';
@@ -369,5 +370,12 @@ export class SqrSquareController {
                                     @Param('userIds', ParseArrayPipe) userIds: SqrSquareEvalGroupUserDto['id'][]
     ): Promise<void> {
         await this.sqrRoleService.removeUsersFromEvalGroups(squareId, sqrEvalGroupIds, userIds);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':squareId/timer-pause-report')
+    async saveTolsx(@Request() {user}: { user: UserDto },
+                    @Param('squareId') squareId: SqrSquareDto['id']): Promise<StreamableFile> {
+        return this.sqrRoleService.getTimerPauseReport(squareId);
     }
 }

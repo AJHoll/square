@@ -161,6 +161,14 @@ export class SqrSquareTimer extends React.Component<SqrSquareTimerProps> {
                                       onClick={async () => await this.sqrSquareTimerStore.recreateTimer()}
                                       disabled={!this.sqrSquareTimerStore.squareId}
                           />
+                          <DevsButton template="filled"
+                                      color="info"
+                                      icon="lni lni-download"
+                                      title="Протокол"
+                                      style={{marginLeft: '20px'}}
+                                      disabled={!this.sqrSquareTimerStore.squareId}
+                                      onClick={() => this.sqrSquareTimerStore.downloadPauseReport()}
+                          />
 
                           <DevsButton template="filled"
                                       color="success"

@@ -5,6 +5,8 @@ import {makeAutoObservable} from "mobx";
 import {SqrTimerDto} from "../../../dtos/SqrTimer.dto";
 import {SqrSquareDto} from "../../../dtos/SqrSquare.dto";
 import {UFilterItem} from "../../../components/DevsGrid/DevsGridFilterItem";
+import {SqrTeamDto} from "../../../dtos/SqrTeam.dto";
+import {saveAs} from "file-saver";
 
 export default class SqrSquareTimerStore {
     private readonly _rootStore: RootStore;
@@ -251,6 +253,15 @@ export default class SqrSquareTimerStore {
             }
             this.timerDescriptionVisible = false;
             await this.reloadSqrTimers();
+        }
+    }
+
+    async downloadPauseReport(): Promise<void> {
+        const fileArrayBuffer = await this._sqrSquareService.downloadTimerPauseReport(this._squareId);
+        if (fileArrayBuffer) {
+            saveAs(new Blob([fileArrayBuffer], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+            }), 'Протокол_учета_времени');
         }
     }
 }
