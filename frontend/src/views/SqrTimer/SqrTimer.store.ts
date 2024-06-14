@@ -7,7 +7,6 @@ import DevsSelect from "@ajholl/devsuikit/dist/DevsSelect";
 import {SqrTimerDto} from "../../dtos/SqrTimer.dto";
 
 export class SqrTimerStore {
-
     private readonly _rootStore: RootStore;
     private readonly _sqrSquareService: SqrSquareService;
 
@@ -83,6 +82,15 @@ export class SqrTimerStore {
         return this.timers.filter((timer, index) => index !== this._mainTimerIdx);
     }
 
+    private _onlyMainTimer: boolean = false;
+    get onlyMainTimer(): boolean {
+        return this._onlyMainTimer;
+    }
+
+    set onlyMainTimer(value: boolean) {
+        this._onlyMainTimer = value;
+    }
+
     constructor(rootStore: RootStore,
                 sqrSquareService: SqrSquareService) {
         this._rootStore = rootStore;
@@ -115,15 +123,21 @@ export class SqrTimerStore {
 
     async syncTimers(): Promise<void> {
         if (this.selectedSquare?.value) {
-            this.timers = await this._sqrSquareService.getSquareTimers(+this.selectedSquare.value);
+            if (!this._onlyMainTimer) {
+                this.timers = (await this._sqrSquareService.getSquareTimers(+this.selectedSquare.value)).filter(timer => timer.teamId !== undefined);
+            } else {
+                this.timers = (await this._sqrSquareService.getSquareTimers(+this.selectedSquare.value)).filter(timer => timer.teamId === undefined)
+                this.mainTimerIdx = 0;
+            }
         }
     }
 
     changeMainTimer(): void {
-        if ((this.squares ?? []).length > 0) {
+        if ((this.timers ?? []).length > 0 && !(this._onlyMainTimer)) {
             this.mainTimerChangeClass = 'timer_hiding';
             setTimeout(() => {
-                if (this._mainTimerIdx === this.squares.length - 1) {
+                console.log(this._mainTimerIdx, this.timers.length)
+                if (this._mainTimerIdx === this.timers.length - 1) {
                     this.mainTimerIdx = 0;
                 } else {
                     this.mainTimerIdx += 1;

@@ -173,7 +173,10 @@ export class SqrSquareService {
     }
 
     async getSquareTeams(squareId: SqrSquareDto['id']): Promise<SqrTeamDto[]> {
-        const dbData = await this.databaseService.sqr_square_team.findMany({where: {square_id: squareId}});
+        const dbData = await this.databaseService.sqr_square_team.findMany({
+            where: {square_id: squareId},
+            orderBy: {caption: 'asc'}
+        });
         return dbData.map(d => ({
             id: d.id.toNumber(),
             squareId: d.square_id.toNumber(),
@@ -255,7 +258,8 @@ export class SqrSquareService {
                         mode: "insensitive"
                     }
                 } : undefined
-            }
+            },
+            orderBy: {adm_user: {caption: 'asc'}}
         });
         return dbData.map(d => ({
             id: d.id.toNumber(),
@@ -304,14 +308,14 @@ export class SqrSquareService {
 
     async getSquareTimers(squareId: SqrSquareDto['id']): Promise<SqrTimerDto[]> {
         const dbData = await this.databaseService.sqr_square_timer.findMany({
-            where:
-                {square_id: squareId},
-            include: {sqr_square_timer_detail: true}
+            where: {square_id: squareId},
+            include: {sqr_square_timer_detail: true},
+            orderBy: {id: 'asc'}
         });
         return dbData.map((rec) => ({
             id: rec.id.toNumber(),
             squareId: rec.square_id.toNumber(),
-            teamId: rec.team_id.toNumber(),
+            teamId: rec.team_id?.toNumber(),
             caption: rec.caption,
             state: {key: rec.state, value: SqrTimerStateWithTitles[<SqrTimerState>rec.state]},
             count: Number(rec.count),
@@ -319,7 +323,7 @@ export class SqrSquareService {
             pauseTime: rec.pause_time,
             continueTime: rec.continue_time,
             stopTime: rec.stop_time,
-            countLeft: this.calcTimerLeftTime(rec.begin_time,
+            countLeft: rec.state === 'STOP' ? 0 : this.calcTimerLeftTime(rec.begin_time,
                 Number(rec.count),
                 Number(rec.sqr_square_timer_detail.reduce((acc, detailRec) => {
                     if (detailRec.state === 'PAUSE') {
@@ -339,7 +343,7 @@ export class SqrSquareService {
         return {
             id: rec.id.toNumber(),
             squareId: rec.square_id.toNumber(),
-            teamId: rec.team_id.toNumber(),
+            teamId: rec.team_id?.toNumber(),
             caption: rec.caption,
             state: {key: rec.state, value: SqrTimerStateWithTitles[<SqrTimerState>rec.state]},
             count: Number(rec.count),
@@ -347,7 +351,7 @@ export class SqrSquareService {
             pauseTime: rec.pause_time,
             continueTime: rec.continue_time,
             stopTime: rec.stop_time,
-            countLeft: this.calcTimerLeftTime(rec.begin_time,
+            countLeft: rec.state === 'STOP' ? 0 : this.calcTimerLeftTime(rec.begin_time,
                 Number(rec.count),
                 Number(rec.sqr_square_timer_detail.reduce((acc, detailRec) => {
                     if (detailRec.state === 'PAUSE') {
@@ -382,6 +386,20 @@ export class SqrSquareService {
                 });
             } else {
                 const teams = await this.getSquareTeams(squareId);
+                await prisma.sqr_square_timer.create({
+                    data: {
+                        square_id: squareId,
+                        team_id: null as number,
+                        caption: 'Основной таймер',
+                        sqr_square_timer_detail: {
+                            create: {
+                                state: 'READY',
+                                time: new Date(),
+                                description: 'Пересоздание основного таймера'
+                            }
+                        }
+                    },
+                });
                 for (const team of teams) {
                     await prisma.sqr_square_timer.create({
                         data: {
@@ -719,9 +737,9 @@ export class SqrSquareService {
         }))?.adm_user?.caption;
         const squareCaption = (await this.databaseService.sqr_square.findFirst({where: {id: squareId}}))?.caption;
         const timerPauses = (await this.databaseService.sqr_square_timer_detail.findMany({
-            where: {sqr_square_timer: {square_id: squareId}, state: 'PAUSE', time: {not: null}},
+            where: {sqr_square_timer: {square_id: squareId, team_id: {not: null}}, state: 'PAUSE', time: {not: null}},
             include: {sqr_square_timer: {include: {sqr_square_team: true}}},
-            orderBy: {time: 'desc'}
+            orderBy: [{time: 'desc'}, {sqr_square_timer: {sqr_square_team: {caption: 'desc'}}}]
         }));
         const fileName = uuid() + '.xlsx';
         const workbook = new Workbook();
