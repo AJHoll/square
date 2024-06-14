@@ -99,7 +99,7 @@ http {
 }
 ```
 
-скопируйте все файлы и папки из `./build` в `nginx/nginx-1.26.1/html`
+скопируйте все файлы и папки из `frontend/build` в `nginx/nginx-1.26.1/html`
 
 запустите `nginx/nginx-1.26.1/nginx.exe`
 проверьте в бразуере `localhost`, если система запустилась - окно с nginx можно закрыть
