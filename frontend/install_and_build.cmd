@@ -1,0 +1,1 @@
+npm i -g yarn && yarn && yarn build && copy ".\config-prod.json" ".\build\config.json" /Y

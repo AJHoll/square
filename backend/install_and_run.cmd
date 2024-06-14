@@ -1,0 +1,1 @@
+npm i -g yarn && yarn && npx prisma generate && yarn start
