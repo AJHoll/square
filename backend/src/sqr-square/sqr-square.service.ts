@@ -146,9 +146,13 @@ export class SqrSquareService {
         await this.databaseService.sqr_square_user.createMany({
             data: addSquareUserData
         });
-        await this.databaseService.adm_user_group.createMany({
-            data: addAdmUserGroupData
-        });
+        try {
+            await this.databaseService.adm_user_group.createMany({
+                data: addAdmUserGroupData
+            });
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     async removeUsersFromSquareRole(squareId: SqrSquareDto['id'], roleIds: SqrRoleDto['id'][], userIds: SqrSquareUserDto['id'][]): Promise<void> {
