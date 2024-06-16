@@ -239,4 +239,10 @@ export default class SqrSquareService {
             responseType: 'arraybuffer'
         }))?.data;
     }
+
+    async exportSquareRoleUsers(squareId: SqrSquareDto['id']): Promise<ArrayBuffer> {
+        return (await axios.post<ArrayBuffer>(`${this.restPath}/${squareId}/export-square-role-user`, {}, {
+            responseType: 'arraybuffer'
+        }))?.data;
+    }
 }

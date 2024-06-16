@@ -6,6 +6,8 @@ import {SqrRoleDto} from "../../../dtos/SqrRole.dto";
 import {SqrSquareUserDto} from "../../../dtos/SqrSquareUser.dto";
 import SqrSquareService from "../../../services/SqrSquare.service";
 import {UFilterItem} from "../../../components/DevsGrid/DevsGridFilterItem";
+import {saveAs} from "file-saver";
+
 
 export default class SqrSquareUserStore {
     private readonly _rootStore: RootStore;
@@ -23,6 +25,10 @@ export default class SqrSquareUserStore {
     }
 
     private _squareId: SqrSquareDto['id'];
+    get squareId(): SqrSquareDto["id"] {
+        return this._squareId;
+    }
+
     private _selectionSqrRoles: SqrRoleDto[] = [];
     private _selectionSquareUsers: SqrSquareUserDto[] = [];
     private _squareUserFilters: { [p: string]: UFilterItem } = {
@@ -130,5 +136,14 @@ export default class SqrSquareUserStore {
             this._selectionSquareUsers.map(su => su.id),
             this._selectionSqrRoles.map(r => r.id));
         await this.reloadSqrSquareUsers();
+    }
+
+    async exportSquareRoleUsers(): Promise<void> {
+        const fileArrayBuffer = await this._sqrSquareService.exportSquareRoleUsers(this._squareId);
+        if (fileArrayBuffer) {
+            saveAs(new Blob([fileArrayBuffer], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+            }), 'Пользователи_площадки');
+        }
     }
 }

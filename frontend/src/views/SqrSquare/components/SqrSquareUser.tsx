@@ -77,6 +77,10 @@ export class SqrSquareUser extends React.Component<SqrSquareUserProps> {
                           gridRowSelection="single"
                           onGridReady={async (event) => await this.onSqrRoleGridReady(event)}
                           onGridRowSelectionChanged={(event) => this.sqrSquareUserStore.sqrRoleSelectionChange(event)}
+                          editBtnIcon="lni lni-download"
+                          editBtnTitle="Экспорт"
+                          editBtnDisabled={!this.sqrSquareUserStore.squareId}
+                          onEditBtnClicked={() => (this.sqrSquareUserStore.exportSquareRoleUsers())}
                 />
             </DevsSplitterPanel>
             <DevsSplitterPanel>

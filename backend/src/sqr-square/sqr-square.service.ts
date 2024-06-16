@@ -344,6 +344,9 @@ export class SqrSquareService {
                 {square_id: squareId, id: timerId},
             include: {sqr_square_timer_detail: true}
         });
+        if (!rec) {
+            return {};
+        }
         return {
             id: rec.id.toNumber(),
             squareId: rec.square_id.toNumber(),
@@ -791,6 +794,36 @@ export class SqrSquareService {
                 });
             }
             sheet.spliceRows(pausesTemplateRowNum, 1);
+        }
+        const filePath = path.join(process.env.TEMPLATE_DIR, 'generated', fileName);
+        await workbook.xlsx.writeFile(filePath);
+        const file = createReadStream(path.join(process.env.TEMPLATE_DIR, 'generated', fileName));
+        file.on('end', () => {
+            unlink(filePath, () => ((error: unknown) => {
+                if (error) console.error(error);
+            }));
+        });
+        return new StreamableFile(file);
+    }
+
+    async exportSquareRoleUser(squareId: SqrSquareDto['id']): Promise<StreamableFile> {
+        const fileName = uuid() + '.xlsx';
+        const workbook = new Workbook();
+        // read excel tempalte
+        await workbook.xlsx.readFile(path.join(process.env.TEMPLATE_DIR, 'square_user_export.xlsx'));
+        const sheet = workbook.getWorksheet('Пользователи на площадке');
+        const records = await this.databaseService.sqr_square_user.findMany({
+            where: {square_id: squareId},
+            include: {sqr_role: true, adm_user: true},
+            orderBy: [{sqr_role: {id: 'asc'}}, {adm_user: {caption: 'asc'}}]
+        });
+        let rowIdx = 2;
+        for (const record of records) {
+            const row = sheet.getRow(rowIdx);
+            row.getCell('A').value = record.adm_user.name;
+            row.getCell('B').value = record.adm_user.caption;
+            row.getCell('C').value = record.sqr_role.caption;
+            rowIdx++;
         }
         const filePath = path.join(process.env.TEMPLATE_DIR, 'generated', fileName);
         await workbook.xlsx.writeFile(filePath);

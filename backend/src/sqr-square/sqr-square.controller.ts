@@ -378,4 +378,12 @@ export class SqrSquareController {
                     @Param('squareId') squareId: SqrSquareDto['id']): Promise<StreamableFile> {
         return this.sqrRoleService.getTimerPauseReport(squareId);
     }
+
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Post(':squareId/export-square-role-user')
+    async exportSquareRoleUser(@Request() {user}: { user: UserDto },
+                               @Param('squareId') squareId: SqrSquareDto['id']): Promise<StreamableFile> {
+        return this.sqrRoleService.exportSquareRoleUser(squareId);
+    }
 }
