@@ -1,8 +1,11 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import {NestFactory} from '@nestjs/core';
+import {AppModule} from './app.module';
+import {json, urlencoded} from "express";
 
 (async () => {
-  const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  await app.listen(1024);
+    const app = await NestFactory.create(AppModule);
+    app.enableCors();
+    app.use(json({limit: '50mb'}));
+    app.use(urlencoded({extended: true, limit: '50mb'}));
+    await app.listen(1024);
 })();
