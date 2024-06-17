@@ -136,7 +136,6 @@ export class SqrTimerStore {
         if ((this.timers ?? []).length > 0 && !(this._onlyMainTimer)) {
             this.mainTimerChangeClass = 'timer_hiding';
             setTimeout(() => {
-                console.log(this._mainTimerIdx, this.timers.length)
                 if (this._mainTimerIdx === this.timers.length - 1) {
                     this.mainTimerIdx = 0;
                 } else {
@@ -144,7 +143,6 @@ export class SqrTimerStore {
                 }
                 this.mainTimerChangeClass = '';
             }, 500);
-
         }
     }
 }

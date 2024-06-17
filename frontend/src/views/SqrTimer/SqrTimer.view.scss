@@ -1,5 +1,21 @@
 @import "@ajholl/devsuikit/dist/scss";
 
+@media all and (display-mode: fullscreen) {
+  .timer_toolbar, .devs_menu_layout__menubar {
+    display: none !important;
+  }
+
+  .sqr_timer_view {
+    .timer_content__main_timer {
+      .sqr_timer {
+        .sqr_timer__countLeft {
+          font-size: clamp(100px, 18.666vw, 350px);
+        }
+      }
+    }
+  }
+}
+
 .sqr_timer_view {
   display: flex;
   flex-direction: column;
@@ -55,7 +71,6 @@
         }
 
         &__countLeft {
-
           font-weight: 900;
           font-size: clamp(40px, 16.666vw, 300px);
         }
