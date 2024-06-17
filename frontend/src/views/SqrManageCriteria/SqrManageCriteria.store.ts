@@ -551,10 +551,10 @@ export class SqrManageCriteriaStore {
     }
 
     recalcSumSubcriteriaMark(criteria: SqrCriteriaDto): void {
-        criteria.sumSubcriteriaMark = criteria.subcriterias.reduce((sumCriteria, subcriteria) => {
+        criteria.sumSubcriteriaMark = +criteria.subcriterias.reduce((sumCriteria, subcriteria) => {
             return sumCriteria + subcriteria.aspects.reduce((sumAspect, aspect) => {
                 return sumAspect + +aspect.mark;
             }, 0);
-        }, 0);
+        }, 0).toFixed(2);
     }
 }
