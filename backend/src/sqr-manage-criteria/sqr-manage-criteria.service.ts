@@ -82,8 +82,19 @@ export class SqrManageCriteriaService {
             const workbook = new Workbook();
             await workbook.xlsx.load(file.buffer);
             const sheet = workbook.getWorksheet(1);
-            sheet?.getRows(4, 8)?.forEach((row) => {
-                if (row.hasValues) {
+            // Найдем № строки под C
+            let firstCriteriaRowNum: number, firstSubcriteriaTableHederRowNum: number;
+            sheet.eachRow((row) => {
+                if (row.getCell('C').value === 'A' && !firstCriteriaRowNum) {
+                    firstCriteriaRowNum = row.number;
+                }
+                if (row.getCell('A').value && !firstSubcriteriaTableHederRowNum) {
+                    firstSubcriteriaTableHederRowNum = row.number;
+                }
+            });
+            // Найдем первый субкритерийID
+            sheet?.getRows(firstCriteriaRowNum, firstSubcriteriaTableHederRowNum - firstCriteriaRowNum)?.forEach((row) => {
+                if (row.hasValues && row.getCell('C').value) {
                     data.push({
                         id: uuid(),
                         key: row.getCell('C').text,
