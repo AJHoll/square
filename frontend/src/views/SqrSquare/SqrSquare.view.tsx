@@ -12,16 +12,27 @@ import OSqrSquareUser from "./components/SqrSquareUser";
 import OSqrSquareTeam from "./components/SqrSquareTeam";
 import OSqrSquareTimer from "./components/SqrSquareTimer";
 import OSqrSquareEvalGroup from "./components/SqrSquareEvalGroup";
+import UserService from "../../services/User.service";
 
 interface SqrSquareViewProps extends BaseViewProps {
 }
 
 export class SqrSquareView extends React.Component<SqrSquareViewProps> {
+    readonly userService: UserService = this.props.rootStore.rootService.userService;
+
     componentDidMount() {
         document.title = this.props.title;
     }
 
     render() {
+        let activePanelNames: string[] = [];
+        if ((this.userService.user?.roles ?? []).includes('admin') ||
+            (this.userService.user?.roles ?? []).includes('squareManage')) {
+            activePanelNames = ['roles', 'teams', 'timers', 'eval-groups'];
+        }
+        if ((this.userService.user?.roles ?? []).includes('timerManage')) {
+            activePanelNames = ['timers'];
+        }
         return (
             <div className="sqr_square_view">
                 <OSqrSquareCard rootStore={this.props.rootStore}/>
@@ -32,18 +43,32 @@ export class SqrSquareView extends React.Component<SqrSquareViewProps> {
                         </DevsSplitterPanel>
                         <DevsSplitterPanel>
                             <DevsTabView>
-                                <DevsTabPanel header="Роли на площадке">
-                                    <OSqrSquareUser rootStore={this.props.rootStore}/>
-                                </DevsTabPanel>
-                                <DevsTabPanel header="Команды">
-                                    <OSqrSquareTeam rootStore={this.props.rootStore}/>
-                                </DevsTabPanel>
-                                <DevsTabPanel header="Таймеры">
-                                    <OSqrSquareTimer rootStore={this.props.rootStore}/>
-                                </DevsTabPanel>
-                                <DevsTabPanel header="Группы проверки">
-                                    <OSqrSquareEvalGroup rootStore={this.props.rootStore}/>
-                                </DevsTabPanel>
+                                {
+                                    activePanelNames.map((panelName) => {
+                                        switch (panelName) {
+                                            case "roles": {
+                                                return <DevsTabPanel header="Роли на площадке">
+                                                    <OSqrSquareUser rootStore={this.props.rootStore}/>
+                                                </DevsTabPanel>
+                                            }
+                                            case "teams": {
+                                                return <DevsTabPanel header="Команды">
+                                                    <OSqrSquareTeam rootStore={this.props.rootStore}/>
+                                                </DevsTabPanel>
+                                            }
+                                            case "timers": {
+                                                return <DevsTabPanel header="Таймеры">
+                                                    <OSqrSquareTimer rootStore={this.props.rootStore}/>
+                                                </DevsTabPanel>
+                                            }
+                                            case "eval-groups": {
+                                                return <DevsTabPanel header="Группы проверки">
+                                                    <OSqrSquareEvalGroup rootStore={this.props.rootStore}/>
+                                                </DevsTabPanel>
+                                            }
+                                        }
+                                    })
+                                }
                             </DevsTabView>
                         </DevsSplitterPanel>
                     </DevsSplitter>

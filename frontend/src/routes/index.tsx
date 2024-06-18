@@ -142,7 +142,7 @@ export default class Routes extends React.Component<RoutesProps> {
                         />
                         <AuthGuardRoute exact
                                         path="/squares"
-                                        guardByRoles={['squareManage', 'admin']}
+                                        guardByRoles={['squareManage', 'timerManage', 'admin']}
                                         rootStore={this.props.rootStore}
                                         render={(routeProps: RouteComponentProps) =>
                                             <OMenuLayout {...routeProps}

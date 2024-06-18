@@ -56,6 +56,7 @@ export class SqrSquare extends React.Component<SqrSquareProps> {
                          editBtnTitle="Редактировать"
                          deleteBtnTitle="Удалить"
                          gridRowSelection="multiple"
+                         createBtnDisabled={this.sqrSquareStore.createBtnDisabled}
                          editBtnDisabled={this.sqrSquareStore.editBtnDisabled}
                          deleteBtnDisabled={this.sqrSquareStore.deleteBtnDisabled}
                          onGridReady={(event) => this.onGridReady(event)}

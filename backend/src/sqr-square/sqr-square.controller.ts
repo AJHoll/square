@@ -206,7 +206,7 @@ export class SqrSquareController {
         return this.sqrRoleService.getSquareTimer(squareId, timerId);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/recreate')
     async recreateSquareTimers(@Request() {user}: { user: UserDto },
@@ -214,7 +214,7 @@ export class SqrSquareController {
         await this.sqrRoleService.recreateSquareTimer(squareId);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/:timerId/recreate')
     async recreateSquareTimer(@Request() {user}: { user: UserDto },
@@ -223,7 +223,7 @@ export class SqrSquareController {
         await this.sqrRoleService.recreateSquareTimer(squareId, timerId);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch(':squareId/sqr-timer/set-count/:count')
     async setAllTimerCount(@Request() {user}: { user: UserDto },
@@ -232,7 +232,7 @@ export class SqrSquareController {
         await this.sqrRoleService.setTimerCount(squareId, count);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch(':squareId/sqr-timer/:timerId/set-count/:count')
     async setTimerCount(@Request() {user}: { user: UserDto },
@@ -242,7 +242,7 @@ export class SqrSquareController {
         await this.sqrRoleService.setTimerCount(squareId, count, timerId);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/start')
     async startAllTimers(@Request() {user}: { user: UserDto },
@@ -250,7 +250,7 @@ export class SqrSquareController {
         await this.sqrRoleService.startTimer(squareId);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/:timerId/start')
     async startTimer(@Request() {user}: { user: UserDto },
@@ -259,7 +259,7 @@ export class SqrSquareController {
         await this.sqrRoleService.startTimer(squareId, timerId);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/pause')
     async pauseAllTimers(@Request() {user}: { user: UserDto },
@@ -268,7 +268,7 @@ export class SqrSquareController {
         await this.sqrRoleService.pauseTimer(squareId, body.description);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/:timerId/pause')
     async pauseTimer(@Request() {user}: { user: UserDto },
@@ -278,7 +278,7 @@ export class SqrSquareController {
         await this.sqrRoleService.pauseTimer(squareId, body.description, timerId);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/stop')
     async stopAllTimers(@Request() {user}: { user: UserDto },
@@ -286,7 +286,7 @@ export class SqrSquareController {
         await this.sqrRoleService.stopTimer(user, squareId);
     }
 
-    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'timerManage', 'admin'])
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':squareId/sqr-timer/:timerId/stop')
     async stopTimer(@Request() {user}: { user: UserDto },

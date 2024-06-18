@@ -8,6 +8,7 @@ import SqrSquareUserStore from "./SqrSquareUser.store";
 import SqrSquareTeamStore from "./SqrSquareTeam.store";
 import SqrSquareTimerStore from "./SqrSquareTimer.store";
 import SqrSquareEvalGroupStore from "./SqrSquareEvalGroup.store";
+import UserService from "../../../services/User.service";
 
 export default class SqrSquareStore {
     private readonly _rootStore: RootStore;
@@ -17,6 +18,8 @@ export default class SqrSquareStore {
     private readonly _sqrSquareTimerStore: SqrSquareTimerStore;
     private readonly _sqrSquareService: SqrSquareService;
     private readonly _sqrSquareEvalGRoupStore: SqrSquareEvalGroupStore;
+
+    private readonly _userService: UserService;
 
     private _gridApi: GridApi<SqrSquareDto> | undefined;
     set gridApi(value: GridApi<SqrSquareDto>) {
@@ -37,12 +40,17 @@ export default class SqrSquareStore {
         this._selectedSquareIds = value;
     }
 
+    get createBtnDisabled(): boolean {
+        return !this._userService.user?.roles?.includes('admin');
+    }
+
     get editBtnDisabled(): boolean {
-        return (this._selectedSquareIds ?? []).length !== 1;
+        return (this._selectedSquareIds ?? []).length !== 1 || (!this._userService.user?.roles.includes('admin') &&
+            !this._userService.user?.roles.includes('squareManage'));
     }
 
     get deleteBtnDisabled(): boolean {
-        return (this._selectedSquareIds ?? []).length === 0;
+        return (this._selectedSquareIds ?? []).length === 0 || !this._userService.user?.roles?.includes('admin');
     }
 
     constructor(rootStore: RootStore, sqrSquareService: SqrSquareService) {
@@ -53,6 +61,7 @@ export default class SqrSquareStore {
         this._sqrSquareTimerStore = rootStore.sqrSquareTimerStore;
         this._sqrSquareEvalGRoupStore = rootStore.sqrSquareEvalGroupStore;
         this._sqrSquareService = sqrSquareService;
+        this._userService = rootStore.rootService.userService;
         makeAutoObservable(this);
     }
 
