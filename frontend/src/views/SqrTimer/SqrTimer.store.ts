@@ -124,7 +124,8 @@ export class SqrTimerStore {
     async syncTimers(): Promise<void> {
         if (this.selectedSquare?.value) {
             if (!this._onlyMainTimer) {
-                this.timers = (await this._sqrSquareService.getSquareTimers(+this.selectedSquare.value)).filter(timer => timer.teamId !== undefined);
+                this.timers = (await this._sqrSquareService.getSquareTimers(+this.selectedSquare.value))
+                    .filter(timer => timer.teamId !== undefined && timer.state?.key !== 'STOP');
             } else {
                 this.timers = (await this._sqrSquareService.getSquareTimers(+this.selectedSquare.value)).filter(timer => timer.teamId === undefined)
                 this.mainTimerIdx = 0;
