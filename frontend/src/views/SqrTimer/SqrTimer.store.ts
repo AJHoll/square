@@ -124,8 +124,13 @@ export class SqrTimerStore {
     async syncTimers(): Promise<void> {
         if (this.selectedSquare?.value) {
             if (!this._onlyMainTimer) {
+                const prevLengthTimers = this._timers.length;
                 this.timers = (await this._sqrSquareService.getSquareTimers(+this.selectedSquare.value))
-                    .filter(timer => timer.teamId !== undefined && timer.state?.key !== 'STOP');
+                    .filter(timer => timer.teamId !== undefined && ['START', 'PAUSE'].includes(timer.state?.key ?? ''));
+                if (this._timers.length !== prevLengthTimers) {
+                    this.mainTimerIdx = 0;
+                    this.changeMainTimer();
+                }
             } else {
                 this.timers = (await this._sqrSquareService.getSquareTimers(+this.selectedSquare.value)).filter(timer => timer.teamId === undefined)
                 this.mainTimerIdx = 0;
@@ -134,7 +139,7 @@ export class SqrTimerStore {
     }
 
     changeMainTimer(): void {
-        if ((this.timers ?? []).length > 0 && !(this._onlyMainTimer)) {
+        if ((this.timers ?? []).length > 1 && !(this._onlyMainTimer)) {
             this.mainTimerChangeClass = 'timer_hiding';
             setTimeout(() => {
                 if (this._mainTimerIdx === this.timers.length - 1) {
