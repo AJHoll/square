@@ -104,7 +104,7 @@ export class SqrTimerStore {
             label: square.caption!,
             value: square.id!
         }));
-        this.selectedSquare = this.squares[this._mainTimerIdx];
+        this.selectedSquare = this.squares[0];
         await this.syncTimers();
         this._syncTimerInterval = setInterval(async (): Promise<void> => {
             await this.syncTimers();

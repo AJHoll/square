@@ -47,26 +47,27 @@ export class SqrSquareView extends React.Component<SqrSquareViewProps> {
                                     activePanelNames.map((panelName) => {
                                         switch (panelName) {
                                             case "roles": {
-                                                return <DevsTabPanel header="Роли на площадке">
+                                                return <DevsTabPanel key="roles" header="Роли на площадке">
                                                     <OSqrSquareUser rootStore={this.props.rootStore}/>
                                                 </DevsTabPanel>
                                             }
                                             case "teams": {
-                                                return <DevsTabPanel header="Команды">
+                                                return <DevsTabPanel key="teams" header="Команды">
                                                     <OSqrSquareTeam rootStore={this.props.rootStore}/>
                                                 </DevsTabPanel>
                                             }
                                             case "timers": {
-                                                return <DevsTabPanel header="Таймеры">
+                                                return <DevsTabPanel key="timers" header="Таймеры">
                                                     <OSqrSquareTimer rootStore={this.props.rootStore}/>
                                                 </DevsTabPanel>
                                             }
                                             case "eval-groups": {
-                                                return <DevsTabPanel header="Группы проверки">
+                                                return <DevsTabPanel key="eval-groups" header="Группы проверки">
                                                     <OSqrSquareEvalGroup rootStore={this.props.rootStore}/>
                                                 </DevsTabPanel>
                                             }
                                         }
+                                        return undefined;
                                     })
                                 }
                             </DevsTabView>

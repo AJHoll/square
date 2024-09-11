@@ -16,6 +16,7 @@ import OSqrManageCriteriaView from "../views/SqrManageCriteria/SqrManageCriteria
 import OSqrManageRateView from "../views/SqrManageRate/SqrManageRate.view";
 import OProfileView from "../views/Profile/Profile.view";
 import OHelpView from "../views/Help/Help.view";
+import OQuestionAnswerView from "../views/QuestionAnswer/QuestionAnswer.view";
 
 interface RoutesProps extends StoreProps {
 }
@@ -197,6 +198,20 @@ export default class Routes extends React.Component<RoutesProps> {
                                                 <OSqrManageRateView {...routeProps}
                                                                     rootStore={this.props.rootStore}
                                                                     title={this.getTitle('Заведение оценок')}
+                                                />
+                                            </OMenuLayout>}
+                        />
+                        <AuthGuardRoute exact
+                                        path="/question-answer"
+                                        rootStore={this.props.rootStore}
+                                        render={(routeProps: RouteComponentProps) =>
+                                            <OMenuLayout {...routeProps}
+                                                         rootStore={this.props.rootStore}
+                                                         title="Вопросы и ответы"
+                                            >
+                                                <OQuestionAnswerView {...routeProps}
+                                                                     rootStore={this.props.rootStore}
+                                                                     title={this.getTitle('Вопросы и ответы')}
                                                 />
                                             </OMenuLayout>}
                         />

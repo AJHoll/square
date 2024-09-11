@@ -11,6 +11,7 @@ import {SqrManageCriteriaService} from "./SqrManageCriteria.service";
 import {makeAutoObservable} from "mobx";
 import SqrManageRateService from "./SqrManageRate.service";
 import RootStore from "../views/Root.store";
+import QuestionAnswerService from "./QuestionAnswer.service";
 
 export default class RootService {
     private _restUrl: string | undefined;
@@ -35,6 +36,7 @@ export default class RootService {
     sqrSquareService: SqrSquareService = new SqrSquareService(this);
     sqrManageCriteriaService: SqrManageCriteriaService = new SqrManageCriteriaService(this);
     sqrManageRateService: SqrManageRateService = new SqrManageRateService(this);
+    questionAnswerService: QuestionAnswerService = new QuestionAnswerService(this);
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;

@@ -1,0 +1,83 @@
+@import "@ajholl/devsuikit/dist/scss/devs";
+
+.question {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: none;
+  width: 100%;
+  border-left: solid transparentize($color-secondary, 0.5) 3px;
+
+  &_title {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 13px;
+    color: $color-primary;
+
+    &__time {
+    }
+
+    &__team {
+
+      &:before {
+        content: '( ';
+      }
+
+      &:after {
+        content: ' )'
+      }
+    }
+
+    &__user {
+    }
+  }
+
+  &_content {
+  }
+
+  &_answers {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    &__input_form {
+      display: flex;
+      flex-direction: column;
+      flex: auto;
+      width: 100%;
+
+      > button {
+        align-self: flex-end;
+      }
+
+      > label {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        textarea {
+          height: 250px;
+        }
+
+        .input_form_footer {
+          display: flex;
+          flex-direction: row;
+          gap: 5px;
+
+          > button {
+            flex: 1;
+          }
+        }
+      }
+    }
+
+    &__content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-left: 10%;
+    }
+  }
+}

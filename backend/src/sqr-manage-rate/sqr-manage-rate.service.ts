@@ -311,7 +311,7 @@ export class SqrManageRateService {
                         aspectExtraRow.getCell('G').value = aspectExtra.description;
                         aspectExtraRow.getCell('H').value = null;
                         aspectExtraRow.getCell('I').value = null;
-                        aspectExtraRow.getCell('N').value = aspect.type === 'D' ? aspectExtra.mark !== undefined ? +aspectExtra.mark : null : null;
+                        aspectExtraRow.getCell('N').value = aspect.type === 'D' ? aspectExtra.mark !== undefined ? (+aspectExtra.mark).toFixed(2) : null : null;
                         if (aei < aspect.extra.length - 1 || subcriteria.aspects[ai + 1] || rate.subcriterias[sci + 1]) {
                             sheet.duplicateRow(duplicateRowIdx, 1, true);
                             duplicateRowIdx++;

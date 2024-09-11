@@ -1,0 +1,29 @@
+@import "@ajholl/devsuikit/dist/scss/devs";
+
+.question_answer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: none;
+  width: 100%;
+  border-right: solid transparentize($color-secondary, 0.5) 3px;
+
+  &_title {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 13px;
+    color: $color-primary;
+
+    &__role {
+      &:before {
+        content: '(';
+      }
+
+      &:after {
+        content: ')';
+      }
+    }
+  }
+}
