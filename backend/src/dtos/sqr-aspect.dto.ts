@@ -6,9 +6,10 @@ export interface SqrAspectDto {
     caption: string;
     description?: string;
     sectionKey?: string;
-    mark: string;
+    maxMark: string;
     extra?: SqrAspectExtraDto[];
     module?: string;
     zedLink?: SqrAspectDto['id'];
     asssSection?: string;
+    mark?: string;
 }

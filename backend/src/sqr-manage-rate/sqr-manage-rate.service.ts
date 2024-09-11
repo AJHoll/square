@@ -124,9 +124,11 @@ export class SqrManageRateService {
             for (const subcriteria of rate.subcriterias) {
                 for (const aspect of subcriteria.aspects) {
                     if (aspect.module !== String(module)) {
-                        aspect.mark = undefined;
+                        aspect.maxMark = undefined;
                         for (const extra of aspect.extra) {
-                            extra.mark = undefined;
+                            if (aspect.type !== 'D') {
+                                extra.maxMark = undefined;
+                            }
                         }
                     }
                 }
@@ -292,6 +294,7 @@ export class SqrManageRateService {
                     aspectRow.getCell('G').value = null;
                     aspectRow.getCell('H').value = null;
                     aspectRow.getCell('I').value = aspect.sectionKey ?? '-';
+                    aspectRow.getCell('J').value = null;
                     aspectRow.getCell('N').value = this.getAspectMark(aspect);
                     if (ai < subcriteria.aspects.length - 1 ||
                         (aspect.extra ?? []).length > 0 ||
@@ -311,6 +314,7 @@ export class SqrManageRateService {
                         aspectExtraRow.getCell('G').value = aspectExtra.description;
                         aspectExtraRow.getCell('H').value = null;
                         aspectExtraRow.getCell('I').value = null;
+                        aspectExtraRow.getCell('J').value = aspect.type === 'D' ? aspectExtra.maxMark !== undefined ? (+aspectExtra.maxMark).toFixed(2) : null : null;
                         aspectExtraRow.getCell('N').value = aspect.type === 'D' ? aspectExtra.mark !== undefined ? (+aspectExtra.mark).toFixed(2) : null : null;
                         if (aei < aspect.extra.length - 1 || subcriteria.aspects[ai + 1] || rate.subcriterias[sci + 1]) {
                             sheet.duplicateRow(duplicateRowIdx, 1, true);

@@ -23,7 +23,7 @@ export class SqrManageAspectExtraJudge extends React.Component<SqrManageAspectEx
                             <label className="sqr_manage_aspect_extra_item__description">
                                 <DevsInput value={extra.description}
                                            addonBefore={<span
-                                               className="sqr_manage_aspect_extra_item__score">{extra.mark}</span>}
+                                               className="sqr_manage_aspect_extra_item__score">{extra.maxMark}</span>}
                                            onChange={(event) =>
                                                this.sqrManageCriteriaStore.setAspectExtraDescription(criteria.id, subcriteria.id, aspect.id, extra.id, event.target.value)}
                                 />

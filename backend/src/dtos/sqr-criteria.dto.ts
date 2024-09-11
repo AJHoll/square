@@ -4,7 +4,7 @@ export interface SqrCriteriaDto {
     id: string;
     key: string;
     caption: string;
-    mark: string;
+    maxMark: string;
     subcriterias: SqrSubcriteriaDto[];
     sumSubcriteriaMark?: number;
     module?: string;

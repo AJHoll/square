@@ -37,10 +37,12 @@ export class SqrManageCriteriaService {
                 ...subcriteria,
                 aspects: subcriteria.aspects.map((aspect) => ({
                     ...aspect,
+                    maxMark: undefined,
                     mark: undefined,
                     extra: aspect.extra?.map((extra) => ({
                         ...extra,
-                        order: aspect.type === 'J' ? extra.mark : undefined,
+                        order: aspect.type === 'J' ? extra.maxMark : undefined,
+                        maxMark: aspect.type === 'D' ? extra.maxMark : undefined,
                         mark: undefined,
                     }))
                 }))
@@ -99,7 +101,7 @@ export class SqrManageCriteriaService {
                         id: uuid(),
                         key: row.getCell('C').text,
                         caption: row.getCell('E').text,
-                        mark: row.getCell('F').text,
+                        maxMark: row.getCell('F').text,
                         subcriterias: [],
                     });
                 }
@@ -126,7 +128,7 @@ export class SqrManageCriteriaService {
                                             type: aspectRow.getCell('C').text as 'B' | 'J' | 'D' | 'Z',
                                             caption: aspectRow.getCell('E').text,
                                             description: aspectRow.getCell('G').text,
-                                            mark: aspectRow.getCell('J').text,
+                                            maxMark: aspectRow.getCell('J').text,
                                             sectionKey: aspectRow.getCell('I').text,
                                             extra: [],
                                             zedLink: aspectRow.getCell('D').text,
@@ -145,7 +147,7 @@ export class SqrManageCriteriaService {
                                                     newAspect.extra.push({
                                                         id: uuid(),
                                                         description: extraRow.getCell('G').text,
-                                                        mark: extraRow.getCell('J').text,
+                                                        maxMark: extraRow.getCell('J').text,
                                                     });
                                                 } else if (newAspect.type === 'J'
                                                     && extraRow.getCell('G').text.length > 0
@@ -153,7 +155,7 @@ export class SqrManageCriteriaService {
                                                     newAspect.extra.push({
                                                         id: uuid(),
                                                         description: extraRow.getCell('G').text,
-                                                        mark: extraRow.getCell('F').text,
+                                                        maxMark: extraRow.getCell('F').text,
                                                     });
                                                 }
                                             }
@@ -274,7 +276,7 @@ export class SqrManageCriteriaService {
             const headerRow = sheet.getRow(headerStartRowIdx);
             headerRow.getCell('C').value = criteria.key;
             headerRow.getCell('E').value = criteria.caption;
-            headerRow.getCell('F').value = +criteria.mark;
+            headerRow.getCell('F').value = +criteria.maxMark;
             headerStartRowIdx++;
         }
 
@@ -291,7 +293,7 @@ export class SqrManageCriteriaService {
             const criteria = criterias[i];
             const headerRow = sheet.getRow(mainTableTemplateRowIdx);
             headerRow.getCell('K').value = `Criterion ${criteria.key}`;
-            headerRow.getCell('M').value = +criteria.mark;
+            headerRow.getCell('M').value = +criteria.maxMark;
             if (i < criterias.length - 2) {
                 sheet.duplicateRow(mainTableTemplateRowIdx, 2, false);
             }
@@ -384,7 +386,7 @@ export class SqrManageCriteriaService {
                     aspectRow.getCell('G').value = null;
                     aspectRow.getCell('H').value = null;
                     aspectRow.getCell('I').value = aspect.sectionKey ?? '-';
-                    aspectRow.getCell('J').value = +aspect.mark;
+                    aspectRow.getCell('J').value = +aspect.maxMark;
                     if (ai < subcriteria.aspects.length - 1 ||
                         (aspect.extra ?? []).length > 0 ||
                         criteria.subcriterias[sci + 1]) {
@@ -399,11 +401,11 @@ export class SqrManageCriteriaService {
                         aspectExtraRow.getCell('C').value = null;
                         aspectExtraRow.getCell('D').value = null;
                         aspectExtraRow.getCell('E').value = null;
-                        aspectExtraRow.getCell('F').value = aspect.type === 'J' ? +aspectExtra.mark : null;
+                        aspectExtraRow.getCell('F').value = aspect.type === 'J' ? +aspectExtra.maxMark : null;
                         aspectExtraRow.getCell('G').value = aspectExtra.description;
                         aspectExtraRow.getCell('H').value = null;
                         aspectExtraRow.getCell('I').value = null;
-                        aspectExtraRow.getCell('J').value = aspect.type === 'D' ? +aspectExtra.mark : null;
+                        aspectExtraRow.getCell('J').value = aspect.type === 'D' ? +aspectExtra.maxMark : null;
                         if (aei < aspect.extra.length - 1 || subcriteria.aspects[ai + 1] || criteria.subcriterias[sci + 1]) {
                             sheet.duplicateRow(duplicateRowIdx, 1, true);
                             duplicateRowIdx++;

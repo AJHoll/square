@@ -43,11 +43,11 @@ export class SqrManageCriteria extends React.Component<SqrManageCriteriaProps> {
                 <label className="sqr_manage_criteria_mark">
                     Вес критерия
                     <DevsInput keyFilter="num"
-                               value={criteria.mark}
+                               value={criteria.maxMark}
                                addonAfter={<span
                                    style={{padding: '0 10px'}}>Сумма: {criteria.sumSubcriteriaMark ?? 0}</span>}
                                onChange={(event) => this.sqrManageCriteriaStore.setCriteriaMark(criteria.id, event.target.value)}
-                               invalid={(criteria.sumSubcriteriaMark ?? 0) !== +criteria.mark}
+                               invalid={(criteria.sumSubcriteriaMark ?? 0) !== +criteria.maxMark}
                     />
                 </label>
                 <DevsButton template="outlined"

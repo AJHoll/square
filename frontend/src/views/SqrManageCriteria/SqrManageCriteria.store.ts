@@ -127,7 +127,7 @@ export class SqrManageCriteriaStore {
             id: uuid(),
             key: criteriaKey,
             caption: '',
-            mark: '0',
+            maxMark: '0',
             subcriterias: []
         }]
     }
@@ -175,10 +175,10 @@ export class SqrManageCriteriaStore {
     }
 
     setCriteriaMark(criteriaId: SqrCriteriaDto['id'],
-                    criteriaMark: SqrCriteriaDto['mark']): void {
+                    criteriaMark: SqrCriteriaDto['maxMark']): void {
         const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
         if (criteria !== undefined) {
-            criteria.mark = criteriaMark;
+            criteria.maxMark = criteriaMark;
         }
     }
 
@@ -272,7 +272,7 @@ export class SqrManageCriteriaStore {
                     type: 'B',
                     caption: '',
                     description: '',
-                    mark: '',
+                    maxMark: '',
                     extra: []
                 });
             }
@@ -293,15 +293,15 @@ export class SqrManageCriteriaStore {
                         aspect.type = aspectType;
                         if (aspect.type === 'J') {
                             aspect.extra = [
-                                {id: uuid(), description: '', mark: '0'},
-                                {id: uuid(), description: '', mark: '1'},
-                                {id: uuid(), description: '', mark: '2'},
-                                {id: uuid(), description: '', mark: '3'},
+                                {id: uuid(), description: '', maxMark: '0'},
+                                {id: uuid(), description: '', maxMark: '1'},
+                                {id: uuid(), description: '', maxMark: '2'},
+                                {id: uuid(), description: '', maxMark: '3'},
                             ];
                         }
                         if (aspect.type === 'D') {
                             aspect.extra = [
-                                {id: uuid(), description: '', mark: ''},
+                                {id: uuid(), description: '', maxMark: ''},
                             ];
                         }
                         if (aspect.type === 'B') {
@@ -380,14 +380,14 @@ export class SqrManageCriteriaStore {
     setAspectMark(criteriaId: SqrCriteriaDto['id'],
                   subcriteriaId: SqrSubcriteriaDto['id'],
                   aspectId: SqrAspectDto['id'],
-                  aspectMark: SqrAspectDto['mark']): void {
+                  aspectMark: SqrAspectDto['maxMark']): void {
         const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
         if (criteria !== undefined) {
             const subcriteria = criteria.subcriterias.find((subcriteria) => subcriteria.id === subcriteriaId);
             if (subcriteria !== undefined) {
                 const aspect = subcriteria.aspects.find((aspect) => aspect.id === aspectId);
                 if (aspect !== undefined) {
-                    aspect.mark = aspectMark;
+                    aspect.maxMark = aspectMark;
                     this.recalcSumSubcriteriaMark(criteria);
                 }
             }
@@ -481,7 +481,7 @@ export class SqrManageCriteriaStore {
                        subcriteriaId: SqrSubcriteriaDto['id'],
                        aspectId: SqrAspectDto['id'],
                        aspectExtraId: SqrAspectExtraDto['id'],
-                       aspectExtraMark: SqrAspectExtraDto['mark']): void {
+                       aspectExtraMark: SqrAspectExtraDto['maxMark']): void {
         const criteria = this._criterias.find((criteria) => criteria.id === criteriaId);
         if (criteria !== undefined) {
             const subcriteria = criteria.subcriterias.find((subcriteria) => subcriteria.id === subcriteriaId);
@@ -490,7 +490,7 @@ export class SqrManageCriteriaStore {
                 if (aspect !== undefined) {
                     const extra = aspect.extra?.find((extra) => extra.id === aspectExtraId);
                     if (extra !== undefined) {
-                        extra.mark = aspectExtraMark;
+                        extra.maxMark = aspectExtraMark;
                     }
                 }
             }
@@ -523,7 +523,7 @@ export class SqrManageCriteriaStore {
                 const aspect = subcriteria.aspects.find((aspect) => aspect.id === aspectId);
                 if (aspect !== undefined) {
                     aspect.extra = [...(aspect.extra ?? []), {
-                        id: uuid(), description: '', mark: '',
+                        id: uuid(), description: '', maxMark: '',
                     }]
                 }
             }
@@ -553,7 +553,7 @@ export class SqrManageCriteriaStore {
     recalcSumSubcriteriaMark(criteria: SqrCriteriaDto): void {
         criteria.sumSubcriteriaMark = +criteria.subcriterias.reduce((sumCriteria, subcriteria) => {
             return sumCriteria + subcriteria.aspects.reduce((sumAspect, aspect) => {
-                return sumAspect + +aspect.mark;
+                return sumAspect + +aspect.maxMark;
             }, 0);
         }, 0).toFixed(2);
     }
