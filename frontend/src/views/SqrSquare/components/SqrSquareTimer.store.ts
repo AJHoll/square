@@ -5,7 +5,6 @@ import {makeAutoObservable} from "mobx";
 import {SqrTimerDto} from "../../../dtos/SqrTimer.dto";
 import {SqrSquareDto} from "../../../dtos/SqrSquare.dto";
 import {UFilterItem} from "../../../components/DevsGrid/DevsGridFilterItem";
-import {SqrTeamDto} from "../../../dtos/SqrTeam.dto";
 import {saveAs} from "file-saver";
 
 export default class SqrSquareTimerStore {
