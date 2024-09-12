@@ -20,7 +20,7 @@ export class SqrManageRateAspectExtraJudge extends React.Component<SqrManageRate
             <div className="extra_judge">
                 <div className="extra_judge__describe">
                     {aspect.extra?.slice()
-                        .sort((ea, eb) => +(eb.order ?? '0') - +(ea.order ?? '0'))
+                        .sort((ea, eb) => +(ea.order ?? '0') - +(eb.order ?? '0'))
                         .map((extra) => (
                             <div key={`${aspect.id}-${extra.id}-description-judge-score`}
                                  className="extra_judge__describe_item"
