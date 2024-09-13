@@ -8,6 +8,7 @@ import {SqrSquareDto} from "../../../dtos/SqrSquare.dto";
 import {UFilterItem} from "../../../components/DevsGrid/DevsGridFilterItem";
 import {SqrSquareEvalGroupCardStore} from "./SqrSquareEvalGroupCard.store";
 
+
 export default class SqrSquareEvalGroupStore {
     private readonly _rootStore: RootStore;
     private readonly _sqrSquareEvalGroupCardStore: SqrSquareEvalGroupCardStore;
@@ -32,6 +33,10 @@ export default class SqrSquareEvalGroupStore {
         return !this._squareId;
     }
 
+    get colorBtnDisabled(): boolean {
+        return !this._squareId || this._mode !== 'view' || (this._selectionSquareEvalGroupUsers ?? []).length === 0;
+    }
+
     private _squareId: SqrSquareDto['id'];
 
     private _selectionSqrEvalGroups: SqrSquareEvalGroupDto[] = [];
@@ -43,6 +48,24 @@ export default class SqrSquareEvalGroupStore {
             value: '',
             type: 'string'
         }
+    }
+
+    private _setEvalGroupUserColorCardVisible: boolean = false;
+    get setEvalGroupUserColorCardVisible(): boolean {
+        return this._setEvalGroupUserColorCardVisible;
+    }
+
+    set setEvalGroupUserColorCardVisible(value: boolean) {
+        this._setEvalGroupUserColorCardVisible = value;
+    }
+
+    private _evalGroupUserColor: string = '000';
+    get evalGroupUserColor(): string {
+        return this._evalGroupUserColor;
+    }
+
+    set evalGroupUserColor(value: string) {
+        this._evalGroupUserColor = value;
     }
 
     get squareEvalGroupUserFilters(): { [p: string]: UFilterItem } {
@@ -166,5 +189,23 @@ export default class SqrSquareEvalGroupStore {
             this._selectionSquareEvalGroupUsers.map(gu => gu.id),
             this._selectionSqrEvalGroups.map(g => g.id));
         await this.reloadSqrEvalGroupUsers();
+    }
+
+    openSetEvalGroupUserColorCard(): void {
+        this.setEvalGroupUserColorCardVisible = true;
+    }
+
+    closeSetEvalGroupUserColorCard(): void {
+        this.setEvalGroupUserColorCardVisible = false;
+    }
+
+    async setEvalGroupUserColor(): Promise<void> {
+        await this._sqrSquareService.setColorToEvalGroupUser(this._squareId,
+            this._selectionSquareEvalGroupUsers.map(gu => gu.id),
+            this._selectionSqrEvalGroups.map(g => g.id),
+            this._evalGroupUserColor);
+        await this.reloadSqrEvalGroupUsers();
+        this.evalGroupUserColor = '000';
+        this.setEvalGroupUserColorCardVisible = false;
     }
 }

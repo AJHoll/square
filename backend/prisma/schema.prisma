@@ -176,13 +176,13 @@ model sqr_square {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model sqr_square_eval_group {
-  id              Decimal           @id(map: "pk_sqr_square_eval_group") @default(dbgenerated("nextval('seq_sqr_square_eval_team'::regclass)")) @db.Decimal(15, 0)
-  square_id       Decimal           @db.Decimal(15, 0)
-  caption         String            @db.VarChar(254)
-  code            String            @db.VarChar(254)
-  modules         String?           @db.VarChar(254)
-  sqr_square      sqr_square        @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_eval_group_square_id")
-  sqr_square_user sqr_square_user[]
+  id                         Decimal                      @id(map: "pk_sqr_square_eval_group") @default(dbgenerated("nextval('seq_sqr_square_eval_team'::regclass)")) @db.Decimal(15, 0)
+  square_id                  Decimal                      @db.Decimal(15, 0)
+  caption                    String                       @db.VarChar(254)
+  code                       String                       @db.VarChar(254)
+  modules                    String?                      @db.VarChar(254)
+  sqr_square                 sqr_square                   @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_eval_group_square_id")
+  sqr_square_eval_group_user sqr_square_eval_group_user[]
 
   @@unique([square_id, code], map: "udx_sqr_square_eval_group_square_id_code")
   @@index([square_id], map: "idx_sqr_square_eval_group_square_id")
@@ -239,19 +239,31 @@ model sqr_square_timer_detail {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model sqr_square_user {
-  id                    Decimal                @id(map: "pk_sqr_square_user") @default(dbgenerated("nextval('seq_sqr_square_role'::regclass)")) @db.Decimal(15, 0)
-  square_id             Decimal                @db.Decimal(15, 0)
-  user_id               Decimal                @db.Decimal(15, 0)
-  role_id               Decimal                @db.Decimal(15, 0)
-  team_id               Decimal?               @db.Decimal(15, 0)
-  eval_group_id         Decimal?               @db.Decimal(15, 0)
-  sqr_square_eval_group sqr_square_eval_group? @relation(fields: [eval_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_eval_group_id")
-  sqr_role              sqr_role               @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_role_id")
-  sqr_square            sqr_square             @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_square_id")
-  sqr_square_team       sqr_square_team?       @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_team_id")
-  adm_user              adm_user               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_user_id")
+  id                         Decimal                      @id(map: "pk_sqr_square_user") @default(dbgenerated("nextval('seq_sqr_square_role'::regclass)")) @db.Decimal(15, 0)
+  square_id                  Decimal                      @db.Decimal(15, 0)
+  user_id                    Decimal                      @db.Decimal(15, 0)
+  role_id                    Decimal                      @db.Decimal(15, 0)
+  team_id                    Decimal?                     @db.Decimal(15, 0)
+  sqr_square_eval_group_user sqr_square_eval_group_user[]
+  sqr_role                   sqr_role                     @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_role_id")
+  sqr_square                 sqr_square                   @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_square_id")
+  sqr_square_team            sqr_square_team?             @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_team_id")
+  adm_user                   adm_user                     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_user_user_id")
 
   @@unique([square_id, user_id, role_id], map: "udx_sqr_square_user_square_id_user_id_role_id")
-  @@index([eval_group_id], map: "idx_sqr_square_user_eval_group_id")
   @@index([team_id], map: "idx_sqr_square_user_team_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sqr_square_eval_group_user {
+  id                    Decimal               @id(map: "pk_sqr_square_eval_group_user") @default(dbgenerated("nextval('seq_sqr_square_eval_group_user'::regclass)")) @db.Decimal(15, 0)
+  eval_group_id         Decimal               @db.Decimal(15, 0)
+  user_id               Decimal               @db.Decimal(15, 0)
+  short_name            String                @db.VarChar(254)
+  color                 String?               @db.VarChar(254)
+  manage_all_rates      Boolean               @default(true)
+  sqr_square_eval_group sqr_square_eval_group @relation(fields: [eval_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_eval_group_user_eval_group_id")
+  sqr_square_user       sqr_square_user       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_eval_group_user_user_id")
+
+  @@unique([eval_group_id, user_id], map: "udx_sqr_square_eval_group_user_eval_group_id_user_id")
 }

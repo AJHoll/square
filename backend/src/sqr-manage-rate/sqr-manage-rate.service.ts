@@ -25,7 +25,13 @@ export class SqrManageRateService {
                               user: UserDto): Promise<string[]> {
         // входит ли пользователь в данную группу проверки?
         const userRec = await this.databaseService.sqr_square_user.findFirst(
-            {where: {square_id: squareId, eval_group_id: evalGroupId, user_id: user.id}}
+            {
+                where: {
+                    square_id: squareId,
+                    sqr_square_eval_group_user: {some: {eval_group_id: evalGroupId}},
+                    user_id: user.id
+                }
+            }
         );
         if (!userRec?.id && user.username !== 'admin' && !user.roles?.includes('allRateViewer')) {
             return [];
@@ -46,7 +52,13 @@ export class SqrManageRateService {
                    user: UserDto): Promise<SqrCriteriaDto[]> {
         // входит ли пользователь в данную группу проверки?
         const userRec = await this.databaseService.sqr_square_user.findFirst(
-            {where: {square_id: squareId, eval_group_id: evalGroupId, user_id: user.id}}
+            {
+                where: {
+                    square_id: squareId,
+                    sqr_square_eval_group_user: {some: {eval_group_id: evalGroupId}},
+                    user_id: user.id
+                }
+            }
         );
         if (!userRec?.id && user.username !== 'admin' && !user.roles?.includes('allRateViewer')) {
             return [];

@@ -7,10 +7,14 @@ import DevsSplitter from "@ajholl/devsuikit/dist/DevsSplitter";
 import DevsGrid from "../../../components/DevsGrid/DevsGrid";
 import DevsSplitterPanel from "@ajholl/devsuikit/dist/DevsSplitterPanel";
 import DevsButton from "@ajholl/devsuikit/dist/DevsButton";
-import {ColDef, GridReadyEvent} from "ag-grid-community";
+import {ColDef, GridReadyEvent, ICellRendererParams} from "ag-grid-community";
 import {SqrSquareEvalGroupDto} from "../../../dtos/SqrSquareEvalGroup.dto";
 import {SqrSquareEvalGroupUserDto} from "../../../dtos/SqrSquareEvalGroupUser.dto";
 import OSqrSquareEvalGroupCard from "./SqrSquareEvalGroupCard";
+import DevsCard from "../../../components/DevsCard/DevsCard";
+import {ColorPicker} from "primereact/colorpicker";
+import DevsForm from "@ajholl/devsuikit/dist/DevsForm";
+import DevsFormItem from "@ajholl/devsuikit/dist/DevsFormItem";
 
 interface SqrSquareEvalGroupProps extends StoreProps {
 }
@@ -63,6 +67,17 @@ export class SqrSquareEvalGroup extends React.Component<SqrSquareEvalGroupProps>
         {
             field: "activeInSquareRole",
             headerName: 'Используется'
+        },
+        {
+            field: "color",
+            headerName: 'Цвет',
+            cellRenderer: (params: ICellRendererParams) => <div style={{
+                width: '34px',
+                height: '34px',
+                backgroundColor: `#${params.value}`,
+                margin: 'auto',
+                alignSelf: 'center'
+            }}/>
         }
     ]
 
@@ -134,6 +149,32 @@ export class SqrSquareEvalGroup extends React.Component<SqrSquareEvalGroupProps>
                                                   disabled={this.sqrSquareEvalGroupStore.modeBtnDisabled}
                                                   onClick={async (event) => await this.sqrSquareEvalGroupStore.toggleMode()}
                                       />
+                                      <DevsButton template="filled"
+                                                  color="secondary"
+                                                  title="Цвет"
+                                                  icon="lni lni-brush"
+                                                  disabled={this.sqrSquareEvalGroupStore.colorBtnDisabled}
+                                                  onClick={(event) => this.sqrSquareEvalGroupStore.openSetEvalGroupUserColorCard()}
+                                      />
+                                      <DevsCard visible={this.sqrSquareEvalGroupStore.setEvalGroupUserColorCardVisible}
+                                                title="Выберите цвет"
+                                                onCancelBtnClicked={() => this.sqrSquareEvalGroupStore.closeSetEvalGroupUserColorCard()}
+                                                onCloseBtnClicked={() => this.sqrSquareEvalGroupStore.closeSetEvalGroupUserColorCard()}
+                                                onSaveBtnClicked={async () => await this.sqrSquareEvalGroupStore.setEvalGroupUserColor()}
+                                                cardItemWasChanged={this.sqrSquareEvalGroupStore.evalGroupUserColor !== '000'}
+                                      >
+                                          <DevsForm labelflex={2} inputflex={5}>
+                                              <DevsFormItem label="Цвет">
+                                                  <ColorPicker value={this.sqrSquareEvalGroupStore.evalGroupUserColor}
+                                                               onChange={(event) => {
+                                                                   this.sqrSquareEvalGroupStore.evalGroupUserColor = event.value as string;
+                                                               }}
+                                                               inputStyle={{width: '100%'}}
+                                                               style={{width: '100%'}}
+                                                  />
+                                              </DevsFormItem>
+                                          </DevsForm>
+                                      </DevsCard>
                                   </>}
                         />
                     </div>

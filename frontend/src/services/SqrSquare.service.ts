@@ -218,20 +218,21 @@ export default class SqrSquareService {
         return (await axios.put<SqrSquareEvalGroupDto>(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupId}`, evalGroup)).data;
     }
 
-    async deleteEvalGroups(squareId: SqrSquareDto['id'], evalGroupIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
+    async deleteEvalGroups(squareId: SqrSquareDto['id'],
+                           evalGroupIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
         await axios.delete<void>(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupIds.join(',')}`);
     }
 
     async addUsersToEvalGroup(squareId: SqrSquareDto['id'],
                               userIds: SqrSquareEvalGroupUserDto['id'][],
-                              teamIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
-        await axios.post(`${this.restPath}/${squareId}/sqr-eval-group/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
+                              evalGroupIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
+        await axios.post(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupIds.join(',')}/user/${userIds.join(',')}`, {});
     }
 
     async removeUsersFromEvalGroup(squareId: SqrSquareDto['id'],
                                    userIds: SqrSquareEvalGroupUserDto['id'][],
-                                   teamIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
-        await axios.delete(`${this.restPath}/${squareId}/sqr-eval-group/${teamIds.join(',')}/user/${userIds.join(',')}`, {});
+                                   evalGroupIds: SqrSquareEvalGroupDto['id'][]): Promise<void> {
+        await axios.delete(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupIds.join(',')}/user/${userIds.join(',')}`, {});
     }
 
     async downloadTimerPauseReport(squareId: SqrSquareDto['id']): Promise<ArrayBuffer> {
@@ -244,5 +245,12 @@ export default class SqrSquareService {
         return (await axios.post<ArrayBuffer>(`${this.restPath}/${squareId}/export-square-role-user`, {}, {
             responseType: 'arraybuffer'
         }))?.data;
+    }
+
+    async setColorToEvalGroupUser(squareId: SqrSquareDto['id'],
+                                  userIds: SqrSquareEvalGroupUserDto['id'][],
+                                  evalGroupIds: SqrSquareEvalGroupDto['id'][],
+                                  color: SqrSquareEvalGroupUserDto['color']): Promise<void> {
+        await axios.post(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupIds.join(',')}/user/${userIds.join(',')}/colorize/${color}`, {});
     }
 }

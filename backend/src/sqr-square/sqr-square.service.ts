@@ -640,11 +640,12 @@ export class SqrSquareService {
             include: {
                 adm_user: true,
                 sqr_role: true,
+                sqr_square_eval_group_user: true,
             },
             where: {
                 square_id: squareId,
                 sqr_role: {name: {in: ['chiefExpert', 'deputyChiefExpert', 'technicalExpert', 'teamExpert', 'evaluationExpert']}},
-                eval_group_id: !showAllUsers ? evalGroupId : undefined,
+                sqr_square_eval_group_user: !showAllUsers ? {some: {eval_group_id: evalGroupId}} : undefined,
                 adm_user: (fastFilter ?? '').length > 0 ? {
                     caption: {
                         contains: fastFilter,
@@ -664,7 +665,8 @@ export class SqrSquareService {
                 description: rec.sqr_role.description,
                 groupId: rec.sqr_role.group_id.toNumber()
             },
-            activeInSquareRole: rec.eval_group_id?.toNumber() === evalGroupId
+            activeInSquareRole: rec.sqr_square_eval_group_user.findIndex((groupUser) => groupUser.eval_group_id.toNumber() === evalGroupId) !== -1,
+            color: rec.sqr_square_eval_group_user.find((groupUser) => groupUser.eval_group_id.toNumber() === evalGroupId)?.color
         }));
     }
 
@@ -715,26 +717,40 @@ export class SqrSquareService {
     async addUsersToEvalGroups(squareId: SqrSquareDto['id'],
                                sqrEvalGroupIds: SqrSquareEvalGroupDto['id'][],
                                userIds: SqrSquareEvalGroupUserDto['id'][]): Promise<void> {
-        await Promise.all(sqrEvalGroupIds.map(evalGroupId => this.databaseService.sqr_square_user.updateMany({
-            where: {
-                square_id: squareId,
-                id: {in: userIds},
-            },
-            data: {eval_group_id: evalGroupId}
-        })));
+        await this.databaseService.$transaction(async (prisma) => {
+            const existsSquareEvalGroupUsers = await prisma.sqr_square_eval_group_user.findMany({
+                where: {eval_group_id: {in: sqrEvalGroupIds}, user_id: {in: userIds}},
+            });
+            const addedUsers = await prisma.sqr_square_user.findMany({
+                where: {id: {in: userIds}},
+                include: {adm_user: true}
+            });
+            for (const sqrEvalGroupId of sqrEvalGroupIds) {
+                for (const userId of userIds.map(uid => +uid)) {
+                    if (existsSquareEvalGroupUsers.findIndex((groupUser) =>
+                        groupUser.eval_group_id.toNumber() === sqrEvalGroupId
+                        && groupUser.user_id.toNumber() === userId) === -1) {
+                        const addedUser = addedUsers.find((au) => au.id.toNumber() === userId);
+                        const shortName = addedUser.adm_user.caption.trim().split(' ').map(word => word.trim()[0]).join('');
+                        await prisma.sqr_square_eval_group_user.create({
+                            data: {
+                                user_id: userId,
+                                eval_group_id: sqrEvalGroupId,
+                                short_name: shortName,
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
     async removeUsersFromEvalGroups(squareId: SqrSquareDto['id'],
                                     sqrEvalGroupIds: SqrSquareEvalGroupDto['id'][],
                                     userIds: SqrSquareEvalGroupUserDto['id'][]): Promise<void> {
-        await Promise.all(sqrEvalGroupIds.map(evalGroupId => this.databaseService.sqr_square_user.updateMany({
-            where: {
-                square_id: squareId,
-                id: {in: userIds},
-                eval_group_id: evalGroupId,
-            },
-            data: {eval_group_id: null}
-        })));
+        await this.databaseService.sqr_square_eval_group_user.deleteMany({
+            where: {eval_group_id: {in: sqrEvalGroupIds}, user_id: {in: userIds}}
+        });
     }
 
     async getTimerPauseReport(squareId: SqrSquareDto['id']): Promise<StreamableFile> {
@@ -834,5 +850,20 @@ export class SqrSquareService {
             }));
         });
         return new StreamableFile(file);
+    }
+
+    async colorizeSquareEvalGroupUsers(squareId: SqrSquareDto['id'],
+                                       sqrEvalGroupIds: SqrSquareEvalGroupDto['id'][],
+                                       userIds: SqrSquareEvalGroupUserDto['id'][],
+                                       color: SqrSquareEvalGroupUserDto['color']): Promise<void> {
+        await this.databaseService.sqr_square_eval_group_user.updateMany({
+            where: {
+                user_id: {in: userIds},
+                eval_group_id: {in: sqrEvalGroupIds},
+            },
+            data: {
+                color: color
+            }
+        });
     }
 }

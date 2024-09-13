@@ -386,4 +386,16 @@ export class SqrSquareController {
                                @Param('squareId') squareId: SqrSquareDto['id']): Promise<StreamableFile> {
         return this.sqrRoleService.exportSquareRoleUser(squareId);
     }
+
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Post(':squareId/sqr-eval-group/:sqrEvalGroupIds/user/:userIds/colorize/:color')
+    async colorizeSquareEvalGroupUsers(@Request() {user}: { user: UserDto },
+                                       @Param('squareId') squareId: SqrSquareDto['id'],
+                                       @Param('sqrEvalGroupIds', ParseArrayPipe) sqrEvalGroupIds: SqrSquareEvalGroupDto['id'][],
+                                       @Param('userIds', ParseArrayPipe) userIds: SqrSquareEvalGroupUserDto['id'][],
+                                       @Param('color') color: SqrSquareEvalGroupUserDto['color']
+    ): Promise<void> {
+        await this.sqrRoleService.colorizeSquareEvalGroupUsers(squareId, sqrEvalGroupIds, userIds, color);
+    }
 }
