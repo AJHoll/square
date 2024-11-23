@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { UserDto } from '../dtos/user.dto';
-import { DatabaseService } from '../services/database.service';
+import {Injectable} from '@nestjs/common';
+import {UserDto} from '../dtos/user.dto';
+import {DatabaseService} from '../services/database.service';
 
 @Injectable()
 export class UserService {
@@ -28,6 +28,9 @@ export class UserService {
         },
       },
     });
+    if (!user) {
+      return null;
+    }
     return {
       id: (user.id as unknown as number),
       username: user.name,
