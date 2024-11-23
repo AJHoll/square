@@ -13,6 +13,7 @@ import {SqrAspectDto} from "../../dtos/SqrAspect.dto";
 import {SqrAspectExtraDto} from "../../dtos/SqrAspectExtra.dto";
 import {SqrTeamDto} from "../../dtos/SqrTeam.dto";
 import {saveAs} from "file-saver";
+import {SqrSquareEvalGroupUserDto} from "../../dtos/SqrSquareEvalGroupUser.dto";
 
 export default class SqrManageRateStore {
     private readonly _rootStore: RootStore;
@@ -66,9 +67,18 @@ export default class SqrManageRateStore {
             this._evalGroupSelectRef.current?.setState({cValue: value});
         }
         this._selectedEvalGroup = value;
+        this.reloadSelectedEvalGroupUsers().then();
         this.reloadModules().then();
     }
 
+    private _selectedEvalGroupUsers: SqrSquareEvalGroupUserDto[] = [];
+    set selectedEvalGroupUsers(value: SqrSquareEvalGroupUserDto[]) {
+        this._selectedEvalGroupUsers = value;
+    }
+
+    get selectedEvalGroupUsers(): SqrSquareEvalGroupUserDto[] {
+        return this._selectedEvalGroupUsers;
+    }
 
     private _modules: SelectOption[] = [];
     get modules(): SelectOption[] {
@@ -176,6 +186,11 @@ export default class SqrManageRateStore {
                 }));
             this.selectedModule = this._modules[0];
         }
+    }
+
+    async reloadSelectedEvalGroupUsers(): Promise<void> {
+        this.selectedEvalGroupUsers = await this._sqrSquareService.getSquareEvalGroupUsers(this._selectedSquare?.value as SqrSquareDto['id']
+            , this._selectedEvalGroup?.value as SqrSquareEvalGroupDto['id'], {}, false);
     }
 
     async reloadTeams(): Promise<void> {

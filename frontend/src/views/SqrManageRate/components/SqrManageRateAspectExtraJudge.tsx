@@ -36,12 +36,13 @@ export class SqrManageRateAspectExtraJudge extends React.Component<SqrManageRate
                 </div>
                 <div className="extra_judge__content">
                     {
-                        [1, 2, 3, 4, 5].map((index) => (
+                        this.sqrManageRateStore.selectedEvalGroupUsers.map((evalGroupUser, index) => (
                             <div key={`${aspect}-judge-score-${index}`}
                                  className="extra_judge__content_score"
                             >
-                                <div className="extra_judge__content_score_index">
-                                    {index}
+                                <div className="extra_judge__content_score_index"
+                                     style={{color: `#${evalGroupUser.color ?? '000'}`}}>
+                                    {evalGroupUser.shortName}
                                 </div>
                                 {
                                     aspect.extra?.slice()
