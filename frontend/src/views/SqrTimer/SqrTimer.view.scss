@@ -45,6 +45,21 @@
     .sqr_timer {
       opacity: 100%;
       transition: opacity 200ms;
+
+      &.warning {
+        color: $color-warning;
+        transition: color 1000ms, opacity 300ms;
+      }
+
+      &.semi-danger {
+        color: #be5514;
+        transition: color 1000ms, opacity 300ms;
+      }
+
+      &.danger {
+        color: $color-danger;
+        transition: color 1000ms, opacity 300ms;
+      }
     }
 
     .timer_hiding {
@@ -64,6 +79,21 @@
         align-items: center;
         color: $color-primary;
         flex: auto;
+
+        &.warning {
+          color: $color-warning;
+          transition: color 1000ms, opacity 300ms;
+        }
+
+        &.semi-danger {
+          color: #be5514;
+          transition: color 1000ms, opacity 300ms;
+        }
+
+        &.danger {
+          color: $color-danger;
+          transition: color 1000ms, opacity 300ms;
+        }
 
         &__caption {
           font-size: clamp(20px, 6.333vw, 60px);
@@ -93,6 +123,21 @@
         align-items: center;
         color: $color-secondary;
         flex: 1;
+
+        &.warning {
+          color: $color-warning;
+          transition: color 1000ms, opacity 300ms;
+        }
+
+        &.semi-danger {
+          color: #be5514;
+          transition: color 1000ms, opacity 300ms;
+        }
+
+        &.danger {
+          color: $color-danger;
+          transition: color 1000ms, opacity 300ms;
+        }
 
         &__caption {
           font-size: clamp(10px, 2.333vw, 20px);

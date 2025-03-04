@@ -26,9 +26,20 @@ export class SqrTimer extends React.Component<SqrTimerProps> {
                 break;
             }
         }
-        return <div className={`sqr_timer ${className ?? ''}`}>
+        let countLeftClass: string = 'default';
+        if ((countLeft ?? 0) > 0 && (countLeft ?? 0) <= 5 * 60) {
+            countLeftClass = 'danger';
+        }
+        if ((countLeft ?? 0) > 5 * 60 && (countLeft ?? 0) <= 15 * 60) {
+            countLeftClass = 'semi-danger';
+        }
+        if ((countLeft ?? 0) > 15 * 60 && (countLeft ?? 0) <= 30 * 60) {
+            countLeftClass = 'warning';
+        }
+
+        return <div className={`sqr_timer ${className ?? ''} ${countLeftClass}`}>
             <div className="sqr_timer__caption">{caption}</div>
-            <div className="sqr_timer__countLeft">{formatCountLeft}</div>
+            <div className={`sqr_timer__countLeft`}>{formatCountLeft}</div>
             {timerStateTitle ? <div className="sqr_timer__state">{timerStateTitle}</div> : <></>}
         </div>;
     }
