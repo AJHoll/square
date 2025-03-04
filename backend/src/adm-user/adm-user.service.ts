@@ -33,7 +33,7 @@ export class AdmUserService {
             id: dbData.id.toNumber(),
             name: dbData.name,
             caption: dbData.caption,
-        };
+        }; 
     }
 
     async createUser(admUser: AdmUserDto): Promise<AdmUserDto> {
