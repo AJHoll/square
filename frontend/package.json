@@ -30,7 +30,7 @@
     ]
   },
   "dependencies": {
-    "@ajholl/devsuikit": "0.0.35",
+    "@ajholl/devsuikit": "0.0.36",
     "ag-grid-community": "30.2.1",
     "ag-grid-enterprise": "30.2.1",
     "ag-grid-react": "30.2.1",

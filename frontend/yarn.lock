@@ -12,10 +12,10 @@
   resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.3.1.tgz#abfccb8ca78075a2b6187345c26243c1a0842f28"
   integrity sha512-/62yikz7NLScCGAAST5SHdnjaDJQBDq0M2muyRTpf2VQhw6StBg2ALiu73zSJQ4fMVLA+0uBhBHAle7Wg+2kSg==
 
-"@ajholl/devsuikit@0.0.35":
-  version "0.0.35"
-  resolved "https://registry.yarnpkg.com/@ajholl/devsuikit/-/devsuikit-0.0.35.tgz#323740d129b9a2d9dca8043005a1eb91e9207e30"
-  integrity sha512-+4CT7ysMOo8LhKEcY42MTnEhz7cZyCferEBCDuC0GGWDL3njwPGsHubJHVqeo32bbBoMQoBkfYF4foptp7rdhg==
+"@ajholl/devsuikit@0.0.36":
+  version "0.0.36"
+  resolved "https://registry.yarnpkg.com/@ajholl/devsuikit/-/devsuikit-0.0.36.tgz#668cba04c51fc42372a57811d6ad4ebe1b3e2de9"
+  integrity sha512-f7xRog+U0GKK1+bXwVA/n1alzq9Rdpg/7hF9Zb0PJlM4WJ5TyMxWqYAqDNTtfZJL3n114yeZ0kijBk0rPzwVAA==
 
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
