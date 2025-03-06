@@ -1,1 +1,1 @@
-npm i -g yarn && yarn && npx prisma generate && yarn start
+npm i -g yarn && yarn && npx prisma migrate deploy && npx prisma db pull && npx prisma generate && yarn start
