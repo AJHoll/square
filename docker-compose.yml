@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.9"
 services:
   square-database:
     container_name: "devs-square-database"
@@ -7,6 +7,9 @@ services:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - square-data:/var/lib/postgresql/data
     ports:
       - "6432:5432"
     healthcheck:
@@ -40,3 +43,6 @@ services:
       BACKEND_API_URL: "host.docker.internal"
     ports:
       - "80:80"
+
+volumes:
+  square-data:

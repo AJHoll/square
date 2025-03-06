@@ -10,4 +10,6 @@ RUN npm install
 
 RUN npm run build
 
+RUN npx prisma migrate deploy
+RUN npx prisma db pull
 RUN npx prisma generate
