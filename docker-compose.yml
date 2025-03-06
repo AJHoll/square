@@ -9,6 +9,7 @@ services:
       POSTGRES_PASSWORD: "postgres"
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
+      - ../2. Init Database:/docker-entrypoint-initdb.d
       - square-data:/var/lib/postgresql/data
     ports:
       - "6432:5432"
