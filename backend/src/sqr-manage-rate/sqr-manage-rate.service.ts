@@ -13,6 +13,7 @@ import * as process from "process";
 import {createReadStream, unlink} from "fs";
 import {v4 as uuid} from 'uuid';
 import {SqrSquareService} from "../sqr-square/sqr-square.service";
+import {SqrSquareModuleDto} from "../dtos/sqr-square-module.dto";
 
 @Injectable()
 export class SqrManageRateService {
@@ -22,7 +23,7 @@ export class SqrManageRateService {
 
     async getAvailableModules(squareId: SqrSquareDto['id'],
                               evalGroupId: SqrSquareEvalGroupDto['id'],
-                              user: UserDto): Promise<string[]> {
+                              user: UserDto): Promise<SqrSquareModuleDto[]> {
         // входит ли пользователь в данную группу проверки?
         const userRec = await this.databaseService.sqr_square_user.findFirst(
             {
@@ -38,16 +39,27 @@ export class SqrManageRateService {
         }
         // Какие проверяют модули команда
         const evalGroupRec = await this.databaseService.sqr_square_eval_group.findFirst({where: {id: evalGroupId}});
-        const squareRec = await this.databaseService.sqr_square.findFirst({where: {id: squareId}});
         // Какие доступны для проверки
-        const evalGroupModules = evalGroupRec.modules.split(',').map(m => m.trim());
-        const squareActiveModules = squareRec.active_modules.split(',').map(m => m.trim());
-        return evalGroupModules.filter((groupModule) => squareActiveModules.includes(groupModule));
+        const evalGroupModuleCodes = (evalGroupRec.modules ?? '').split(',').map(m => m.trim());
+        const evalGroupModules = await this.databaseService.sqr_square_module.findMany({
+            where: {
+                square_id: squareId,
+                code: {in: evalGroupModuleCodes},
+                evaluating: true
+            }
+        });
+        return evalGroupModules.map(rec => ({
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            code: rec.code,
+            caption: rec.caption,
+            evaluating: rec.evaluating,
+        }))
     }
 
     async getRates(squareId: SqrSquareDto['id'],
                    evalGroupId: SqrSquareEvalGroupDto['id'],
-                   module: number,
+                   moduleId: SqrSquareModuleDto['id'],
                    teamId: SqrTeamDto['id'],
                    user: UserDto): Promise<SqrCriteriaDto[]> {
         // входит ли пользователь в данную группу проверки?
@@ -65,11 +77,15 @@ export class SqrManageRateService {
         }
         // Какие проверяют модули команда
         const evalGroupRec = await this.databaseService.sqr_square_eval_group.findFirst({where: {id: evalGroupId}});
-        const squareRec = await this.databaseService.sqr_square.findFirst({where: {id: squareId}});
         // Какие доступны для проверки
-        const evalGroupModules = evalGroupRec.modules.split(',').map(m => +m.trim());
-        const squareActiveModules = squareRec.active_modules.split(',').map(m => +m.trim());
-        const availableModules = evalGroupModules.filter((groupModule) => squareActiveModules.includes(groupModule) && groupModule === module);
+        const availableModules = (await this.databaseService.sqr_square_module.findMany({
+            where: {
+                square_id: squareId,
+                id: moduleId,
+                code: {in: (evalGroupRec.modules ?? '').split(',').map(m => m.trim())},
+                evaluating: true
+            }
+        })).map(rec => rec.id.toNumber());
         // Забираем сохраненную копию данных критериев
         const rates = (await this.databaseService.sqr_square_team.findFirst({
             where: {square_id: squareId, id: teamId,}

@@ -9,6 +9,7 @@ import SqrSquareTeamStore from "./SqrSquareTeam.store";
 import SqrSquareTimerStore from "./SqrSquareTimer.store";
 import SqrSquareEvalGroupStore from "./SqrSquareEvalGroup.store";
 import UserService from "../../../services/User.service";
+import {SqrSquareModuleStore} from "./SqrSquareModule.store";
 
 export default class SqrSquareStore {
     private readonly _rootStore: RootStore;
@@ -17,7 +18,8 @@ export default class SqrSquareStore {
     private readonly _sqrSquareTeamStore: SqrSquareTeamStore;
     private readonly _sqrSquareTimerStore: SqrSquareTimerStore;
     private readonly _sqrSquareService: SqrSquareService;
-    private readonly _sqrSquareEvalGRoupStore: SqrSquareEvalGroupStore;
+    private readonly _sqrSquareEvalGroupStore: SqrSquareEvalGroupStore;
+    private readonly _sqrSquareModuleStore: SqrSquareModuleStore;
 
     private readonly _userService: UserService;
 
@@ -59,7 +61,8 @@ export default class SqrSquareStore {
         this._sqrSquareTeamStore = rootStore.sqrSquareTeamStore;
         this._sqrSquareCardStore = rootStore.sqrSquareCardStore;
         this._sqrSquareTimerStore = rootStore.sqrSquareTimerStore;
-        this._sqrSquareEvalGRoupStore = rootStore.sqrSquareEvalGroupStore;
+        this._sqrSquareEvalGroupStore = rootStore.sqrSquareEvalGroupStore;
+        this._sqrSquareModuleStore = rootStore.sqrSquareModuleStore;
         this._sqrSquareService = sqrSquareService;
         this._userService = rootStore.rootService.userService;
         makeAutoObservable(this);
@@ -83,7 +86,8 @@ export default class SqrSquareStore {
             this._sqrSquareUserStore.setSquareId(squareId),
             this._sqrSquareTeamStore.setSquareId(squareId),
             this._sqrSquareTimerStore.setSquareId(squareId),
-            this._sqrSquareEvalGRoupStore.setSquareId(squareId),
+            this._sqrSquareEvalGroupStore.setSquareId(squareId),
+            this._sqrSquareModuleStore.setSquareId(squareId),
         ]);
     }
 

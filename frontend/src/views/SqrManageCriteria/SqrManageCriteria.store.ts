@@ -42,8 +42,10 @@ export class SqrManageCriteriaStore {
         this._selectedSquare = value;
         if (this._selectedSquare?.value) {
             this.reloadCriterias().then();
+            this.reloadModules().then();
         } else {
             this.criterias = [];
+            this.modules = [];
         }
     }
 
@@ -94,6 +96,15 @@ export class SqrManageCriteriaStore {
         ], [] as SelectOption[]);
     }
 
+    private _modules: SelectOption[] = [];
+    get modules(): SelectOption[] {
+        return this._modules;
+    }
+
+    set modules(value: SelectOption[]) {
+        this._modules = value;
+    }
+
     constructor(rootStore: RootStore,
                 sqrManageCriteriaService: SqrManageCriteriaService,
                 sqrSquareService: SqrSquareService) {
@@ -117,6 +128,14 @@ export class SqrManageCriteriaStore {
 
     async reloadCriterias(): Promise<void> {
         this.criterias = (await this._sqrManageCriteriaService.getCriterias(this._selectedSquare?.value as SqrSquareDto['id'])) ?? [];
+    }
+
+    async reloadModules(): Promise<void> {
+        this.modules = ((await this._sqrSquareService.getSquareModules(this._selectedSquare?.value as SqrSquareDto['id'])) ?? [])
+            .map(module => ({
+                label: `${module.code} - ${module.caption}`,
+                value: module.id
+            } as SelectOption));
     }
 
     addCriteria(): void {

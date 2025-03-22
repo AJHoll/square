@@ -1,11 +1,12 @@
 import RootStore from "../../Root.store";
-import {makeAutoObservable} from "mobx";
-import {SqrSquareDto} from "../../../dtos/SqrSquare.dto";
 import SqrSquareService from "../../../services/SqrSquare.service";
+import {makeAutoObservable} from "mobx";
+import {SqrSquareModuleDto} from "../../../dtos/SqrSquareModule.dto";
 
-export default class SqrSquareCardStore {
+export class SqrSquareModuleCardStore {
     private readonly _rootStore: RootStore;
     private readonly _sqrSquareService: SqrSquareService;
+
 
     private _visible: boolean = false;
     get visible(): boolean {
@@ -43,51 +44,52 @@ export default class SqrSquareCardStore {
         this._cardItemWasChanged = value;
     }
 
+    private _sqrSquareModule: SqrSquareModuleDto = {};
 
-    private _sqrSquare: SqrSquareDto = {};
-    get sqrSquare(): SqrSquareDto {
-        return this._sqrSquare;
+    get sqrSquareModule(): SqrSquareModuleDto {
+        return this._sqrSquareModule;
     }
 
-    set sqrSquare(value: SqrSquareDto) {
-        this._sqrSquare = value;
+    set sqrSquareModule(value: SqrSquareModuleDto) {
+        this._sqrSquareModule = value;
     }
 
-    constructor(rootStore: RootStore, sqrSquareService: SqrSquareService) {
+    constructor(rootStore: RootStore,
+                sqrSquareService: SqrSquareService) {
         this._rootStore = rootStore;
         this._sqrSquareService = sqrSquareService;
         makeAutoObservable(this);
     }
 
-    setName(name: SqrSquareDto['name']): void {
-        this._sqrSquare.name = name;
+    setCode(code: SqrSquareModuleDto['code']): void {
+        this._sqrSquareModule.code = code;
         this._cardItemWasChanged = true;
     }
 
-    setCaption(caption: SqrSquareDto['caption']): void {
-        this._sqrSquare.caption = caption;
+    setCaption(caption: SqrSquareModuleDto['caption']): void {
+        this._sqrSquareModule.caption = caption;
         this._cardItemWasChanged = true;
     }
 
-    setDescription(description: SqrSquareDto['description']): void {
-        this._sqrSquare.description = description;
+    setEvaluating(evaluating: SqrSquareModuleDto['evaluating']): void {
+        this._sqrSquareModule.evaluating = evaluating;
         this._cardItemWasChanged = true;
     }
 
     close(): void {
         this._cardItemWasChanged = false;
-        this._sqrSquare = {};
+        this._sqrSquareModule = {};
         this._loading = false;
         this._visible = false;
     }
 
     async save(): Promise<void> {
-        if (this._sqrSquare.id) {
-            await this._sqrSquareService.editSquare(this._sqrSquare.id, this._sqrSquare);
+        if (this._sqrSquareModule.id) {
+            await this._sqrSquareService.editSquareModule(this._sqrSquareModule.squareId, this._sqrSquareModule.id, this._sqrSquareModule);
         } else {
-            await this._sqrSquareService.createSquare(this._sqrSquare);
+            await this._sqrSquareService.createSquareModule(this._sqrSquareModule.squareId, this._sqrSquareModule);
         }
         this.close();
-        await this._rootStore.sqrSquareStore.reloadSquares();
+        await this._rootStore.sqrSquareModuleStore.reloadSqrSquareModules();
     }
 }

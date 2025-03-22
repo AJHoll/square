@@ -1,0 +1,26 @@
+.modules_input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+
+  &__input {
+    display: flex;
+    flex: auto;
+    flex-direction: column;
+    gap: 5px;
+
+    &-row {
+      display: flex;
+      flex-direction: row;
+      gap: 5px;
+    }
+  }
+
+  &__button {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-self: flex-start;
+  }
+}

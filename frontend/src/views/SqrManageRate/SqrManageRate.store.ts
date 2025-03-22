@@ -178,12 +178,12 @@ export default class SqrManageRateStore {
 
     async reloadModules(): Promise<void> {
         if (this._selectedSquare && this._selectedEvalGroup) {
-            this.modules = (await this._sqrManageRateService.getAvailableModules(this._selectedSquare.value as SqrSquareDto['id'],
-                this._selectedEvalGroup.value as SqrSquareEvalGroupDto['id']))
+            this.modules = ((await this._sqrManageRateService.getAvailableModules(this._selectedSquare.value as SqrSquareDto['id'],
+                this._selectedEvalGroup.value as SqrSquareEvalGroupDto['id'])) ?? [])
                 .map((module) => ({
-                    label: module,
-                    value: module
-                }));
+                    label: `${module.code} - ${module.caption}`,
+                    value: module.id
+                } as SelectOption));
             this.selectedModule = this._modules[0];
         }
     }

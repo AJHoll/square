@@ -167,6 +167,7 @@ model sqr_square {
   sqr_criteria          sqr_criteria?
   sqr_question          sqr_question[]
   sqr_square_eval_group sqr_square_eval_group[]
+  sqr_square_module     sqr_square_module[]
   sqr_square_team       sqr_square_team[]
   sqr_square_timer      sqr_square_timer[]
   sqr_square_user       sqr_square_user[]
@@ -266,4 +267,17 @@ model sqr_square_eval_group_user {
   sqr_square_user       sqr_square_user       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_eval_group_user_user_id")
 
   @@unique([eval_group_id, user_id], map: "udx_sqr_square_eval_group_user_eval_group_id_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sqr_square_module {
+  id         Decimal     @id(map: "pk_sqr_square_module") @default(dbgenerated("nextval('seq_sqr_square_module'::regclass)")) @db.Decimal(15, 0)
+  square_id  Decimal?    @db.Decimal(15, 0)
+  code       String?     @db.VarChar(254)
+  caption    String?     @db.VarChar(254)
+  evaluating Boolean     @default(false)
+  sqr_square sqr_square? @relation(fields: [square_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sqr_square_module_square_id")
+
+  @@unique([square_id, code], map: "udx_sqr_square_module_square_id_code")
+  @@index([square_id], map: "idx_sqr_square_module_square_id")
 }

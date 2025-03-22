@@ -42,11 +42,6 @@ export class SqrSquareCard extends React.Component<SqrSquareCardProps> {
                                   onChange={(event) => this.sqrSquareCardStore.setDescription(event.target.value)}
                     />
                 </DevsFormItem>
-                <DevsFormItem label="Проверяемые модули">
-                    <DevsInput value={this.sqrSquareCardStore.sqrSquare.activeModules}
-                               onChange={(event) => this.sqrSquareCardStore.setActiveModules(event.target.value)}
-                    />
-                </DevsFormItem>
             </DevsForm>
         </DevsCard>;
     }

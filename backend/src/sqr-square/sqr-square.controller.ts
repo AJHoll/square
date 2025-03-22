@@ -29,6 +29,7 @@ import {SqrSquareEvalGroupDto} from "../dtos/sqr-square-eval-group.dto";
 import {SqrSquareEvalGroupUserDto} from "../dtos/sqr-square-eval-group-user.dto";
 import {HasRoles} from "../guards/roles.decorator";
 import {RolesGuard} from "../guards/roles.guard";
+import {SqrSquareModuleDto} from "../dtos/sqr-square-module.dto";
 
 @Controller('sqr-square')
 export class SqrSquareController {
@@ -397,5 +398,52 @@ export class SqrSquareController {
                                        @Param('color') color: SqrSquareEvalGroupUserDto['color']
     ): Promise<void> {
         await this.sqrRoleService.colorizeSquareEvalGroupUsers(squareId, sqrEvalGroupIds, userIds, color);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-square-modules')
+    async getSquareModules(@Request() {user}: { user: UserDto },
+                           @Param('squareId') squareId: SqrSquareDto['id']): Promise<SqrSquareModuleDto[]> {
+        return this.sqrRoleService.getSquareModules(squareId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':squareId/sqr-square-modules/:moduleId')
+    async getSquareModule(@Request() {user}: { user: UserDto },
+                          @Param('squareId') squareId: SqrSquareDto['id'],
+                          @Param('moduleId') moduleId: SqrSquareModuleDto['id'],
+    ): Promise<SqrSquareModuleDto> {
+        return this.sqrRoleService.getSquareModule(squareId, moduleId);
+    }
+
+    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Post(':squareId/sqr-square-modules/')
+    async createSquareModule(@Request() {user}: { user: UserDto },
+                             @Param('squareId') squareId: SqrSquareDto['id'],
+                             @Body() sqrModule: SqrSquareModuleDto): Promise<SqrSquareModuleDto> {
+        return this.sqrRoleService.createSquareModule(squareId, sqrModule);
+    }
+
+    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Put(':squareId/sqr-square-modules/:moduleId')
+    async editSquareModule(@Request() {user}: { user: UserDto },
+                           @Param('squareId') squareId: SqrSquareDto['id'],
+                           @Param('moduleId') moduleId: SqrSquareModuleDto['id'],
+                           @Body() sqrModule: SqrSquareModuleDto): Promise<SqrTeamDto> {
+        return this.sqrRoleService.editSquareModule(squareId, moduleId, sqrModule);
+    }
+
+    @HasRoles(['squareManage', 'admin'])
+    @HasRoles(['squareManage', 'admin'])
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Delete(':squareId/sqr-square-modules/:moduleIds')
+    async deleteSquareModules(@Request() {user}: { user: UserDto },
+                              @Param('squareId') squareId: SqrSquareDto['id'],
+                              @Param('moduleIds', ParseArrayPipe) moduleIds: string[]): Promise<void> {
+        await this.sqrRoleService.deleteSquareModules(squareId, moduleIds.map(val => +val));
     }
 }

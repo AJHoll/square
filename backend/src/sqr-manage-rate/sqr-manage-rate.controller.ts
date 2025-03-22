@@ -19,6 +19,7 @@ import {SqrSquareEvalGroupDto} from "../dtos/sqr-square-eval-group.dto";
 import {SqrTeamDto} from "../dtos/sqr-team.dto";
 import {HasRoles} from "../guards/roles.decorator";
 import {RolesGuard} from "../guards/roles.guard";
+import {SqrSquareModuleDto} from "../dtos/sqr-square-module.dto";
 
 @Controller('manage-rate')
 export class SqrManageRateController {
@@ -31,10 +32,10 @@ export class SqrManageRateController {
     async getRates(@Request() {user}: { user: UserDto },
                    @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id'],
                    @Query('evalGroupId', ParseIntPipe) evalGroupId: SqrSquareEvalGroupDto['id'],
-                   @Query('module', ParseIntPipe,) module: number,
+                   @Query('moduleId', ParseIntPipe,) moduleId: SqrSquareModuleDto['id'],
                    @Query('teamId', ParseIntPipe) teamId: SqrTeamDto['id'],
     ): Promise<SqrCriteriaDto[]> {
-        return this.sqrManageRateService.getRates(squareId, evalGroupId, module, teamId, user);
+        return this.sqrManageRateService.getRates(squareId, evalGroupId, moduleId, teamId, user);
     }
 
     @HasRoles(['rateManager', 'admin'])
@@ -42,7 +43,7 @@ export class SqrManageRateController {
     @Get('/modules')
     async getAvailableModules(@Request() {user}: { user: UserDto },
                               @Query('squareId', ParseIntPipe) squareId: SqrSquareDto['id'],
-                              @Query('evalGroupId', ParseIntPipe) evalGroupId: SqrSquareEvalGroupDto['id']): Promise<string[]> {
+                              @Query('evalGroupId', ParseIntPipe) evalGroupId: SqrSquareEvalGroupDto['id']): Promise<SqrSquareModuleDto[]> {
         return this.sqrManageRateService.getAvailableModules(squareId, evalGroupId, user);
     }
 

@@ -16,6 +16,7 @@ import * as path from 'path';
 import * as process from "process";
 import {v4 as uuid} from "uuid";
 import {createReadStream, unlink} from "fs";
+import {SqrSquareModuleDto} from "../dtos/sqr-square-module.dto";
 
 @Injectable()
 export class SqrSquareService {
@@ -867,5 +868,71 @@ export class SqrSquareService {
                 color: color
             }
         });
+    }
+
+    async getSquareModules(squareId: SqrSquareDto['id']): Promise<SqrSquareModuleDto[]> {
+        const recs = await this.databaseService.sqr_square_module.findMany({
+            where: {square_id: squareId}
+        });
+        return recs.map(rec => ({
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            code: rec.code,
+            caption: rec.caption,
+            evaluating: rec.evaluating,
+        }));
+    }
+
+    async getSquareModule(squareId: SqrSquareDto['id'], moduleId: SqrSquareModuleDto['id']): Promise<SqrSquareModuleDto> {
+        const rec = await this.databaseService.sqr_square_module.findFirst({
+            where: {square_id: squareId, id: moduleId},
+        });
+        return {
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            code: rec.code,
+            caption: rec.caption,
+            evaluating: rec.evaluating,
+        };
+    }
+
+    async createSquareModule(squareId: SqrSquareDto['id'], module: SqrSquareModuleDto): Promise<SqrSquareModuleDto> {
+        const rec = await this.databaseService.sqr_square_module.create({
+            data: {
+                square_id: squareId,
+                code: module.code,
+                caption: module.caption,
+                evaluating: module.evaluating
+            }
+        })
+        return {
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            code: rec.code,
+            caption: rec.caption,
+            evaluating: rec.evaluating,
+        };
+    }
+
+    async editSquareModule(squareId: SqrSquareDto['id'], moduleId: SqrSquareModuleDto['id'], module: SqrSquareModuleDto): Promise<SqrSquareModuleDto> {
+        const rec = await this.databaseService.sqr_square_module.update({
+            where: {square_id: squareId, id: moduleId},
+            data: {
+                code: module.code,
+                caption: module.caption,
+                evaluating: module.evaluating
+            }
+        })
+        return {
+            id: rec.id.toNumber(),
+            squareId: rec.square_id.toNumber(),
+            code: rec.code,
+            caption: rec.caption,
+            evaluating: rec.evaluating,
+        };
+    }
+
+    async deleteSquareModules(squareId: SqrSquareDto['id'], moduleIds: SqrSquareModuleDto['id'][]): Promise<void> {
+        await this.databaseService.sqr_square_module.deleteMany({where: {square_id: squareId, id: {in: moduleIds}}});
     }
 }

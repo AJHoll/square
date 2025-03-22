@@ -8,6 +8,7 @@ import DevsInput from "@ajholl/devsuikit/dist/DevsInput";
 import DevsButton from "@ajholl/devsuikit/dist/DevsButton";
 import {SqrManageCriteriaStore} from "../SqrManageCriteria.store";
 import OSqrManageSubcriteria from "./SqrManageSubcriteria";
+import DevsSelect from "@ajholl/devsuikit/dist/DevsSelect";
 
 interface SqrManageCriteriaProps extends StoreProps {
     criteria: SqrCriteriaDto
@@ -29,9 +30,9 @@ export class SqrManageCriteria extends React.Component<SqrManageCriteriaProps> {
                 </label>
                 <label className="sqr_manage_criteria__module">
                     Модуль
-                    <DevsInput keyFilter="pint"
-                               value={criteria.module}
-                               onChange={(event) => this.sqrManageCriteriaStore.setCriteriaModule(criteria.id, event.target.value)}
+                    <DevsSelect options={this.sqrManageCriteriaStore.modules}
+                                value={this.sqrManageCriteriaStore.modules.find(m => m.value === criteria.module)}
+                                onChange={(event) => this.sqrManageCriteriaStore.setCriteriaModule(criteria.id, event.value?.value)}
                     />
                 </label>
                 <label className="sqr_manage_criteria__caption">

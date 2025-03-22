@@ -2,6 +2,7 @@ import RootStore from "../../Root.store";
 import SqrSquareService from "../../../services/SqrSquare.service";
 import {makeAutoObservable} from "mobx";
 import {SqrSquareEvalGroupDto} from "../../../dtos/SqrSquareEvalGroup.dto";
+import {SelectOption} from "@ajholl/devsuikit";
 
 export class SqrSquareEvalGroupCardStore {
     private readonly _rootStore: RootStore;
@@ -54,6 +55,16 @@ export class SqrSquareEvalGroupCardStore {
         this._sqrEvalGroup = value;
     }
 
+    private _squareModules: SelectOption[] = [];
+    get squareModules(): SelectOption[] {
+        return this._squareModules;
+    }
+
+    set squareModules(value: SelectOption[]) {
+        this._squareModules = value;
+    }
+
+
     constructor(rootStore: RootStore,
                 sqrSquareService: SqrSquareService) {
         this._rootStore = rootStore;
@@ -76,9 +87,28 @@ export class SqrSquareEvalGroupCardStore {
         this._cardItemWasChanged = true;
     }
 
+    setFormModule(module: SelectOption, newValue: SelectOption) {
+        module.label = newValue.label;
+        module.value = newValue.value;
+        this.refreshModulesField();
+    }
+
+    removeFormModule(module: SelectOption) {
+        this._sqrEvalGroup.formModules = (this._sqrEvalGroup.formModules ?? []).filter(formModule => formModule !== module);
+        this.refreshModulesField();
+    }
+
+    addNewModulesBtnClick(): void {
+        this._sqrEvalGroup.formModules = [...(this._sqrEvalGroup?.formModules ?? []), {
+            label: '',
+            value: ''
+        } as SelectOption];
+    }
+
     close(): void {
         this._cardItemWasChanged = false;
         this._sqrEvalGroup = {};
+        this._squareModules = [];
         this._loading = false;
         this._visible = false;
     }
@@ -93,4 +123,9 @@ export class SqrSquareEvalGroupCardStore {
         await this._rootStore.sqrSquareEvalGroupStore.reloadSqrEvalGroups();
     }
 
+    private refreshModulesField(): void {
+        this.setModules((this._sqrEvalGroup.formModules ?? [])
+            .filter(formModule => !!formModule?.value)
+            .map(formModule => formModule.value).join(','))
+    }
 }

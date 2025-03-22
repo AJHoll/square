@@ -5,6 +5,7 @@ import {SqrSquareEvalGroupDto} from "../dtos/SqrSquareEvalGroup.dto";
 import {SqrCriteriaDto} from "../dtos/SqrCriteria.dto";
 import axios from "axios";
 import {SqrTeamDto} from "../dtos/SqrTeam.dto";
+import {SqrSquareModuleDto} from "../dtos/SqrSquareModule.dto";
 
 export default class SqrManageRateService {
     private readonly rootService: RootService;
@@ -18,16 +19,16 @@ export default class SqrManageRateService {
         makeAutoObservable(this);
     }
 
-    async getAvailableModules(squareId: SqrSquareDto['id'], evalGroupId: SqrSquareEvalGroupDto['id']): Promise<string[]> {
-        return (await axios.get<string[]>(`${this.restPath}/modules`, {params: {squareId, evalGroupId}})).data;
+    async getAvailableModules(squareId: SqrSquareDto['id'], evalGroupId: SqrSquareEvalGroupDto['id']): Promise<SqrSquareModuleDto[]> {
+        return (await axios.get<SqrSquareModuleDto[]>(`${this.restPath}/modules`, {params: {squareId, evalGroupId}})).data;
     }
 
     async getAvailableRates(squareId: SqrSquareDto['id'],
                             evalGroupId: SqrSquareEvalGroupDto['id'],
-                            module: number,
+                            moduleId: number,
                             teamId: SqrTeamDto['id']): Promise<SqrCriteriaDto[]> {
         return (await axios.get<SqrCriteriaDto[]>(`${this.restPath}`, {
-            params: {squareId, evalGroupId, module, teamId}
+            params: {squareId, evalGroupId, moduleId, teamId}
         })).data;
     }
 

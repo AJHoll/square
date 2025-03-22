@@ -7,12 +7,14 @@ import AdmUserCardStore from "./AdmUserCard.store";
 import AdmUserGroupStore from "./AdmUserGroup.store";
 import {saveAs} from "file-saver";
 import React from "react";
+import UserService from "../../../services/User.service";
 
 export default class AdmUserStore {
     private readonly _rootStore: RootStore;
     private readonly _admUserCardStore: AdmUserCardStore;
     private readonly _admUserGroupStore: AdmUserGroupStore;
     private readonly _admUserService: AdmUserService;
+    private readonly _userService: UserService;
 
 
     private _gridApi: GridApi<AdmUserDto> | undefined;
@@ -40,7 +42,8 @@ export default class AdmUserStore {
     }
 
     get deleteBtnDisabled(): boolean {
-        return (this._selectedUserIds ?? []).length === 0 || this._selectedUserIds.includes(1);
+        return (this._selectedUserIds ?? []).length === 0 || this._selectedUserIds.includes(1) ||
+            !this._userService.user?.roles?.includes('admin');
     }
 
     constructor(rootStore: RootStore,
@@ -49,6 +52,7 @@ export default class AdmUserStore {
         this._admUserCardStore = rootStore.admUserCardStore;
         this._admUserGroupStore = rootStore.admUserGroupStore;
         this._admUserService = admUserService;
+        this._userService = this._rootStore.rootService.userService;
         makeAutoObservable(this);
     }
 

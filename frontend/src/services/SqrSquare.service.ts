@@ -10,6 +10,7 @@ import {SqrSquareTeamUserDto} from "../dtos/SqrSquareTeamUserDto";
 import {SqrTimerDto} from "../dtos/SqrTimer.dto";
 import {SqrSquareEvalGroupDto} from "../dtos/SqrSquareEvalGroup.dto";
 import {SqrSquareEvalGroupUserDto} from "../dtos/SqrSquareEvalGroupUser.dto";
+import {SqrSquareModuleDto} from "../dtos/SqrSquareModule.dto";
 
 export default class SqrSquareService {
     private readonly _rootService: RootService;
@@ -252,5 +253,26 @@ export default class SqrSquareService {
                                   evalGroupIds: SqrSquareEvalGroupDto['id'][],
                                   color: SqrSquareEvalGroupUserDto['color']): Promise<void> {
         await axios.post(`${this.restPath}/${squareId}/sqr-eval-group/${evalGroupIds.join(',')}/user/${userIds.join(',')}/colorize/${color}`, {});
+    }
+
+    async getSquareModules(squareId: SqrSquareDto['id']): Promise<SqrSquareModuleDto[]> {
+        return (await axios.get<SqrSquareModuleDto[]>(`${this.restPath}/${squareId}/sqr-square-modules`)).data;
+    }
+
+    async getSquareModule(squareId: SqrSquareDto['id'], squareModuleId: SqrSquareModuleDto['id']): Promise<SqrSquareModuleDto> {
+        return (await axios.get<SqrSquareModuleDto>(`${this.restPath}/${squareId}/sqr-square-modules/${squareModuleId}`)).data;
+    }
+
+    async createSquareModule(squareId: SqrSquareDto['id'], squareModule: SqrSquareModuleDto): Promise<SqrSquareModuleDto> {
+        return (await axios.post<SqrSquareModuleDto>(`${this.restPath}/${squareId}/sqr-square-modules`, squareModule)).data;
+    }
+
+    async editSquareModule(squareId: SqrSquareDto['id'], squareModuleId: SqrSquareModuleDto['id'], squareModule: SqrSquareModuleDto): Promise<SqrSquareModuleDto> {
+        return (await axios.put<SqrSquareModuleDto>(`${this.restPath}/${squareId}/sqr-square-modules/${squareModuleId}`, squareModule)).data;
+    }
+
+    async deleteSquareModules(squareId: SqrSquareDto['id'],
+                              squareModuleIds: SqrSquareModuleDto['id'][]): Promise<void> {
+        await axios.delete<void>(`${this.restPath}/${squareId}/sqr-square-modules/${squareModuleIds.join(',')}`);
     }
 }

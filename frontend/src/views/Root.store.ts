@@ -29,6 +29,8 @@ import {SqrSquareEvalGroupCardStore} from "./SqrSquare/components/SqrSquareEvalG
 import SqrManageRateStore from "./SqrManageRate/SqrManageRate.store";
 import ProfileStore from "./Profile/Profile.store";
 import QuestionAnswerStore from "./QuestionAnswer/QuestionAnswer.store";
+import {SqrSquareModuleStore} from "./SqrSquare/components/SqrSquareModule.store";
+import {SqrSquareModuleCardStore} from "./SqrSquare/components/SqrSquareModuleCard.store";
 
 export default class RootStore {
     readonly projectName = '[Скверъ]';
@@ -60,6 +62,8 @@ export default class RootStore {
     readonly sqrSquareTimerStore: SqrSquareTimerStore = new SqrSquareTimerStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareEvalGroupCardStore: SqrSquareEvalGroupCardStore = new SqrSquareEvalGroupCardStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareEvalGroupStore: SqrSquareEvalGroupStore = new SqrSquareEvalGroupStore(this, this.rootService.sqrSquareService);
+    readonly sqrSquareModuleCardStore: SqrSquareModuleCardStore = new SqrSquareModuleCardStore(this, this.rootService.sqrSquareService);
+    readonly sqrSquareModuleStore: SqrSquareModuleStore = new SqrSquareModuleStore(this, this.rootService.sqrSquareService);
     readonly sqrSquareStore: SqrSquareStore = new SqrSquareStore(this, this.rootService.sqrSquareService);
 
     readonly sqrTimerStore: SqrTimerStore = new SqrTimerStore(this, this.rootService.sqrSquareService);

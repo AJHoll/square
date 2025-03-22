@@ -7,6 +7,7 @@ import {SqrSquareEvalGroupUserDto} from "../../../dtos/SqrSquareEvalGroupUser.dt
 import {SqrSquareDto} from "../../../dtos/SqrSquare.dto";
 import {UFilterItem} from "../../../components/DevsGrid/DevsGridFilterItem";
 import {SqrSquareEvalGroupCardStore} from "./SqrSquareEvalGroupCard.store";
+import {SelectOption} from "@ajholl/devsuikit";
 
 
 export default class SqrSquareEvalGroupStore {
@@ -150,9 +151,14 @@ export default class SqrSquareEvalGroupStore {
         await this.reloadSqrEvalGroupUsers();
     }
 
-    createEvalGroup(): void {
+    async createEvalGroup(): Promise<void> {
         this._sqrSquareEvalGroupCardStore.title = 'Новая группа проверки';
         this._sqrSquareEvalGroupCardStore.sqrEvalGroup = {squareId: this._squareId};
+        this._sqrSquareEvalGroupCardStore.squareModules = (await this._sqrSquareService.getSquareModules(this._squareId))
+            .map(module => ({
+                label: `${module.code} - ${module.caption}`,
+                value: module.code
+            } as SelectOption));
         this._sqrSquareEvalGroupCardStore.visible = true;
     }
 
@@ -160,6 +166,13 @@ export default class SqrSquareEvalGroupStore {
         const evalGroup = await this._sqrSquareService.getSquareEvalGroup(this._squareId, this._selectionSqrEvalGroups[0]?.id);
         if (evalGroup) {
             this._sqrSquareEvalGroupCardStore.title = `Редактирование команды (id: ${evalGroup.id})`;
+            this._sqrSquareEvalGroupCardStore.squareModules = (await this._sqrSquareService.getSquareModules(this._squareId))
+                .map(module => ({
+                    label: `${module.code} - ${module.caption}`,
+                    value: module.code
+                } as SelectOption));
+            evalGroup.formModules = evalGroup.modules?.split(',').map(moduleCode => moduleCode.trim())
+                .map(moduleCode => this._sqrSquareEvalGroupCardStore.squareModules.find(option => option.value === moduleCode) as SelectOption)
             this._sqrSquareEvalGroupCardStore.sqrEvalGroup = evalGroup;
             this._sqrSquareEvalGroupCardStore.visible = true;
         } else {

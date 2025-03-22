@@ -44,10 +44,12 @@ export class SqrManageAspect extends React.Component<SqrManageAspectProps> {
                             <label className="aspect_module">
                                 Модуль
                                 {
-                                    !!subcriteria.module ? <DevsInputWrapper value={aspect.module}/>
-                                        : <DevsInput keyFilter="pint"
-                                                     value={aspect.module}
-                                                     onChange={(event) => this.sqrManageCriteriaStore.setAspectModule(criteria.id, subcriteria.id, aspect.id, event.target.value)}
+                                    !!subcriteria.module ? <DevsInputWrapper
+                                            value={this.sqrManageCriteriaStore.modules.find(m => m.value === aspect.module)?.label}/>
+                                        : <DevsSelect options={this.sqrManageCriteriaStore.modules}
+                                                      value={this.sqrManageCriteriaStore.modules.find(m => m.value === aspect.module)}
+                                                      onlySelection={true}
+                                                      onChange={(event) => this.sqrManageCriteriaStore.setAspectModule(criteria.id, subcriteria.id, aspect.id, event.value?.value)}
                                         />
                                 }
                             </label>

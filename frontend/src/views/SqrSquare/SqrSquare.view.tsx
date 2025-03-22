@@ -13,6 +13,7 @@ import OSqrSquareTeam from "./components/SqrSquareTeam";
 import OSqrSquareTimer from "./components/SqrSquareTimer";
 import OSqrSquareEvalGroup from "./components/SqrSquareEvalGroup";
 import UserService from "../../services/User.service";
+import OSqrSquareModule from "./components/SqrSquareModule";
 
 interface SqrSquareViewProps extends BaseViewProps {
 }
@@ -28,7 +29,7 @@ export class SqrSquareView extends React.Component<SqrSquareViewProps> {
         let activePanelNames: string[] = [];
         if ((this.userService.user?.roles ?? []).includes('admin') ||
             (this.userService.user?.roles ?? []).includes('squareManage')) {
-            activePanelNames = ['roles', 'teams', 'timers', 'eval-groups'];
+            activePanelNames = ['roles', 'teams', 'timers', 'eval-groups', 'modules'];
         }
         if ((this.userService.user?.roles ?? []).includes('timerManage')) {
             activePanelNames = ['timers'];
@@ -64,6 +65,11 @@ export class SqrSquareView extends React.Component<SqrSquareViewProps> {
                                             case "eval-groups": {
                                                 return <DevsTabPanel key="eval-groups" header="Группы проверки">
                                                     <OSqrSquareEvalGroup rootStore={this.props.rootStore}/>
+                                                </DevsTabPanel>
+                                            }
+                                            case "modules": {
+                                                return <DevsTabPanel key="modules" header="Модули задания">
+                                                    <OSqrSquareModule rootStore={this.props.rootStore}/>
                                                 </DevsTabPanel>
                                             }
                                         }
