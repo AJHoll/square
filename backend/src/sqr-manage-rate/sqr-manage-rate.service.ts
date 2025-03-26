@@ -183,11 +183,11 @@ export class SqrManageRateService {
     mapRatesToExcel(square: SqrSquareDto,
                     rates: SqrCriteriaDto[],
                     workbook: Workbook): void {
-        const sheet = workbook.getWorksheet('CIS Marking Scheme Import');
+        const sheet = workbook.getWorksheet('Схема оценок');
         // Найдем название компетенции
         let titleRowIdx = 0;
         sheet.eachRow((row) => {
-            if (row.getCell('E').text.includes('Skill name')) {
+            if (row.getCell('A').text.includes('Название компетенции')) {
                 if (titleRowIdx === 0) {
                     titleRowIdx = row.number + 1;
                 }
@@ -195,41 +195,42 @@ export class SqrManageRateService {
         });
         const titleRow = sheet.getRow(titleRowIdx);
         if (titleRow) {
-            titleRow.getCell('E').value = square.caption;
-        }
-        // Найдем начало шапки
-        let headerStartRowIdx = 0;
-        sheet.eachRow((row) => {
-            if (row.getCell('E').text.includes('Criteria')) {
-                if (headerStartRowIdx === 0) {
-                    headerStartRowIdx = row.number + 1;
+            titleRow.eachCell((cell) => {
+                if (['A3', 'B3', 'C3'].includes(cell.address)) {
+                    cell.value = square.caption;
                 }
-            }
-        });
+            });
+        }
+
+        // Найдем начало шапки
+        let headerStartRowIdx = titleRowIdx + 2;
         // Заполняем
         for (const rate of rates) {
-            sheet.duplicateRow(headerStartRowIdx, 1, true);
+            if (headerStartRowIdx > 6) {
+                sheet.duplicateRow(headerStartRowIdx, 1, true);
+            }
             const headerRow = sheet.getRow(headerStartRowIdx);
-            headerRow.getCell('C').value = rate.key;
-            headerRow.getCell('E').value = rate.caption;
-            // headerRow.getCell('F').value = +(rate.mark ?? '0');
+            headerRow.getCell('A').value = rate.key;
+            headerRow.getCell('B').value = rate.caption;
+            headerRow.getCell('C').value = +rate.maxMark;
             headerStartRowIdx++;
+        }
+        if (headerStartRowIdx > 6) {
+            sheet.spliceRows(headerStartRowIdx, 1);
         }
 
         // Заполняем критерии основной таблицы
         let mainTableTemplateRowIdx = 0;
         sheet.eachRow((row) => {
-            if (row.getCell('K').text.includes('Criterion')) {
+            if (row.getCell('A').text.includes('Модуль')) {
                 if (mainTableTemplateRowIdx === 0) {
                     mainTableTemplateRowIdx = row.number;
                 }
             }
         });
+        // Заполняем критерии основной таблицы
         for (let i = 0; i < rates.length; i++) {
             const rate = rates[i];
-            const headerRow = sheet.getRow(mainTableTemplateRowIdx);
-            headerRow.getCell('K').value = `Criterion ${rate.key}`;
-            // headerRow.getCell('M').value = +rate.mark;
             if (i < rates.length - 2) {
                 sheet.duplicateRow(mainTableTemplateRowIdx, 2, false);
             }
@@ -238,7 +239,7 @@ export class SqrManageRateService {
             bufferRow.getCell('A').value = rate.id;
             mainTableTemplateRowIdx += 2;
         }
-        // работаем с субкритериями и аспектами
+
         for (const rate of rates) {
             let duplicateRowIdx = 0;
             sheet.eachRow((row) => {
@@ -248,56 +249,21 @@ export class SqrManageRateService {
                     }
                 }
             });
-            const row = sheet.getRow(duplicateRowIdx);
             const allStyle: Partial<Style> = {
                 font: {
                     name: 'Arial',
                     size: 10,
-                },
-                border: {
-                    top: {style: 'thin'},
-                    bottom: {style: 'thin'},
-                    left: {style: 'medium'},
-                    right: {style: 'medium'},
                 },
                 alignment: {
                     vertical: 'middle',
                     wrapText: true,
                 }
             }
-            row.getCell('A').style = {
-                ...allStyle,
-                font: {bold: true},
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('B').style = {...allStyle, font: {bold: true}};
-            row.getCell('C').style = {
-                ...allStyle,
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('D').style = allStyle;
-            row.getCell('E').style = allStyle;
-            row.getCell('F').style = {
-                ...allStyle,
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('N').style = {
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('G').style = allStyle;
-            row.getCell('H').style = allStyle;
-            row.getCell('I').style = {
-                ...allStyle,
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('J').style = {
-                ...allStyle,
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
 
             for (let sci = 0; sci < rate.subcriterias.length; sci++) {
                 const subcriteria = rate.subcriterias[sci];
                 const subcriteriaRow = sheet.getRow(duplicateRowIdx);
+                this.applySubcriteriaRowStyle(subcriteriaRow, allStyle);
                 subcriteriaRow.getCell('A').value = `${rate.key}${subcriteria.order}`;
                 subcriteriaRow.getCell('B').value = subcriteria.caption;
                 subcriteriaRow.getCell('C').value = null;
@@ -308,20 +274,22 @@ export class SqrManageRateService {
                 subcriteriaRow.getCell('H').value = null;
                 subcriteriaRow.getCell('I').value = null;
                 subcriteriaRow.getCell('J').value = null;
+                subcriteriaRow.getCell('N').value = null;
                 sheet.duplicateRow(duplicateRowIdx, 1, true);
                 duplicateRowIdx++;
                 for (let ai = 0; ai < subcriteria.aspects.length; ai++) {
                     const aspect = subcriteria.aspects[ai];
                     const aspectRow = sheet.getRow(duplicateRowIdx);
+                    this.applyAspectRowStyle(aspectRow, allStyle);
                     aspectRow.getCell('A').value = null;
                     aspectRow.getCell('B').value = null;
                     aspectRow.getCell('C').value = aspect.type;
                     aspectRow.getCell('D').value = null;
-                    aspectRow.getCell('E').value = `${aspect.caption}${aspect.description ? '\n' + aspect.description : ''}`;
+                    aspectRow.getCell('E').value = aspect.caption;
                     aspectRow.getCell('F').value = null;
-                    aspectRow.getCell('G').value = null;
-                    aspectRow.getCell('H').value = null;
-                    aspectRow.getCell('I').value = aspect.sectionKey ?? '-';
+                    aspectRow.getCell('G').value = aspect.description;
+                    aspectRow.getCell('H').value = aspect.sectionKey ?? '-';
+                    aspectRow.getCell('I').value = null;
                     aspectRow.getCell('J').value = null;
                     aspectRow.getCell('N').value = this.getAspectMark(aspect);
                     if (ai < subcriteria.aspects.length - 1 ||
@@ -341,8 +309,8 @@ export class SqrManageRateService {
                         aspectExtraRow.getCell('F').value = aspect.type === 'J' ? +aspectExtra.order : null;
                         aspectExtraRow.getCell('G').value = aspectExtra.description;
                         aspectExtraRow.getCell('H').value = null;
-                        aspectExtraRow.getCell('I').value = null;
-                        aspectExtraRow.getCell('J').value = aspect.type === 'D' ? aspectExtra.maxMark !== undefined ? (+aspectExtra.maxMark).toFixed(2) : null : null;
+                        aspectExtraRow.getCell('I').value = aspect.type === 'D' ? aspectExtra.maxMark !== undefined ? (+aspectExtra.maxMark).toFixed(2) : null : null;
+                        aspectExtraRow.getCell('J').value = null;
                         aspectExtraRow.getCell('N').value = aspect.type === 'D' ? aspectExtra.mark !== undefined ? (+aspectExtra.mark).toFixed(2) : null : null;
                         if (aei < aspect.extra.length - 1 || subcriteria.aspects[ai + 1] || rate.subcriterias[sci + 1]) {
                             sheet.duplicateRow(duplicateRowIdx, 1, true);
@@ -351,7 +319,109 @@ export class SqrManageRateService {
                     }
                 }
             }
+            const lastRow = sheet.getRow(duplicateRowIdx);
+            const fillBottomBorder = (cell: any) => {
+                cell.style = {...cell.style, border: {...cell.style.border, bottom: {style: 'thin'}}}
+            }
+            fillBottomBorder(lastRow.getCell('A'));
+            fillBottomBorder(lastRow.getCell('B'));
+            fillBottomBorder(lastRow.getCell('C'));
+            fillBottomBorder(lastRow.getCell('D'));
+            fillBottomBorder(lastRow.getCell('E'));
+            fillBottomBorder(lastRow.getCell('F'));
+            fillBottomBorder(lastRow.getCell('G'));
+            fillBottomBorder(lastRow.getCell('H'));
+            fillBottomBorder(lastRow.getCell('I'));
+            fillBottomBorder(lastRow.getCell('J'));
         }
+    }
+
+    private applySubcriteriaRowStyle(row: any, allStyle: any) {
+        const defaultBorder = {
+            top: {style: 'thin'},
+            bottom: {style: 'thin'},
+        };
+        const defaultFill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: {argb: 'FFB4C6E7'},
+            bgColor: {argb: 'FF000000'}
+        };
+        row.getCell('A').style = {
+            ...allStyle,
+            font: {bold: true},
+            alignment: {...allStyle.alignment, horizontal: 'center'},
+            border: {
+                ...defaultBorder,
+                left: {style: 'thin'},
+            }, fill: defaultFill
+        };
+        row.getCell('B').style = {...allStyle, font: {bold: true}, border: defaultBorder, fill: defaultFill};
+        row.getCell('C').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}, border: defaultBorder, fill: defaultFill
+        };
+        row.getCell('D').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}, border: defaultBorder, fill: defaultFill
+        };
+        row.getCell('E').style = {...allStyle, border: defaultBorder, fill: defaultFill};
+        row.getCell('F').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}, border: defaultBorder, fill: defaultFill
+        };
+        row.getCell('G').style = {...allStyle, border: defaultBorder, fill: defaultFill};
+        row.getCell('H').style = {...allStyle, border: defaultBorder, fill: defaultFill};
+        row.getCell('I').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}, border: defaultBorder, fill: defaultFill
+        };
+        row.getCell('J').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'},
+            border: {
+                ...defaultBorder,
+                right: {style: 'thin'},
+            }, fill: defaultFill
+        };
+    }
+
+    private applyAspectRowStyle(row: any, allStyle: any) {
+        row.getCell('A').style = {
+            ...allStyle,
+            font: {bold: true},
+            alignment: {...allStyle.alignment, horizontal: 'center'},
+            border: {
+                left: {style: 'thin'},
+            }
+        };
+        row.getCell('B').style = {...allStyle, font: {bold: true}};
+        row.getCell('C').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}
+        };
+        row.getCell('D').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}
+        };
+        row.getCell('E').style = allStyle;
+        row.getCell('F').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}
+        };
+        row.getCell('G').style = allStyle;
+        row.getCell('H').style = allStyle;
+        row.getCell('I').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}
+        };
+        row.getCell('J').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'},
+            border: {
+                right: {style: 'thin'},
+            }
+        };
     }
 
     private getAspectMark(aspect: SqrAspectDto): string | number | null {
