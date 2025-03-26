@@ -38,12 +38,36 @@ services:
       - square-backend
     container_name: "devs-square-frontend"
     build: "./frontend"
+    labels:
+      proxy_nginx: "For SSL"
     volumes:
       - ./nginx:/etc/nginx/templates
+      - ./certs:/etc/nginx/certs
+      - /tmp/letsencrypt/www:/tmp/letsencrypt/www
     environment:
       BACKEND_API_URL: "host.docker.internal"
     ports:
       - "80:80"
+  devs-certs:
+    image: gordonchan/auto-letsencrypt
+    links:
+      - square-frontend
+    volumes:
+      - /var/log/letsencrypt/:/var/log/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - /tmp/letsencrypt/www:/tmp/letsencrypt/www
+      - ./certs:/etc/nginx/certs
+    environment:
+      - EMAIL=email@gmail.ru # change it!
+      - SERVER_CONTAINER=square-frontend
+      - WEBROOT_PATH=/tmp/letsencrypt/www
+      - CERTS_PATH=/etc/nginx/certs
+      - DOMAINS=square.devsystem.space
+      - CHECK_FREQ=1
+      - SERVER_CONTAINER_LABEL=proxy_nginx
+    restart: unless-stopped
 
 volumes:
   square-data:
