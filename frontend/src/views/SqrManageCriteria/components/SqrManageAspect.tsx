@@ -56,7 +56,7 @@ export class SqrManageAspect extends React.Component<SqrManageAspectProps> {
                         </div>
                         <div className="aspect_common_second_row">
                             <label className="aspect_asss">
-                                ASSS Секция
+                                Код навыка
                                 <DevsInput value={aspect.sectionKey}
                                            onChange={(event) =>
                                                this.sqrManageCriteriaStore.setAspectSectionKey(criteria.id, subcriteria.id, aspect.id, event.target.value)}
@@ -65,14 +65,14 @@ export class SqrManageAspect extends React.Component<SqrManageAspectProps> {
                         </div>
                     </div>
                     <label className="aspect_caption">
-                        Название аспекта
+                        Описание аспекта
                         <DevsTextArea value={aspect.caption}
                                       onChange={(event) =>
                                           this.sqrManageCriteriaStore.setAspectCaption(criteria.id, subcriteria.id, aspect.id, event.target.value)}
                         />
                     </label>
                     <label className="aspect_description">
-                        Описание аспекта
+                        Комментарий к аспекту
                         <DevsTextArea value={aspect.description}
                                       onChange={(event) =>
                                           this.sqrManageCriteriaStore.setAspectDescription(criteria.id, subcriteria.id, aspect.id, event.target.value)}

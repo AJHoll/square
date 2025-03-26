@@ -87,84 +87,86 @@ export class SqrManageCriteriaService {
             // Найдем № строки под C
             let firstCriteriaRowNum: number, firstSubcriteriaTableHederRowNum: number;
             sheet.eachRow((row) => {
-                if (row.getCell('C').value === 'A' && !firstCriteriaRowNum) {
+                if (row.getCell('A').value === 'A' && !firstCriteriaRowNum) {
                     firstCriteriaRowNum = row.number;
                 }
-                if (row.getCell('A').value && !firstSubcriteriaTableHederRowNum) {
+                if (row.getCell('A').value === 'Модуль' && !firstSubcriteriaTableHederRowNum) {
                     firstSubcriteriaTableHederRowNum = row.number;
                 }
             });
             // Найдем первый субкритерийID
             sheet?.getRows(firstCriteriaRowNum, firstSubcriteriaTableHederRowNum - firstCriteriaRowNum)?.forEach((row) => {
-                if (row.hasValues && row.getCell('C').value) {
+                if (row.hasValues && row.getCell('A').value) {
                     data.push({
                         id: uuid(),
-                        key: row.getCell('C').text,
-                        caption: row.getCell('E').text,
-                        maxMark: row.getCell('F').text,
+                        key: row.getCell('A').text,
+                        caption: row.getCell('B').text,
+                        maxMark: row.getCell('C').text,
                         subcriterias: [],
                     });
                 }
             });
             data.forEach((skill) => {
                 sheet.eachRow((row, rowNumber) => {
-                    if (row.hasValues) {
-                        if (row.getCell('A').text.indexOf(skill.key) === 0) {
-                            const newSubcriteria: SqrSubcriteriaDto = {
-                                id: uuid(),
-                                order: row.getCell('A').text.replaceAll(skill.key, ''),
-                                caption: row.getCell('B').text,
-                                aspects: [],
-                            };
-                            let aspectsMaxRowNum = rowNumber + 1;
-                            while (sheet.getRow(aspectsMaxRowNum).getCell('A').text.length === 0 && aspectsMaxRowNum < sheet.rowCount) {
-                                aspectsMaxRowNum++;
-                            }
-                            sheet.getRows(rowNumber + 1, aspectsMaxRowNum - (rowNumber + 1))?.forEach((aspectRow) => {
-                                if (aspectRow.hasValues) {
-                                    if (['B', 'D', 'J', 'Z'].indexOf(aspectRow.getCell('C').text) !== -1) {
-                                        const newAspect: SqrAspectDto = {
-                                            id: uuid(),
-                                            type: aspectRow.getCell('C').text as 'B' | 'J' | 'D' | 'Z',
-                                            caption: aspectRow.getCell('E').text,
-                                            description: aspectRow.getCell('G').text,
-                                            maxMark: aspectRow.getCell('J').text,
-                                            sectionKey: aspectRow.getCell('I').text,
-                                            extra: [],
-                                            zedLink: aspectRow.getCell('D').text,
-                                        };
-                                        let extraMaxRowNum = aspectRow.number + 1;
-                                        while (sheet.getRow(extraMaxRowNum).getCell('E').text.length === 0 && extraMaxRowNum < sheet.rowCount) {
-                                            extraMaxRowNum++;
-                                        }
-                                        if (extraMaxRowNum !== sheet.rowCount) {
-                                            extraMaxRowNum--;
-                                        }
-                                        sheet.getRows(aspectRow.number + 1, extraMaxRowNum - aspectRow.number)?.forEach((extraRow) => {
-                                            if (extraRow.hasValues) {
-                                                if (newAspect.type === 'D'
-                                                    && extraRow.getCell('G').text.length > 0) {
-                                                    newAspect.extra.push({
-                                                        id: uuid(),
-                                                        description: extraRow.getCell('G').text,
-                                                        maxMark: extraRow.getCell('J').text,
-                                                    });
-                                                } else if (newAspect.type === 'J'
-                                                    && extraRow.getCell('G').text.length > 0
-                                                    && ['0', '1', '2', '3'].indexOf(extraRow.getCell('F').text) !== -1) {
-                                                    newAspect.extra.push({
-                                                        id: uuid(),
-                                                        description: extraRow.getCell('G').text,
-                                                        maxMark: extraRow.getCell('F').text,
-                                                    });
-                                                }
-                                            }
-                                        });
-                                        newSubcriteria.aspects.push(newAspect);
-                                    }
+                    if (rowNumber > firstSubcriteriaTableHederRowNum) {
+                        if (row.hasValues) {
+                            if (row.getCell('A').text.indexOf(skill.key) === 0) {
+                                const newSubcriteria: SqrSubcriteriaDto = {
+                                    id: uuid(),
+                                    order: row.getCell('A').text.replaceAll(skill.key, ''),
+                                    caption: row.getCell('B').text,
+                                    aspects: [],
+                                };
+                                let aspectsMaxRowNum = rowNumber + 1;
+                                while (sheet.getRow(aspectsMaxRowNum).getCell('A').text.length === 0 && aspectsMaxRowNum < sheet.rowCount) {
+                                    aspectsMaxRowNum++;
                                 }
-                            });
-                            skill.subcriterias.push(newSubcriteria);
+                                sheet.getRows(rowNumber + 1, aspectsMaxRowNum - (rowNumber + 1))?.forEach((aspectRow) => {
+                                    if (aspectRow.hasValues) {
+                                        if (['B', 'D', 'J', 'Z'].indexOf(aspectRow.getCell('C').text) !== -1) {
+                                            const newAspect: SqrAspectDto = {
+                                                id: uuid(),
+                                                type: aspectRow.getCell('C').text as 'B' | 'J' | 'D' | 'Z',
+                                                caption: aspectRow.getCell('E').text,
+                                                description: aspectRow.getCell('G').text,
+                                                maxMark: aspectRow.getCell('I').text,
+                                                sectionKey: aspectRow.getCell('H').text,
+                                                extra: [],
+                                                zedLink: aspectRow.getCell('D').text,
+                                            };
+                                            let extraMaxRowNum = aspectRow.number + 1;
+                                            while (sheet.getRow(extraMaxRowNum).getCell('E').text.length === 0 && extraMaxRowNum < sheet.rowCount) {
+                                                extraMaxRowNum++;
+                                            }
+                                            if (extraMaxRowNum !== sheet.rowCount) {
+                                                extraMaxRowNum--;
+                                            }
+                                            sheet.getRows(aspectRow.number + 1, extraMaxRowNum - aspectRow.number)?.forEach((extraRow) => {
+                                                if (extraRow.hasValues) {
+                                                    if (newAspect.type === 'D'
+                                                        && extraRow.getCell('G').text.length > 0) {
+                                                        newAspect.extra.push({
+                                                            id: uuid(),
+                                                            description: extraRow.getCell('G').text,
+                                                            maxMark: extraRow.getCell('I').text,
+                                                        });
+                                                    } else if (newAspect.type === 'J'
+                                                        && extraRow.getCell('G').text.length > 0
+                                                        && ['0', '1', '2', '3'].indexOf(extraRow.getCell('F').text) !== -1) {
+                                                        newAspect.extra.push({
+                                                            id: uuid(),
+                                                            description: extraRow.getCell('G').text,
+                                                            maxMark: extraRow.getCell('F').text,
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                            newSubcriteria.aspects.push(newAspect);
+                                        }
+                                    }
+                                });
+                                skill.subcriterias.push(newSubcriteria);
+                            }
                         }
                     }
                 });
@@ -247,11 +249,11 @@ export class SqrManageCriteriaService {
     mapCriteriasToExcel(square: SqrSquareDto,
                         criterias: SqrCriteriaDto[],
                         workbook: Workbook): void {
-        const sheet = workbook.getWorksheet('CIS Marking Scheme Import');
+        const sheet = workbook.getWorksheet('Схема оценок');
         // Найдем название компетенции
         let titleRowIdx = 0;
         sheet.eachRow((row) => {
-            if (row.getCell('E').text.includes('Skill name')) {
+            if (row.getCell('A').text.includes('Название компетенции')) {
                 if (titleRowIdx === 0) {
                     titleRowIdx = row.number + 1;
                 }
@@ -259,41 +261,42 @@ export class SqrManageCriteriaService {
         });
         const titleRow = sheet.getRow(titleRowIdx);
         if (titleRow) {
-            titleRow.getCell('E').value = square.caption;
-        }
-        // Найдем начало шапки
-        let headerStartRowIdx = 0;
-        sheet.eachRow((row) => {
-            if (row.getCell('E').text.includes('Criteria')) {
-                if (headerStartRowIdx === 0) {
-                    headerStartRowIdx = row.number + 1;
+            titleRow.eachCell((cell) => {
+                if (['A3', 'B3', 'C3'].includes(cell.address)) {
+                    cell.value = square.caption;
                 }
-            }
-        });
+            });
+        }
+
+        // Найдем начало шапки
+        let headerStartRowIdx = titleRowIdx + 2;
         // Заполняем
         for (const criteria of criterias) {
-            sheet.duplicateRow(headerStartRowIdx, 1, true);
+            if (headerStartRowIdx > 6) {
+                sheet.duplicateRow(headerStartRowIdx, 1, true);
+            }
             const headerRow = sheet.getRow(headerStartRowIdx);
-            headerRow.getCell('C').value = criteria.key;
-            headerRow.getCell('E').value = criteria.caption;
-            headerRow.getCell('F').value = +criteria.maxMark;
+            headerRow.getCell('A').value = criteria.key;
+            headerRow.getCell('B').value = criteria.caption;
+            headerRow.getCell('C').value = +criteria.maxMark;
             headerStartRowIdx++;
+        }
+        if (headerStartRowIdx > 6) {
+            sheet.spliceRows(headerStartRowIdx, 1);
         }
 
         // Заполняем критерии основной таблицы
         let mainTableTemplateRowIdx = 0;
         sheet.eachRow((row) => {
-            if (row.getCell('K').text.includes('Criterion')) {
+            if (row.getCell('A').text.includes('Модуль')) {
                 if (mainTableTemplateRowIdx === 0) {
                     mainTableTemplateRowIdx = row.number;
                 }
             }
         });
+        // Заполняем критерии основной таблицы
         for (let i = 0; i < criterias.length; i++) {
             const criteria = criterias[i];
-            const headerRow = sheet.getRow(mainTableTemplateRowIdx);
-            headerRow.getCell('K').value = `Criterion ${criteria.key}`;
-            headerRow.getCell('M').value = +criteria.maxMark;
             if (i < criterias.length - 2) {
                 sheet.duplicateRow(mainTableTemplateRowIdx, 2, false);
             }
@@ -302,7 +305,7 @@ export class SqrManageCriteriaService {
             bufferRow.getCell('A').value = criteria.id;
             mainTableTemplateRowIdx += 2;
         }
-        // работаем с субкритериями и аспектами
+
         for (const criteria of criterias) {
             let duplicateRowIdx = 0;
             sheet.eachRow((row) => {
@@ -312,56 +315,21 @@ export class SqrManageCriteriaService {
                     }
                 }
             });
-            const row = sheet.getRow(duplicateRowIdx);
             const allStyle: Partial<Style> = {
                 font: {
                     name: 'Arial',
                     size: 10,
-                },
-                border: {
-                    top: {style: 'thin'},
-                    bottom: {style: 'thin'},
-                    left: {style: 'medium'},
-                    right: {style: 'medium'},
                 },
                 alignment: {
                     vertical: 'middle',
                     wrapText: true,
                 }
             }
-            row.getCell('A').style = {
-                ...allStyle,
-                font: {bold: true},
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('B').style = {...allStyle, font: {bold: true}};
-            row.getCell('C').style = {
-                ...allStyle,
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('D').style = {
-                ...allStyle,
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('E').style = allStyle;
-            row.getCell('F').style = {
-                ...allStyle,
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('G').style = allStyle;
-            row.getCell('H').style = allStyle;
-            row.getCell('I').style = {
-                ...allStyle,
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
-            row.getCell('J').style = {
-                ...allStyle,
-                alignment: {...allStyle.alignment, horizontal: 'center'}
-            };
 
             for (let sci = 0; sci < criteria.subcriterias.length; sci++) {
                 const subcriteria = criteria.subcriterias[sci];
                 const subcriteriaRow = sheet.getRow(duplicateRowIdx);
+                this.applySubcriteriaRowStyle(subcriteriaRow, allStyle);
                 subcriteriaRow.getCell('A').value = `${criteria.key}${subcriteria.order}`;
                 subcriteriaRow.getCell('B').value = subcriteria.caption;
                 subcriteriaRow.getCell('C').value = null;
@@ -377,16 +345,17 @@ export class SqrManageCriteriaService {
                 for (let ai = 0; ai < subcriteria.aspects.length; ai++) {
                     const aspect = subcriteria.aspects[ai];
                     const aspectRow = sheet.getRow(duplicateRowIdx);
+                    this.applyAspectRowStyle(aspectRow, allStyle);
                     aspectRow.getCell('A').value = null;
                     aspectRow.getCell('B').value = null;
                     aspectRow.getCell('C').value = aspect.type;
                     aspectRow.getCell('D').value = aspect.zedLink !== undefined ? +aspect.zedLink : null;
-                    aspectRow.getCell('E').value = `${aspect.caption}${aspect.description ? '\n' + aspect.description : ''}`;
+                    aspectRow.getCell('E').value = aspect.caption;
                     aspectRow.getCell('F').value = null;
-                    aspectRow.getCell('G').value = null;
-                    aspectRow.getCell('H').value = null;
-                    aspectRow.getCell('I').value = aspect.sectionKey ?? '-';
-                    aspectRow.getCell('J').value = +aspect.maxMark;
+                    aspectRow.getCell('G').value = aspect.description;
+                    aspectRow.getCell('H').value = aspect.sectionKey ?? '-';
+                    aspectRow.getCell('I').value = +aspect.maxMark;
+                    aspectRow.getCell('J').value = null;
                     if (ai < subcriteria.aspects.length - 1 ||
                         (aspect.extra ?? []).length > 0 ||
                         criteria.subcriterias[sci + 1]) {
@@ -404,8 +373,8 @@ export class SqrManageCriteriaService {
                         aspectExtraRow.getCell('F').value = aspect.type === 'J' ? +aspectExtra.maxMark : null;
                         aspectExtraRow.getCell('G').value = aspectExtra.description;
                         aspectExtraRow.getCell('H').value = null;
-                        aspectExtraRow.getCell('I').value = null;
-                        aspectExtraRow.getCell('J').value = aspect.type === 'D' ? +aspectExtra.maxMark : null;
+                        aspectExtraRow.getCell('I').value = aspect.type === 'D' ? +aspectExtra.maxMark : null;
+                        aspectExtraRow.getCell('J').value = null;
                         if (aei < aspect.extra.length - 1 || subcriteria.aspects[ai + 1] || criteria.subcriterias[sci + 1]) {
                             sheet.duplicateRow(duplicateRowIdx, 1, true);
                             duplicateRowIdx++;
@@ -413,6 +382,108 @@ export class SqrManageCriteriaService {
                     }
                 }
             }
+            const lastRow = sheet.getRow(duplicateRowIdx);
+            const fillBottomBorder = (cell: any) => {
+                cell.style = {...cell.style, border: {...cell.style.border, bottom: {style: 'thin'}}}
+            }
+            fillBottomBorder(lastRow.getCell('A'));
+            fillBottomBorder(lastRow.getCell('B'));
+            fillBottomBorder(lastRow.getCell('C'));
+            fillBottomBorder(lastRow.getCell('D'));
+            fillBottomBorder(lastRow.getCell('E'));
+            fillBottomBorder(lastRow.getCell('F'));
+            fillBottomBorder(lastRow.getCell('G'));
+            fillBottomBorder(lastRow.getCell('H'));
+            fillBottomBorder(lastRow.getCell('I'));
+            fillBottomBorder(lastRow.getCell('J'));
         }
+    }
+
+    private applySubcriteriaRowStyle(row: any, allStyle: any) {
+        const defaultBorder = {
+            top: {style: 'thin'},
+            bottom: {style: 'thin'},
+        };
+        const defaultFill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: {argb: 'FFB4C6E7'},
+            bgColor: {argb: 'FF000000'}
+        };
+        row.getCell('A').style = {
+            ...allStyle,
+            font: {bold: true},
+            alignment: {...allStyle.alignment, horizontal: 'center'},
+            border: {
+                ...defaultBorder,
+                left: {style: 'thin'},
+            }, fill: defaultFill
+        };
+        row.getCell('B').style = {...allStyle, font: {bold: true}, border: defaultBorder, fill: defaultFill};
+        row.getCell('C').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}, border: defaultBorder, fill: defaultFill
+        };
+        row.getCell('D').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}, border: defaultBorder, fill: defaultFill
+        };
+        row.getCell('E').style = {...allStyle, border: defaultBorder, fill: defaultFill};
+        row.getCell('F').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}, border: defaultBorder, fill: defaultFill
+        };
+        row.getCell('G').style = {...allStyle, border: defaultBorder, fill: defaultFill};
+        row.getCell('H').style = {...allStyle, border: defaultBorder, fill: defaultFill};
+        row.getCell('I').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}, border: defaultBorder, fill: defaultFill
+        };
+        row.getCell('J').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'},
+            border: {
+                ...defaultBorder,
+                right: {style: 'thin'},
+            }, fill: defaultFill
+        };
+    }
+
+    private applyAspectRowStyle(row: any, allStyle: any) {
+        row.getCell('A').style = {
+            ...allStyle,
+            font: {bold: true},
+            alignment: {...allStyle.alignment, horizontal: 'center'},
+            border: {
+                left: {style: 'thin'},
+            }
+        };
+        row.getCell('B').style = {...allStyle, font: {bold: true}};
+        row.getCell('C').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}
+        };
+        row.getCell('D').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}
+        };
+        row.getCell('E').style = allStyle;
+        row.getCell('F').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}
+        };
+        row.getCell('G').style = allStyle;
+        row.getCell('H').style = allStyle;
+        row.getCell('I').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'}
+        };
+        row.getCell('J').style = {
+            ...allStyle,
+            alignment: {...allStyle.alignment, horizontal: 'center'},
+            border: {
+                right: {style: 'thin'},
+            }
+        };
     }
 }
