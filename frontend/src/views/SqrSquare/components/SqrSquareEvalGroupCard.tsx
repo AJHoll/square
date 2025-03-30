@@ -16,6 +16,7 @@ interface SqrSquareEvalGroupCardProps extends StoreProps {
 
 export class SqrSquareEvalGroupCard extends React.Component<SqrSquareEvalGroupCardProps> {
     readonly sqrSquareEvalGroupCardStore: SqrSquareEvalGroupCardStore = this.props.rootStore.sqrSquareEvalGroupCardStore;
+
     render() {
         return <DevsCard title={this.sqrSquareEvalGroupCardStore.title}
                          visible={this.sqrSquareEvalGroupCardStore.visible}
@@ -51,12 +52,12 @@ export class SqrSquareEvalGroupCard extends React.Component<SqrSquareEvalGroupCa
                             {
                                 (this.sqrSquareEvalGroupCardStore.sqrEvalGroup.formModules ?? [])
                                     .map(module => (
-                                        <div className="modules_input__input-row" key={uuid()}
+                                        <div className="modules_input__input-row" key={module.value ?? uuid()}
                                         >
                                             <DevsSelect options={this.sqrSquareEvalGroupCardStore.squareModules}
                                                         value={module}
                                                         onlySelection={true}
-                                                        onChange={(event) => this.sqrSquareEvalGroupCardStore.setFormModule(module, event.value)}
+                                                        onChange={(event) => this.sqrSquareEvalGroupCardStore.setFormModule(module, {...event.value})}
                                             />
                                             <DevsButton template='filled'
                                                         color="danger"

@@ -88,8 +88,8 @@ export class SqrSquareEvalGroupCardStore {
     }
 
     setFormModule(module: SelectOption, newValue: SelectOption) {
-        module.label = newValue.label;
-        module.value = newValue.value;
+        module.label = newValue?.label;
+        module.value = newValue?.value;
         this.refreshModulesField();
     }
 

@@ -172,8 +172,9 @@ export default class SqrSquareEvalGroupStore {
                     value: module.code
                 } as SelectOption));
             evalGroup.formModules = evalGroup.modules?.split(',').map(moduleCode => moduleCode.trim())
-                .map(moduleCode => this._sqrSquareEvalGroupCardStore.squareModules.find(option => option.value === moduleCode) as SelectOption)
-            this._sqrSquareEvalGroupCardStore.sqrEvalGroup = evalGroup;
+                .filter(moduleCode => moduleCode)
+                .map(moduleCode => ({...this._sqrSquareEvalGroupCardStore.squareModules.find(option => option.value === moduleCode) as SelectOption}))
+            this._sqrSquareEvalGroupCardStore.sqrEvalGroup = {...evalGroup};
             this._sqrSquareEvalGroupCardStore.visible = true;
         } else {
             this._rootStore.message.error('Ошибка получения данных', `Не удалость найти команду с ID = ${this._selectionSqrEvalGroups[0].id}`);
