@@ -17,6 +17,8 @@ import * as process from "process";
 import {v4 as uuid} from "uuid";
 import {createReadStream, unlink} from "fs";
 import {SqrSquareModuleDto} from "../dtos/sqr-square-module.dto";
+import {SqrCriteriaDto} from "../dtos/sqr-criteria.dto";
+import {SqrAspectDto} from "../dtos/sqr-aspect.dto";
 
 @Injectable()
 export class SqrSquareService {
@@ -182,13 +184,89 @@ export class SqrSquareService {
             where: {square_id: squareId},
             orderBy: {caption: 'asc'}
         });
+        const criterias = (await this.databaseService.sqr_criteria.findFirst({
+            where: {
+                square_id: squareId
+            }
+        }))?.criterias;
         return dbData.map(d => ({
             id: d.id.toNumber(),
             squareId: d.square_id.toNumber(),
             name: d.name,
             caption: d.caption,
             description: d.description,
+            result: this.getTeamResult(d.rates as unknown as SqrCriteriaDto[], criterias as unknown as SqrCriteriaDto[]),
         }));
+    }
+
+    getTeamResult(rates: SqrCriteriaDto[], criterias: SqrCriteriaDto[]): number {
+        return rates?.reduce((crAcc, criteria) => {
+            crAcc += criteria.subcriterias?.reduce((sCrAcc, subcriteria) => {
+                sCrAcc += subcriteria.aspects?.reduce((asAcc, aspect) => {
+                    asAcc += this.getAspectMark(aspect, criterias);
+                    return asAcc;
+                }, 0) ?? 0;
+                return sCrAcc;
+            }, 0) ?? 0;
+            return crAcc;
+        }, 0) ?? 0;
+    }
+
+    getAspectMark(aspect: SqrAspectDto, criterias: SqrCriteriaDto[]): number {
+        switch (aspect.type) {
+            case "B": {
+                return +(aspect.mark ?? '0');
+            }
+            case "D": {
+                if (aspect.extra.findIndex(extra => extra.mark !== undefined && extra.mark !== null) === -1) {
+                    return 0;
+                }
+                const errorPoints = aspect.extra?.reduce((exAcc, extra) => {
+                    exAcc += (+(extra.maxMark ?? '0') * +(extra.mark ?? '0'));
+                    return exAcc;
+                }, 0) ?? 0;
+                let maxCriteriaMark = 0;
+                for (const crCrit of (criterias ?? [])) {
+                    for (const crSubcrit of (crCrit.subcriterias ?? [])) {
+                        for (const crAspect of (crSubcrit.aspects ?? [])) {
+                            if (crAspect.id === aspect.id) {
+                                maxCriteriaMark = +(crAspect.maxMark ?? '0');
+                            }
+                        }
+                    }
+                }
+                return +(maxCriteriaMark ?? '0') - (Math.round(errorPoints * 100) / 100);
+            }
+            case "J": {
+                const arrJudge = aspect.extra?.reduce((jAcc, extra) => {
+                    const idxs = extra.mark?.split('') ?? [];
+                    for (const idx of idxs) {
+                        jAcc[idx] = +(extra.order ?? '0');
+                    }
+                    return jAcc;
+                }, []) ?? [];
+
+                const coeff = (arrJudge?.length ?? 0) === 0 ? 0 : ((arrJudge?.reduce((acc, judgeScore) => {
+                    acc += judgeScore;
+                    return acc;
+                }) ?? 0) / ((arrJudge?.length ?? 1) * 3));
+
+                let maxCriteriaMark = 0;
+                for (const crCrit of (criterias ?? [])) {
+                    for (const crSubcrit of (crCrit.subcriterias ?? [])) {
+                        for (const crAspect of (crSubcrit.aspects ?? [])) {
+                            if (crAspect.id === aspect.id) {
+                                maxCriteriaMark = +(crAspect.maxMark ?? '0');
+                            }
+                        }
+                    }
+                }
+                return Math.round(maxCriteriaMark * coeff * 100) / 100;
+            }
+            default: {
+                return 0;
+            }
+        }
     }
 
     async getSquareTeam(squareId: SqrSquareDto['id'], teamId: SqrTeamDto['id']): Promise<SqrTeamDto> {

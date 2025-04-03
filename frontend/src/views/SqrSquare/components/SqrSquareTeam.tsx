@@ -42,6 +42,10 @@ export class SqrSquareTeam extends React.Component<SqrSquareParticipantProps> {
             field: 'description',
             headerName: 'Описание',
         },
+        {
+            field: 'result',
+            headerName: 'Результат',
+        }
     ]
 
     squareRoleUserColDef: ColDef<SqrSquareTeamUserDto>[] = [

@@ -4,4 +4,5 @@ export interface SqrTeamDto {
     name?: string;
     caption?: string;
     description?: string;
+    result?: number;
 }
