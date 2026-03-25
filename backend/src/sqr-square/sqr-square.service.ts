@@ -215,7 +215,17 @@ export class SqrSquareService {
     getAspectMark(aspect: SqrAspectDto, criterias: SqrCriteriaDto[]): number {
         switch (aspect.type) {
             case "B": {
-                return +(aspect.mark ?? '0');
+                let maxCriteriaMark = 0;
+                for (const crCrit of (criterias ?? [])) {
+                    for (const crSubcrit of (crCrit.subcriterias ?? [])) {
+                        for (const crAspect of (crSubcrit.aspects ?? [])) {
+                            if (crAspect.id === aspect.id) {
+                                maxCriteriaMark = +(crAspect.maxMark ?? '0');
+                            }
+                        }
+                    }
+                }
+                return (+(aspect.mark ?? '0')) * maxCriteriaMark;
             }
             case "D": {
                 if (aspect.extra.findIndex(extra => extra.mark !== undefined && extra.mark !== null) === -1) {
